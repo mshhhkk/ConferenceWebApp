@@ -1,0 +1,210 @@
+﻿@using ConferenceWebApp.Application.DTOs.CommiteeDTOs
+@model IEnumerable<CommitteeDTO>
+@{
+    ViewData["Title"] = "Главная";
+}
+<link rel="stylesheet" href="~/css/mainpage.css" />
+<link rel="stylesheet" href="~/css/global.css" />
+
+<div class="main-banner">
+    <div class="main-banner-content">
+        <div class="main-banner-title">
+            Международная научно-техническая конференция
+        </div>
+        <div class="main-banner-subtitle">
+            «Квантовая электроника»
+        </div>
+        <div class="main-banner-info">
+            <div class="main-banner-info-block">
+                <img src="/images/time.svg" alt="Дата" class="main-banner-info-icon" />
+                <div class="main-banner-info-title">Дата</div>
+                <div class="main-banner-info-desc">С 10 по 15 января 2025 года</div>
+            </div>
+            <div class="main-banner-info-block">
+                <img src="/images/location.svg" alt="Место" class="main-banner-info-icon" />
+                <div class="main-banner-info-title">Место</div>
+                <div class="main-banner-info-desc">ул. Курчатова 7, Минск</div>
+            </div>
+            <div class="main-banner-info-block">
+                <img src="/images/participants.svg" alt="Участники" class="main-banner-info-icon" />
+                <div class="main-banner-info-title">Участники</div>
+                <div class="main-banner-info-desc">Более шестисот сотрудников</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="symposium-grad">
+    <div class="symposium-block">
+        <div class="symposium-content">
+            <div class="title-purple">
+                МЕЖДУНАРОДНЫЙ<br /><span class="title-black">СИМПОЗИУМ</span>
+            </div>
+            <div class="text-typography">
+                На базе факультета радиофизики и компьютерных технологий Белорусского государственного университета 15 января 2025 г. состоится международная научно-практическая конференция «Квантовая электроника».<br><br>
+                Целью конференции стало обсуждение актуальных вопросов развития методов и технологий в области квантовой электроники, организация межуниверситетского и международного сотрудничества, стимулирование внедрения новых квантовых технологий и научных исследований, промышленности, телекоммуникаций и систем безопасности.
+            </div>
+        </div>
+        <div class="symposium-images">
+            <img src="/images/symposium1.jpg" alt="" class="symposium-img symposium-img-main" />
+            <img src="/images/symposium2.jpg" alt="" class="symposium-img symposium-img-side" />
+        </div>
+    </div>
+</div>
+
+<div class="info-section info-section-two-cols">
+    <div class="info-inner info-col-title">
+        <div class="info-title-block">
+            <div class="title-purple">
+                ФОРМАТ<br /><span class="title-black">ПРОВЕДЕНИЯ</span>
+            </div>
+        </div>
+    </div>
+    <div class="info-inner info-col-desc">
+        <div class="text-typography">
+            Гибридный, очный с использованием онлайн видеоконференций. Открытие, пленарное заседание и выступления с секционными докладами проходили в очном режиме с возможностью подключения к видеоконференции. Постерная секция проводилась с использованием дистанционной образовательной платформы Moodle.
+        </div>
+    </div>
+</div>
+<div class="info-section info-section-two-cols">
+    <div class="info-inner info-col-desc">
+        <div class="text-typography">
+            Для участия симпозиуме необходимо оплатить оргвзнос. Величина оргвзноса составляет 140 BYN. Для аспирантов, студентов и участников без докладов предусмотрена скидка 50 %. Пленарные докладчики освобождены от уплаты оргвзноса.
+        </div>
+    </div>
+    <div class="info-inner info-col-title">
+        <div class="info-title-block">
+            <div class="title-purple">
+                ОРГАНИЗАЦИОННЫЙ<br /><span class="title-black">ВЗНОС</span>
+            </div>
+        </div>
+    </div>  
+</div>
+
+
+
+
+<div class="sections-gradient-wrapper">
+    <div class="sections-gradient-left"></div>
+    <div class="sections-gradient-right"></div>
+    <div class="sections-block">
+        <div class="info-title-block-center">
+            <div class="title-purple">
+                СЕКЦИИ<br /><span class="title-black">КОНФЕРЕНЦИИ</span>
+            </div>
+        </div>
+        <div class="section-list">
+            <div class="section-item">
+                <div class="section-number">
+                    <span class="section-digit">01</span>
+                </div>
+                <div>
+                    <div class="section-name">Системы и методы квантовой электроники</div>
+                    <div class="text-typography">
+                        Исследования и разработки, направленные на создание и оптимизацию квантово-электронных устройств, методов генерации и управления квантовыми состояниями.
+                    </div>
+                </div>
+            </div>
+            <div class="section-item">
+                <div class="section-number">
+                    <span class="section-digit">02</span>
+                </div>
+                <div>
+                    <div class="section-name">Интеллектуальные технологии и системы</div>
+                    <div class="text-typography">
+                        Системы, способные на основе использования интеллектуальных технологий проектирования, алгоритмизации, анализа и хранения данных целенаправленно приобретать, воспроизводить и использовать знания.
+                    </div>
+                </div>
+            </div>
+            <div class="section-item">
+                <div class="section-number">
+                    <span class="section-digit">03</span>
+                </div>
+                <div>
+                    <div class="section-name">Прикладной анализ данных</div>
+                    <div class="text-typography">
+                        Методы, алгоритмы и программные средства прикладного анализа данных.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="program-committee-wrapper">
+    <div class="program-committee-left">
+        <div class="title-purple">
+            ПРОГРАММНЫЙ<br /><span class="title-black">КОМИТЕТ</span>
+        </div>
+        <div class="text-typography">
+            В программный комитет конференции входят ведущие специалисты в области компьютерных технологий и анализа данных.
+        </div>
+    </div>
+    <div class="program-committee-scroll">
+        @foreach (var member in Model)
+        {
+            <div class="program-committee-card">
+                <img src="@member.PhotoUrl" alt="@member.FullName" class="program-committee-photo" />
+                <div class="program-committee-name">@member.FullName</div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<div class="info-section">
+    <div class="info-inner info-location">
+        <div class="info-location-image">
+            <img src="/images/НИИПФП 1.png" alt="Институт прикладных физических проблем" style="width: 100%; max-width: 750px; height: auto;" />
+        </div>
+        <div class="info-location-content">
+            <div class="info-title-block">
+                <div class="title-purple">
+                    МЕСТО<br /><span class="title-black">ПРОВЕДЕНИЯ</span>
+                </div>
+            </div>
+            <div class="text-typography">
+                Симпозиум будет проходить в г. Минске на базе
+                <span class="gradient-text">
+                    Научно-исследовательское учреждение «Институт прикладных физических проблем имени А. Н. Севченко»
+                </span>
+                Белорусского государственного университета.
+            </div>
+            <a href="https://yandex.by/maps/?ll=27.5706,53.9275&z=16" target="_blank" class="info-location-map-btn">
+                Смотреть на карте
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="conference-banner">
+    <div class="conference-banner-main">
+        <span class="conference-banner-dark">CONFERENCE 2025</span>
+        <span class="conference-banner-outline">CONFERENCE</span>
+    </div>
+</div>
+
+
+<section class="sponsors-section">
+    <div class="sponsors-title-bg">
+        <h2 class="sponsors-title">СПОНСОРЫ</h2>
+    </div>
+    <div class="sponsors-logos">
+        <img src="/images/spons1.svg" alt="SemiTEq" />
+        <img src="/images/spons2.svg" alt="MWave" />
+        <img src="/images/spons3.svg" alt="НАУКА" />
+        <img src="/images/spons4.svg" alt="PolyKetone" />
+        <img src="/images/spons5.svg" alt="NanoMagnetics" />
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+

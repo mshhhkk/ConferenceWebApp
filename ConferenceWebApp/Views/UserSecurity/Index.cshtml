@@ -1,0 +1,13 @@
+﻿<h2>Управление аккаунтом</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<form asp-action="DeleteAccount" method="post">
+    <button type="submit" class="btn btn-danger">Удалить аккаунт</button>
+</form>
+<a asp-action="ChangePassword" class="tn btn-primary mt-1">Безопасность</a>
+
+

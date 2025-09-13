@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Подтверждение email";
+    Layout = "_AuthLayout";
+}
+<link rel="stylesheet" href="~/css/global.css" />
+<link rel="stylesheet" href="~/css/auth.css" />
+
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-left">
+            <div class="auth-left-overlay"></div>
+            <div class="auth-left-content">
+                <div class="auth-welcome-title">Проверьте вашу почту</div>
+                <div class="auth-welcome-desc">
+                    Для завершения регистрации перейдите по ссылке из письма, отправленного на ваш email.
+                </div>
+            </div>
+        </div>
+        <div class="auth-right">
+            <div class="auth-form-block">
+                <h2>Подтверждение email</h2>
+                <p>
+                    Мы отправили вам письмо для подтверждения адреса.<br />
+                    Если письмо не пришло, проверьте папку "Спам" или <a href="/Auth/ResendEmail">отправьте повторно</a>.
+                </p>
+                <div class="form-link">
+                    <a href="/Auth/Login">Вернуться к входу</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+﻿
+@model ArchiveModel
+<link rel="stylesheet" href="~/css/archive.css" />
+<link rel="stylesheet" href="~/css/global.css" />
+<div class="up-banner"></div>
+
+<div class="up-banner-oval">
+    <span class="up-banner-title">Архив</span>
+</div>
+
+@foreach (var year in Model.ArchiveYears)
+{
+    <div class="archive-year-block">
+        <h3 class="archive-year-title">@year.Year ГОД</h3>
+        <div class="archive-year-row">
+            <div class="archive-year-item">
+                <div>Программа симпозиума</div>
+                <a class="archive-btn" href="@year.ProgramUrl">Скачать программу</a>
+            </div>
+            <div class="archive-year-item">
+                <div>Труды симпозиума</div>
+                <a class="archive-btn" href="@year.Volume1Url">Скачать ТОМ 1</a>
+                <a class="archive-btn" href="@year.Volume2Url">Скачать ТОМ 2</a>
+            </div>
+            <div class="archive-year-item">
+                <div>Фотографии</div>
+                <a class="archive-btn" href="@year.PhotosUrl">Скачать архив</a>
+            </div>
+        </div>
+    </div>
+}
+</div>

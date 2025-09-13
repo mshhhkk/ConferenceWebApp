@@ -1,0 +1,36 @@
+﻿@using ConferenceWebApp.Application.DTOs.RefferReport
+@model RefferSearchDTO
+
+<h2>Передача доклада</h2>
+
+<form asp-action="RefferSearch" method="get">
+    <input type="hidden" name="reportId" value="@Model.ReportId" />
+    <div class="form-group">
+        <label>Введите имя:</label>
+        <input type="text" name="query" class="form-control" value="@Model.Query" />
+    </div>
+    <button type="submit" class="btn btn-primary">Найти</button>
+</form>
+
+@if (Model.Users.Any())
+{
+    <table class="table">
+        <thead><tr><th>ФИО</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var user in Model.Users)
+            {
+                <tr>
+                    <td>@user.FullName</td>
+                    <td>
+                        <form asp-action="Reffer" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="reportId" value="@Model.ReportId" />
+                            <input type="hidden" name="targetUserId" value="@user.UserId" />
+                            <button class="btn btn-success" type="submit">Передать</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

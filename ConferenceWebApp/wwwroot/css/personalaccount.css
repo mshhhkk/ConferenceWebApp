@@ -1,0 +1,122 @@
+﻿.personal-account-layout {
+    display: flex;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    margin-top: 90px;
+    padding: 32px 0;
+    align-items: stretch;
+}
+
+.personal-account-sidebar {
+    flex: 0 0 340px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 90px;
+    align-items: center;
+    height: 100%;
+}
+
+
+.personal-account-main {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    margin-top: 90px;
+    flex-direction: column;
+    gap: 24px;
+    height: 100%;
+}
+.personal-account-gradient {
+    position: absolute;
+    left: 0;
+    width: 100vw;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.personal-account-gradient--top {
+    top: 0;
+    height: 400px; /* подберите нужную высоту */
+    display: flex;
+    justify-content: center;
+}
+
+.personal-account-gradient--bottom {
+    bottom: 0;
+    height: 400px; /* подберите нужную высоту */
+    display: flex;
+    justify-content: center;
+}
+
+.personal-account-gradient img {
+    width: 100vw;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+body {
+    position: relative;
+    min-height: 100vh;
+}
+
+.section-tabs {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    align-items: flex-start; /* не растягивать по высоте */
+}
+
+.section-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 700;                /* Bold */
+    color: #9D3FE7;                  /* Corporate/Purple */
+    background: transparent;
+    border: 2px solid #9D3FE7;       /* Цвет границы как текст */
+    border-radius: 8px;
+    padding: 4px 14px;               /* Paragraph spacing */
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    outline: none;
+    min-width: 0;
+    height: 45px;
+    line-height: 1.48;               /* 148% */
+    box-sizing: border-box;
+    white-space: nowrap;
+    text-align: center;
+    text-decoration: none;
+    letter-spacing: 0;
+}
+
+.section-tab-btn.selected,
+.section-tab-btn.active {
+    background: #9D3FE7;
+    color: #fff;
+    border-color: #9D3FE7;
+}
+
+.section-tab-btn:focus {
+    box-shadow: 0 0 0 2px #bfaaff;
+}
+
+
+
+.personal-account-content-box {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(140, 58, 232, 0.08);
+    padding: 32px 24px;
+    width: 100%;
+    max-width: 700px;
+    margin-left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%; /* растягиваем на всю высоту main */
+    box-sizing: border-box;
+}

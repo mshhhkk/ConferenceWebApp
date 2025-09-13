@@ -1,0 +1,143 @@
+﻿@using ConferenceWebApp.Application.ViewModels
+@model ApprovedReportsForReferralViewModel
+@{
+    Layout = "_PersonalAccountLayout";
+}
+
+<link rel="stylesheet" href="~/css/payment.css" />
+<link rel="stylesheet" href="~/css/reports.css" />
+
+<div class="payment-card" style="max-width:700px;">
+    <div class="payment-info">
+        <p>
+            Вы можете сделать запрос о передаче доклада другому участнику Симпозиума. Этот участник должен будет принять доклад в личном кабинете. До этого момента Вы сможете отменить запрос.
+        </p>
+        <p>
+            Если за Вами перестанут быть приняты доклады, то автоматически перестанете быть участником Симпозиума!
+        </p>
+    </div>
+
+    <!-- Принятые доклады -->
+    <div class="payment-title">Принятые доклады</div>
+    @foreach (var report in Model.Reports.Where(r => !r.IsTransferRequested))
+    {
+        <div class="report-block">
+            <div class="report-title">@report.Title</div>
+            <div class="report-thesis">@report.ExtThesis</div>
+            <span class="report-type">стендовый</span>
+            <div class="report-actions">
+                <button type="button" class="payment-btn" onclick="openModal('@report.ReportId')">Передать доклад</button>
+            </div>
+        </div>
+    }
+
+    @if (Model.Reports.Any(r => r.IsTransferRequested && !r.IsTransferConfirmed))
+    {
+        <div class="payment-title">Ожидание одобрения передачи</div>
+        @foreach (var report in Model.Reports.Where(r => r.IsTransferRequested && !r.IsTransferConfirmed))
+        {
+            <div class="report-block waiting-block">
+                <div class="report-title">@report.Title</div>
+                <div class="report-thesis">@report.ExtThesis</div>
+                <span class="report-type">стендовый</span>
+                <div class="report-actions" style="text-align:center; margin-top:12px;">
+                    <form asp-action="CancelTransfer" method="post" style="display:inline;">
+                        <input type="hidden" name="reportId" value="@report.ReportId" />
+                        <button type="submit" class="payment-btn outline">Отменить запрос</button>
+                    </form>
+                </div>
+            </div>
+        }
+    }
+
+    @if (Model.IncomingTransfers != null && Model.IncomingTransfers.Any())
+    {
+        <div class="payment-title">Полученные заявки</div>
+        @foreach (var report in Model.IncomingTransfers)
+        {
+            <div class="report-block requests-block">
+                <div class="report-title">@report.Title</div>
+                <div class="report-thesis">@report.ExtThesis</div>
+                <span class="report-type">стендовый</span>
+                <div class="report-actions">
+                    <form asp-action="ConfirmTransfer" method="post">
+                        <input type="hidden" name="reportId" value="@report.ReportId" />
+                        <input type="hidden" name="targetUserId" value="@report.UserId" />
+                        <button type="submit" class="payment-btn">Принять</button>
+                    </form>
+                    <form asp-action="DeclineTransfer" method="post">
+                        <input type="hidden" name="reportId" value="@report.ReportId" />
+                        <button type="submit" class="payment-btn outline">Отклонить</button>
+                    </form>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+
+<div id="transferModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="modal-title">Выберите, кому передать доклад</div>
+        <form id="transferForm" method="post" action="/ReportsRefferal/Reffer" style="width:100%;">
+            <input type="hidden" name="reportId" id="modalReportId" />
+            <input type="hidden" name="targetUserId" id="targetUserId" />
+            <input type="text" id="searchUser" class="modal-input" autocomplete="off" placeholder="Начните вводить ФИО..." />
+            <div id="searchResults"></div>
+            <button type="submit" class="modal-btn" disabled id="submitTransferBtn">Выбрать</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal(reportId) {
+        document.getElementById('transferModal').style.display = 'flex';
+        document.getElementById('modalReportId').value = reportId;
+        document.getElementById('searchUser').value = '';
+        document.getElementById('searchResults').innerHTML = '';
+        document.getElementById('targetUserId').value = '';
+        document.getElementById('submitTransferBtn').disabled = true;
+    }
+    function closeModal() {
+        document.getElementById('transferModal').style.display = 'none';
+    }
+
+    document.getElementById('searchUser').addEventListener('input', function() {
+        var query = this.value;
+        var reportId = document.getElementById('modalReportId').value;
+        if (query.length < 2) {
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('targetUserId').value = '';
+            document.getElementById('submitTransferBtn').disabled = true;
+            return;
+        }
+        fetch(`/ReportsRefferal/RefferSearch?reportId=${reportId}&query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                var results = '';
+                if (data && data.users && data.users.length > 0) {
+                    data.users.forEach(function(user) {
+                        results += `<div class="search-result" onclick="selectUser('${user.userId}', '${user.fullName}')">${user.fullName}</div>`;
+                    });
+                } else {
+                    results = '<div class="no-results">Ничего не найдено</div>';
+                }
+                document.getElementById('searchResults').innerHTML = results;
+            });
+    });
+
+    function selectUser(userId, fullName) {
+        document.getElementById('searchUser').value = fullName;
+        document.getElementById('targetUserId').value = userId;
+        document.getElementById('searchResults').innerHTML = '';
+        document.getElementById('submitTransferBtn').disabled = false;
+    }
+
+    window.onclick = function(event) {
+        var modal = document.getElementById('transferModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+</script>

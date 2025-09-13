@@ -1,0 +1,46 @@
+﻿@using ConferenceWebApp.Application.ViewModels
+@model ExtendedThesisViewModel
+
+@{
+    Layout = "_PersonalAccountLayout";
+}
+
+<link rel="stylesheet" href="~/css/modal.css" />
+<link rel="stylesheet" href="~/css/extendedthesis.css" />
+
+@if (!Model.UserProfile.IsApprovedAnyReports)
+{
+    <p class="thesis-empty">Пока что нет одобренных докладов.</p>
+}
+else if (!Model.ReportsWithTheses.Any() && !Model.ReportsWithoutTheses.Any())
+{
+    <p class="thesis-empty">У вас пока нет расширенных тезисов.</p>
+}
+else
+{
+    <div class="thesis-list">
+        @foreach (var report in Model.ReportsWithTheses)
+        {
+            <div class="thesis-card" id="card-@report.Id">
+                <div class="thesis-card-title">@report.ReportTheme</div>
+                <div class="thesis-card-org">@report.Section</div>
+                <div class="thesis-card-type">@report.WorkType</div>
+                <div class="thesis-card-ext">@report.ExtThesis</div>
+                <div class="thesis-card-actions">
+                    <a asp-action="Edit" asp-route-reportId="@report.Id" class="thesis-btn thesis-btn-edit">Редактировать</a>
+                </div>
+            </div>
+        }
+        @foreach (var report in Model.ReportsWithoutTheses)
+        {
+            <div class="thesis-card" id="card-@report.Id">
+                <div class="thesis-card-title">@report.ReportTheme</div>
+                <div class="thesis-card-org">@report.Section</div>
+                <div class="thesis-card-type">@report.WorkType</div>
+                <div class="thesis-card-actions">
+                    <a asp-action="Edit" asp-route-reportId="@report.Id" class="thesis-btn thesis-btn-add">Добавить расширенные тезисы</a>
+                </div>
+            </div>
+        }
+    </div>
+}

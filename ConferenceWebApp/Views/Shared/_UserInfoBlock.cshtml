@@ -1,0 +1,92 @@
+﻿@model ConferenceWebApp.Application.DTOs.PersonalAccountDTOs.UserProfileDTO
+<link rel="stylesheet" href="~/css/userinfoblock.css" />
+@{
+    var photoUrl = string.IsNullOrWhiteSpace(Model.PhotoUrl)
+        ? Url.Content("~/images/default_user.png")
+        : Model.PhotoUrl;
+    bool isParticipant = Model.ParticipantType == ParticipantType.Speaker;
+}
+
+
+<div class="user-info-block">
+    <div class="user-info-photo">
+        <img src="@photoUrl" alt="Фото пользователя" />
+    </div>
+    <div class="user-info-name">@Model.FullName</div>
+
+    <div class="user-info-section-title">ЛИЧНАЯ ИНФОРМАЦИЯ</div>
+    <div class="user-info-section">
+        <div class="user-info-row">
+            <span class="user-info-key">Организация:</span>
+            <span class="user-info-value">@Model.Organization</span>
+        </div>
+        <div class="user-info-row">
+            <span class="user-info-key">Специальность:</span>
+            <span class="user-info-value">@Model.Specialization</span>
+        </div>
+        <div class="user-info-row">
+            <span class="user-info-key">Дата рождения:</span>
+            <span class="user-info-value">@Model.BirthDate.ToString("dd.MM.yyyy")</span>
+        </div>
+    </div>
+
+    <div class="user-info-section-title">КОНТАКТЫ</div>
+    <div class="user-info-section">
+        <div class="user-info-row">
+            <span class="user-info-key">Телефон:</span>
+            <span class="user-info-value">@Model.PhoneNumber</span>
+        </div>
+        <div class="user-info-row">
+            <span class="user-info-key">Email:</span>
+            <span class="user-info-value">@Model.Email</span>
+        </div>
+    </div>
+
+    <div class="user-info-section-title">УЧАСТИЕ</div>
+    <div class="user-info-section">
+        <div class="user-info-row">
+            @if (isParticipant)
+            {
+                <span class="participant-status participant-status--active">
+                    ВЫ ЯВЛЯЕТЕСЬ УЧАСТНИКОМ
+                </span>
+            }
+            else
+            {
+                <span class="participant-status participant-status--inactive">
+                    ВЫ НЕ ЯВЛЯЕТЕСЬ УЧАСТНИКОМ
+                </span>
+            }
+        </div>
+        @if (isParticipant)
+        {
+            <div class="user-info-row">
+                <span class="user-info-key">Форма участия:</span>
+                <span class="user-info-value">@Model.ParticipantType</span>
+            </div>
+            <div class="user-info-invite">
+                <div class="user-info-invite-label">
+                    Если необходимо, вы можете сгенерировать персональное официальное приглашение
+                </div>
+                <form method="get" action="/PersonalAccount/GenerateInvitation">
+                    <button type="submit" class="user-info-invite-btn">
+                        Создать приглашение
+                    </button>
+                </form>
+            </div>
+        }
+
+        <div class="user-info-row">
+            <span class="user-info-key">Статус оплаты:</span>
+            <span class="user-info-value">@(Model.HasPaidFee ? "Оплачено" : "Не оплачено")</span>
+        </div>
+        <div class="user-info-row">
+            <span class="user-info-key">Регистрация:</span>
+            <span class="user-info-value">@(Model.IsRegisteredForConference ? "Зарегистрирован" : "Не зарегистрирован")</span>
+        </div>
+        <div class="user-info-row">
+            <span class="user-info-key">Доклады:</span>
+            <span class="user-info-value">@(Model.IsApprovedAnyReports ? "Есть одобренные" : "Нет одобренных")</span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Ваш проект</title>
+    <link rel="stylesheet" href="~/css/global.css" />   
+    <link rel="stylesheet" href="~/css/footer.css" />
+    <link rel="stylesheet" href="~/css/common.css" />
+    <link rel="stylesheet" href="~/css/sidebar.css" />
+    <link rel="stylesheet" href="~/css/abous.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Anton:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
+</head>
+<body>
+    @await Html.PartialAsync("_Header")
+    <div class="up-gradient-bg"></div>
+    <div class="layout-root">
+        @await Html.PartialAsync("_Sidebar")
+        <div id="main-content">    
+            @RenderBody()
+        </div>
+    </div>
+    <div class="down-gradient-bg"></div>
+    @await Html.PartialAsync("_Footer")
+
+    @RenderSection("Scripts", required: false)
+
+    <script>
+        document.getElementById('sidebar-toggle').onclick = function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const sidebarToggleIcon = document.getElementById('sidebarToggleIcon');
+            sidebar.classList.toggle('closed');
+            mainContent.classList.toggle('sidebar-opened');
+            if (sidebar.classList.contains('closed')) {
+                sidebarToggleIcon.src = '/images/sidebar_icon_open.svg';
+                sidebarToggleIcon.alt = 'Открыть меню';
+            } else {
+                sidebarToggleIcon.src = '/images/sidebar_icon_close.svg';
+                sidebarToggleIcon.alt = 'Закрыть меню';
+            }
+        };
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,66 @@
+﻿@using ConferenceWebApp.Application.DTOs
+@using ConferenceWebApp.Application.DTOs.Schedule
+@model List<GroupedScheduleDTO>
+<link rel="stylesheet" href="~/css/schedule.css" />
+<link rel="stylesheet" href="~/css/global.css" />
+
+<div class="up-banner"></div>
+<div class="up-banner-oval">
+    <span class="up-banner-title">Труды симпозиума</span>
+</div>
+
+<div class="schedule-gradient-section">
+    <div class="schedule-title-block">
+        <span class="schedule-title">РАСПИСАНИЕ</span>
+    </div>
+    <div class="schedule-inner">
+        @foreach (var group in Model)
+        {
+            <div class="schedule-day-row">
+                <div class="schedule-day-info">
+                    <div class="schedule-day-accent">
+                        @group.Date.ToString("dddd", new System.Globalization.CultureInfo("ru-RU"))
+                    </div>
+                    <div class="schedule-day-date">
+                        @group.Date.ToString("d MMMM, yyyy", new System.Globalization.CultureInfo("ru-RU"))
+                    </div>
+                </div>
+                <div class="schedule-events-list">
+                    @foreach (var ev in group.Events)
+                    {
+                        <div class="schedule-event">
+                            <div class="schedule-event-time">@ev.Time</div>
+                            <div class="schedule-event-desc">@ev.Event</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="schedule-bottom-block">
+    <div class="schedule-bottom-inner">
+        <div class="schedule-bottom-item">
+            <div class="schedule-bottom-title">
+                <span class="accent">ПРОГРАММА</span> СИМПОЗИУМА
+            </div>
+            <div class="schedule-bottom-desc">
+                Смотрите полную программу симпозиума здесь!
+            </div>
+            <a href="#" class="schedule-bottom-btn">Полная программа</a>
+        </div>
+        <div class="schedule-bottom-center">
+            <img src="/images/atom.svg" alt="Атом" class="schedule-bottom-img" />
+        </div>
+        <div class="schedule-bottom-item">
+            <div class="schedule-bottom-title">
+                <span class="accent">ТРУДЫ</span> СИМПОЗИУМА
+            </div>
+            <div class="schedule-bottom-btns">
+                <a href="#" class="schedule-bottom-btn"><i class="fa fa-download"></i> Скачать ТОМ 1</a>
+                <a href="#" class="schedule-bottom-btn"><i class="fa fa-download"></i> Скачать ТОМ 2</a>
+            </div>
+        </div>
+    </div>
+</div>

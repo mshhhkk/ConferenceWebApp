@@ -1,0 +1,87 @@
+﻿@using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs
+@model EditUserDTO
+
+@{
+    Layout = "_SettingsLayout";
+}
+
+@if (!Model.IsRegisteredForConference)
+{
+    <div class="report-block waiting-block">
+        <div class="report-thesis" style="text-align: justify;">
+            Внимание! При неполном заполнении ФИО, даты рождения, организации, специализации и номера телефона вы не будете зарегистрированы на конференцию.
+        </div>
+    </div>
+}
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div class="settings-avatar-block">
+        <img src="@Model.PhotoUrl" alt="Фото" class="settings-avatar" />
+        <div class="settings-photo-btns">
+            <label class="settings-photo-btn">
+                <input asp-for="Photo" type="file" style="display:none;" />
+                Загрузить новое фото
+            </label>
+            <label class="settings-photo-btn">
+                <input asp-for="RemovePhoto" type="checkbox" style="display:none;" />
+                Удалить фото
+            </label>
+        </div>
+    </div>
+
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="LastName" class="settings-form-label">Фамилия</label>
+            <input asp-for="LastName" class="settings-form-input" placeholder="Фамилия" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+        <div class="settings-form-group">
+            <label asp-for="FirstName" class="settings-form-label">Имя</label>
+            <input asp-for="FirstName" class="settings-form-input" placeholder="Имя" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+        <div class="settings-form-group">
+            <label asp-for="MiddleName" class="settings-form-label">Отчество</label>
+            <input asp-for="MiddleName" class="settings-form-input" placeholder="Отчество" />
+            <span asp-validation-for="MiddleName" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="BirthDate" class="settings-form-label">Дата рождения</label>
+            <input asp-for="BirthDate" type="date" class="settings-form-input"
+                   min="1920-01-01" max="@DateTime.Now.ToString("yyyy-MM-dd")"
+                   value="@(Model.BirthDate.HasValue ? Model.BirthDate.Value.ToString("yyyy-MM-dd") : "2000-01-01")" />
+            <small class="form-text text-muted">Выберите дату в формате дд.мм.гггг</small>
+            <span asp-validation-for="BirthDate" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="Organization" class="settings-form-label">Организация</label>
+            <input asp-for="Organization" class="settings-form-input" placeholder="Организация" />
+            <span asp-validation-for="Organization" class="text-danger"></span>
+        </div>
+        <div class="settings-form-group">
+            <label asp-for="Specialization" class="settings-form-label">Специализация</label>
+            <input asp-for="Specialization" class="settings-form-input" placeholder="Специализация" />
+            <span asp-validation-for="Specialization" class="text-danger"></span>
+        </div>
+        <div class="settings-form-group">
+            <label asp-for="PhoneNumber" class="settings-form-label">Телефон</label>
+            <input asp-for="PhoneNumber" class="settings-form-input" placeholder="+375 (XX) XXX-XX-XX" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="settings-form-actions">
+        <button type="submit" class="settings-save-btn">Сохранить изменения</button>
+        <a href="/PersonalAccount" class="settings-cancel-btn">Отмена</a>
+    </div>
+
+    <div class="settings-delete-account">
+        Вы можете <a href="/PersonalAccount/Delete" style="color:#8c3ae8;text-decoration:underline;">удалить свою учетную запись</a>
+    </div>
+</form>

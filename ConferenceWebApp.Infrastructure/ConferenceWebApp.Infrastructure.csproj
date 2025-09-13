@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ConferenceWebApp.Application\ConferenceWebApp.Application.csproj" />
+		<ProjectReference Include="..\ConferenceWebApp.Persistence\ConferenceWebApp.Persistence.csproj" />
+	</ItemGroup>
+</Project>

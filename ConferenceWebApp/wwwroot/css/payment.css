@@ -1,0 +1,133 @@
+﻿.payment-card {
+    background: #fff;
+    padding: 40px 32px;
+    max-width: 600px;
+    margin: 32px auto;
+    margin-top: -50px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+.payment-title {
+    color: #9D3FE7;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    text-align: left;
+}
+
+.payment-info {
+    font-size: 16px;
+    color: #222;
+    margin-bottom: 18px;
+    line-height: 1.5;
+}
+
+    .payment-info strong {
+        font-weight: 600;
+    }
+
+.payment-amount {
+    font-size: 28px;
+    font-weight: 600;
+    color: #9D3FE7;
+    margin-bottom: 8px;
+}
+
+.payment-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #222;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.payment-input,
+.payment-file {
+    width: 100%;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 16px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    margin-bottom: 20px;
+    background: #F8F8F8;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+    .payment-input:focus,
+    .payment-file:focus {
+        border-color: #9D3FE7;
+    }
+
+.payment-btn {
+    display: block;
+    width: 260px;
+    margin: 24px auto 0 auto;
+    background: #9D3FE7;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 0;
+    font-size: 18px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(157,63,231,0.08);
+    transition: background 0.2s;
+    text-align: center;
+}
+
+    .payment-btn:hover {
+        background: #7c2fc0;
+    }
+
+.receipt-preview {
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+.alert {
+    margin-top: 16px;
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-size: 16px;
+}
+
+.alert-success {
+    background: #F3E6FA;
+    color: #9D3FE7;
+}
+
+.alert-danger {
+    background: #ffeaea;
+    color: #e83a3a;
+}
+.payment-info p {
+    margin-bottom: 14px;
+    font-size: 16px;
+    color: #222;
+    font-weight: 400;
+    font-family: 'Montserrat', Arial, sans-serif;
+}
+
+.payment-info p:last-child {
+    margin-bottom: 0;
+}
+
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background: rgba(157,63,231,0.08);
+}
+.modal-content {
+    animation: modalShow 0.2s;
+}
+@keyframes modalShow {
+    from { transform: translateY(-40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}

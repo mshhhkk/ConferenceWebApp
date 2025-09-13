@@ -1,0 +1,526 @@
+﻿
+.layout-root {
+    display: flex;
+    min-height: 100vh;
+}
+
+#main-content {
+    margin-left: 60px; 
+    transition: margin-left 0.3s;
+}
+    
+#main-content.sidebar-opened {
+   margin-left: 320px; 
+}
+
+.main-banner {
+    position: relative;
+    width: 100vw; /* Занимает всю ширину viewport */
+    max-width: 100vw; /* Гарантирует, что не будет превышения */
+    height: calc(100vh - 90px); /* Минус высота header */
+    background: url('/images/main-banner.png') center center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden; /* Обрезает любой контент, выходящий за границы по горизонтали */
+}
+
+.main-banner-content {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    color: #fff;
+    position: relative;
+    z-index: 2;
+}
+
+/* 🔹 Тексты баннера */
+.main-banner-title {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 800;
+    font-size: 48px;
+    margin-bottom: 24px;
+}
+
+.main-banner-subtitle {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 800;
+    font-size: 64px;
+    margin-bottom: 32px;
+}
+
+.main-banner-info {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    font-size: 18px;
+    margin-top: 32px;
+}
+
+.main-banner-info-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 180px;
+}
+
+.symposium-grad {
+    width: 100vw;
+    height: 420px; /* или нужная вам высота */
+    background: url('/images/Gradient.png') center center/cover no-repeat;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    z-index: 0;
+    pointer-events: none;
+    margin-bottom:370px;
+}
+.symposium-block {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    gap: 48px;
+}
+
+.symposium-content {
+    margin-top: 200px;
+    max-width: 600px;
+}
+
+
+
+.symposium-images {
+    margin-top: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 16px;
+    max-width: 100%;
+}
+
+.symposium-img {
+    border-radius: 16px;
+    max-width: 220px;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    box-shadow: 0 4px 24px rgba(140,37,244,0.12);
+}
+
+.symposium-img-side {
+    max-width: 140px;
+    width: 100%;
+    height: 120px;
+    margin-right: 32px;
+}
+
+.info-section {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: transparent;
+    padding: 40px 0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 150px;
+}
+
+.info-section-orgs {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: transparent;
+    padding: 40px 0;
+    box-sizing: border-box;
+    display: flex;
+}
+
+.info-section-two-cols {
+    display: flex;
+    justify-content: center;
+    gap: 64px;
+    max-width: 1200px;
+    margin-bottom: 150px;
+    background: transparent;
+    padding: 40px 0;
+    box-sizing: border-box;
+}
+.info-section-two-cols .info-inner {
+    flex: 1 1 0;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.info-section-two-cols .info-inner:first-child {
+    align-items: flex-end;
+    text-align: right;
+}
+
+.info-col {
+    width: 48%; /* или 50% - зависит от желаемого расстояния */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* для правой колонки */
+}
+
+.info-col:first-child {
+    align-items: flex-start; /* для левой колонки */
+}
+
+.info-title-block,
+.text-typography {
+    width: 100%;
+}
+
+
+.sections-block {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    background: transparent;
+    padding: 32px 0 48px 0;
+}
+
+.section-list {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.section-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    padding: 24px 0;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+.section-number {
+    min-width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.section-name {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+    color: #222;
+    margin-bottom: 8px;
+}
+.section-number {
+    font-family: 'Anton', Arial, sans-serif;
+    font-weight: 400;
+    font-size: 50px;
+    line-height: 50px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #8C25F4 0%, #F425F4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    display: block;
+    text-align: center;
+}
+.info-title-block.right {
+    justify-content: flex-end;
+    text-align: right;
+}
+.info-title-block-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.sections-gradient-wrapper {
+    position: relative;
+    overflow: hidden;
+    margin-bottom:150px;/* фикс чтобы не вылазили */
+    width: 100%;
+}
+.org-fee-center {
+    justify-content: center !important;
+    gap: 64px;
+}
+
+.org-fee-center > .text-typography,
+.org-fee-center > .info-title-block {
+    max-width: 480px;
+    text-align: center;
+}
+.sections-gradient-left,
+.sections-gradient-right {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 340px;
+    max-width: 100%;
+}
+.sections-gradient-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 340px;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    background: url('/images/right_gradient.png') right top/cover no-repeat;
+    opacity: 1;
+}
+
+/* Чтобы секции были поверх градиента */
+.sections-block {
+    position: relative;
+    z-index: 1;
+}
+
+.program-committee-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1100px;
+    margin: 0 auto 48px auto;
+    padding: 32px 0 0 0;
+    background: transparent;
+    margin-bottom:150px;
+}
+
+.program-committee-left {
+    width: 470px;
+    margin-right: 48px;
+}
+
+
+
+.program-committee-right {
+    display: flex;
+    gap: 32px;
+}
+
+.program-committee-card {
+    background: transparent;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(140,37,244,0.08);
+    width: 180px;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+    overflow: hidden;
+}
+
+.program-committee-photo {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 20px 20px 0 0;
+}
+
+.program-committee-name {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 16px;
+    color: #fff;
+    background: rgba(34,34,34,0.7);
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-radius: 0 0 20px 20px;
+}
+
+.program-committee-scroll {
+    display: flex;
+    gap: 32px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: #D12DF7 #f5f5f5;
+    margin-left: 24px; /* небольшой отступ между текстом и фото */
+}
+
+    .program-committee-scroll::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .program-committee-scroll::-webkit-scrollbar-thumb {
+        background: linear-gradient(90deg, #D12DF7 0%, #8C25F4 100%);
+        border-radius: 4px;
+    }
+
+    .program-committee-scroll::-webkit-scrollbar-track {
+        background: #f5f5f5;
+        border-radius: 4px;
+    }
+
+    /* Блок "Место проведения" */
+.info-location {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    margin-top: 48px;
+    margin-bottom: 48px;
+}
+
+.info-location-image img {
+    width: 100%; /* фикс вместо 1500px */
+    max-width: 100%;
+    height: auto;
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+.info-location-content {
+    flex: 1;
+    min-width: 320px;
+}
+
+.info-location .info-title {
+    font-size: 48px;
+    font-weight: bold;
+    line-height: 1.1;
+}
+
+.info-title-accent {
+    color: #B45CFF;
+}
+
+.info-location .info-text {
+    margin-top: 24px;
+    font-size: 20px;
+    line-height: 1.7; /* чуть больше межстрочный интервал для читаемости */
+    color: #222;
+    max-width: 600px; /* шире, чтобы не было узкой колонки */
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: break-word;
+    column-count: unset !important;
+    column-width: unset !important;
+    columns: unset !important;
+    text-align: left;
+    display: block;
+}
+
+.info-location-map-btn {
+    display: inline-block;
+    margin-top: 32px;
+    padding: 12px 32px;
+    background: #B45CFF;
+    color: #fff;
+    border-radius: 8px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 700; /* BOLD */
+    text-decoration: none;
+    font-size: 18px;
+    transition: background 0.2s;
+    letter-spacing: 0;
+}
+
+.info-location-map-btn:hover {
+    background: #7B3EFF;
+}
+
+.conference-banner {
+    width: 100%;
+    margin: 0 auto 32px auto;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 250px;
+}
+
+.conference-banner-main {
+    display: flex;
+    gap: 32px;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: nowrap;
+}
+
+.conference-banner-dark {
+    font-family: 'Anton', Arial, sans-serif;
+    font-size: 160px;
+    font-weight: 400;
+    line-height: 1;
+    color: #3C3750;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.conference-banner-outline {
+    font-family: 'Anton', Arial, sans-serif;
+    font-size: 160px;
+    font-weight: 400;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 3px #B45CFF;
+    text-stroke: 3px #B45CFF;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.sponsors-section {
+    width: 100%;
+    padding: 48px 0 56px 0;
+    background: 0;
+    text-align: center;
+    margin-bottom: 150px;
+}
+
+.sponsors-title-bg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 32px;
+    min-height: 110px;
+    background: 0;
+}
+
+.sponsors-title {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 800;
+    font-size: 48px;
+    color: #222;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    margin: 0;
+    padding: 32px 0;
+    background: none;
+}
+
+.sponsors-logos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 48px 64px;
+}
+
+.sponsors-logos img {
+    max-height: 80px;
+    max-width: 220px;
+    object-fit: contain;
+    background: none;
+    border: none;
+    box-shadow: none;
+}

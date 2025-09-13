@@ -1,0 +1,46 @@
+﻿@using ConferenceWebApp.Application.DTOs
+@using ConferenceWebApp.Application.DTOs.CommiteeDTOs
+@model IEnumerable<CommitteeDTO>
+<link rel="stylesheet" href="~/css/global.css" />
+<link rel="stylesheet" href="~/css/committee.css" />
+
+<div class="up-banner"></div>
+<div class="up-banner-oval">
+    <span class="up-banner-title">Организационный комитет</span>
+</div>
+
+
+<div class="committee-title">ПРЕДСЕДАТЕЛЬ</div>
+<div class="committee-list committee-list-head">
+    @foreach (var committee in Model.Where(c => c.IsHead))
+    {
+        <div class="committee-card">
+            <div class="committee-card-img">
+                <img src="@committee.PhotoUrl" alt="Фото" />
+                <div class="committee-card-info">
+                    <div class="committee-card-title">@committee.FullName</div>
+                    <div class="committee-card-desc">@committee.Description</div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="committee-title">ЧЛЕНЫ <span class="committee-title-accent">ОРГКОМИТЕТА</span></div>
+<div class="committee-list">
+    @foreach (var committee in Model.Where(c => !c.IsHead))
+    {
+        <div class="committee-card">
+            <div class="committee-card-img">
+                <img src="@committee.PhotoUrl" alt="Фото" />
+                <div class="committee-card-info">
+                    <div class="committee-card-title">@committee.FullName</div>
+                    <div class="committee-card-desc">@committee.Description</div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+

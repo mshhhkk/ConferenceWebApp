@@ -1,0 +1,216 @@
+﻿
+.header-bar {
+    position: fixed;
+    z-index: 3000;
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.mainpage-header {
+    min-height: 90px;
+}
+
+.personal-account-header {
+    min-height: 0px;
+}
+
+.header-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 32px;
+    min-height: 80px;
+    box-sizing: border-box;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 24px; /* расстояние между иконкой и логотипом */
+}
+
+.sidebar-toggle-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-right: 24px;
+    margin-left: -20px;
+}
+
+.sidebar-toggle-btn img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    display: block;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.header-logo img {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+    margin: 0;
+    padding: 0;
+    display: block;
+}
+
+.header-logo-text {
+    font-family: 'Anton', Arial, sans-serif;
+    font-weight: 400;
+    font-size: 34px;
+    text-transform: uppercase;
+    color: #5B1FA6;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.header-auth {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 120px;
+}
+
+.header-login {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #5B1FA6;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    height: 40px;
+}
+
+.header-login img {
+    width: 40px;
+    height: 40px;
+    display: block;
+    border-radius: 50%;
+    background: #8c3ae8;
+}
+
+.header-login span {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    height: 40px;
+    color: #222;
+    font-size: 18px;
+}
+
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* расстояние между иконкой и ФИО */
+}
+
+.header-user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #8F4AE6;
+    object-fit: cover;
+    display: block;
+}
+
+.header-user-name {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 150%;
+    color: #222;
+    margin: 0;
+    padding: 0;
+}
+
+.header-user-block {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-modal {
+    display: none;
+    position: absolute;
+    top: 80px; 
+    right: -32px;
+    min-width: 210px;
+    background: #F5F3F7;
+    border-radius: 16px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+    z-index: 9999;
+    padding: 18px 18px 16px 18px;
+}
+
+.profile-modal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.profile-modal-item {
+    display: flex;
+    align-items: center;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: #3C2A5D;
+    text-decoration: none;
+    padding: 6px 0;
+    border-radius: 8px;
+    transition: background 0.15s;
+}
+
+.profile-modal-item:hover {
+    background: #E2DDF2;
+}
+
+.profile-modal-icon {
+    width: 22px;
+    height: 22px;
+    margin-right: 8px;
+    opacity: 0.6;
+}
+
+.profile-modal-exit {
+    width: 100%;
+    background: #8F4AE6;
+    color: #fff;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+
+.profile-modal-exit:hover {
+    background: #A48CF0;
+}

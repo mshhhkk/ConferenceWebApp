@@ -1,0 +1,94 @@
+﻿using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Application.DTOs.AuthDTOs;
+using ConferenceWebApp.Infrastructure.Services.Abstract;
+using ConferenceWebApp.Application;
+using Microsoft.AspNetCore.Identity;
+
+namespace ConferenceWebApp.Infrastructure.Services.Realization;
+
+public class AuthService : IAuthService
+{
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly IEmailSender _emailSender;
+    private readonly ITwoFactorService _twoFactorService;
+
+    public AuthService(
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IEmailSender emailSender,
+        ITwoFactorService twoFactorService)
+    {
+        _userManager = userManager;
+        _signInManager = signInManager;
+        _emailSender = emailSender;
+        _twoFactorService = twoFactorService;
+    }
+
+    public async Task<Result> RegisterAsync(RegisterDTO dto)
+    {
+        var existingUser = await _userManager.FindByEmailAsync(dto.Email);
+        if (existingUser != null)
+            return Result.Failureure("Пользователь с таким email уже существует");
+
+        var user = new User(Guid.NewGuid(), dto.Email);
+        var result = await _userManager.CreateAsync(user, dto.Password);
+
+        if (!result.Succeeded)
+            return Result.Failureure(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+        await _userManager.AddToRoleAsync(user, "Participant");
+
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var confirmationLink = $"https://yourdomain.com/Auth/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+        await _emailSender.SendAsync(dto.Email, "Подтвердите ваш email", $"Для подтверждения перейдите по ссылке: {confirmationLink}");
+
+        return Result.Success();
+    }
+
+    public async Task<Result> ConfirmEmailAsync(string userId, string token)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+            return Result.Failureure("Пользователь не найден");
+
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        if (!result.Succeeded)
+            return Result.Failureure("Ошибка подтверждения email");
+
+        await _signInManager.SignInAsync(user, isPersistent: true);
+        return Result.Success();
+    }
+
+    public async Task<Result> SendTwoFactorCodeAsync(LoginDTO dto)
+    {
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
+            return Result.Failureure("Неверный логин или пароль");
+
+        var code = _twoFactorService.GenerateCode();
+        await _twoFactorService.StoreCodeAsync(dto.Email, code);
+        await _emailSender.SendAsync(dto.Email, "Ваш код подтверждения", $"Код: {code}");
+
+        return Result.Success();
+    }
+
+    public async Task<Result> VerifyTwoFactorCodeAsync(Verify2FADTO dto)
+    {
+        if (!await _twoFactorService.ValidateCodeAsync(dto.Email, dto.Code))
+            return Result.Failureure("Неверный или просроченный код");
+
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user == null)
+            return Result.Failureure("Пользователь не найден");
+
+        await _signInManager.SignInAsync(user, isPersistent: true);
+        return Result.Success();
+    }
+
+    public async Task<Result> LogoutAsync()
+    {
+        await _signInManager.SignOutAsync();
+        return Result.Success();
+    }
+}

@@ -1,0 +1,35 @@
+﻿@using ConferenceWebApp.Application.ViewModels;
+@model EditExtendedThesisViewModel
+@{
+    Layout = "_PersonalAccountLayout";
+}
+
+<link rel="stylesheet" href="~/css/extendedthesis.css" />
+
+<div class="add-thesis-card">
+    <div class="add-thesis-title">Редактирование расширенных тезисов</div>
+
+    <div class="add-thesis-row">
+        <div class="add-thesis-col">
+            <label class="add-thesis-label"><strong>Тема доклада:</strong></label>
+            <div class="add-thesis-value">@Model.Thesis.ReportTheme</div>
+        </div>
+        <div class="add-thesis-col">
+            <label class="add-thesis-label"><strong>Организация:</strong></label>
+            <div class="add-thesis-value">@Model.UserProfile.Organization</div>
+        </div>
+    </div>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Thesis.ReportId" />
+        <div class="add-thesis-row">
+            <div class="add-thesis-col" style="width:100%;">
+                <label asp-for="Thesis.ExtThesis" class="add-thesis-label">Расширенные тезисы</label>
+                <textarea asp-for="Thesis.ExtThesis" class="add-thesis-input" rows="6" placeholder="Введите расширенные тезисы"></textarea>
+                <span asp-validation-for="Thesis.ExtThesis" class="text-danger"></span>
+            </div>
+        </div>
+        <button type="submit" class="add-thesis-btn">Сохранить</button>
+        <a asp-action="Index" class="add-thesis-btn-cancel">Отмена</a>
+    </form>
+</div>

@@ -1,0 +1,86 @@
+﻿
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,0.45);
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+}
+
+.modal-content {
+    background: #fff;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    overflow: hidden;
+    font-family: 'Montserrat', Arial, sans-serif;
+    text-align: center;
+}
+
+.modal-header {
+    padding: 24px 32px 0 32px;
+}
+
+.modal-title {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 120%;
+    letter-spacing: 0;
+    text-align: center;
+    margin-bottom: 8px;
+    color: #222;
+}
+
+.modal-body {
+    padding: 0 32px 0 32px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 132%;
+    letter-spacing: 0;
+    text-align: center;
+    color: #333;
+    margin-bottom: 24px;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    padding: 0 32px 32px 32px;
+}
+
+.modal-btn {
+    padding: 10px 32px;
+    border-radius: 8px;
+    border: 2px solid #9D3FE7;
+    cursor: pointer;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.modal-btn-yes {
+    background: #fff;
+    color: #9D3FE7;
+}
+
+.modal-btn-yes:hover {
+    background: #F3E6FA;
+}
+
+.modal-btn-no {
+    background: #9D3FE7;
+    color: #fff;
+}
+
+.modal-btn-no:hover {
+    background: #7c2fc2;
+}

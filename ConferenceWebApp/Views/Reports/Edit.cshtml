@@ -1,0 +1,128 @@
+﻿@using ConferenceWebApp.Application.ViewModels
+@model EditReportViewModel
+
+@{
+    Layout = "_PersonalAccountLayout";
+}
+
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="~/css/reports.css" />
+
+<partial name="_ValidationScriptsPartial" />
+
+<div class="add-thesis-card">
+    <div class="add-thesis-title">Редактирование отчёта</div>
+    <form asp-action="Edit" enctype="multipart/form-data" method="post">
+        <input type="hidden" asp-for="Report.Id" />
+        <input type="hidden" asp-for="Report.CurrentFileName" />
+        <input type="hidden" asp-for="Report.CurrentFilePath" />
+        <input type="hidden" asp-for="Report.CurrentFileUploadDate" />
+
+        <div>
+            <label asp-for="Report.ReportTheme" class="add-thesis-label">Тема доклада</label>
+            <input asp-for="Report.ReportTheme" class="add-thesis-input" placeholder="Введите тему" />
+            <span asp-validation-for="Report.ReportTheme" class="text-danger"></span>
+        </div>
+
+        <div class="add-thesis-row">
+            <div class="add-thesis-col">
+                <label asp-for="Report.Section" class="add-thesis-label">Тема секции</label>
+                <select asp-for="Report.Section" asp-items="Html.GetEnumSelectList<SectionTopic>()" class="add-thesis-select">
+                    <option value="">Выбрать</option>
+                </select>
+                <span asp-validation-for="Report.Section" class="text-danger"></span>
+            </div>
+            <div class="add-thesis-col">
+                <label asp-for="Report.WorkType" class="add-thesis-label">Характер работы</label>
+                <select asp-for="Report.WorkType" asp-items="Html.GetEnumSelectList<WorkType>()" class="add-thesis-select">
+                    <option value="">Выбрать</option>
+                </select>
+                <span asp-validation-for="Report.WorkType" class="text-danger"></span>
+            </div>
+        </div>
+
+        @* Блок текущего файла *@
+        @if (!string.IsNullOrEmpty(Model.Report.CurrentFilePath))
+        {
+            <div class="add-thesis-upload-current">
+                <div class="add-thesis-label" style="margin-bottom: 8px;">Текущий файл:</div>
+                <div class="add-thesis-upload-current-file">
+                    <a href="@Url.Action("DownloadReport", "Reports", new { id = Model.Report.Id })" class="fw-bold" style="color:#9D3FE7;">
+                        <img src="~/images/download_icon.png" alt="Значок загрузки" style="width:20px;vertical-align:middle;margin-right:6px;" />
+                        @Model.Report.CurrentFileName
+                    </a>
+                    <div class="text-muted small mt-1" style="margin-top:4px;">
+                        Загружен: @Model.Report.CurrentFileUploadDate?.ToString("dd.MM.yyyy HH:mm")
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div>
+            <label class="add-thesis-label">Загрузка нового файла</label>
+            <div class="add-thesis-upload" id="drop-area">
+                <div class="add-thesis-upload-logo">
+                    <img src="~/images/upload_file_logo.svg" alt="Облако загрузки" />
+                </div>
+                <div class="add-thesis-upload-desc add-thesis-upload-desc-main">
+                    Перетащите файл сюда<br />или
+                </div>
+                <label class="add-thesis-upload-btn">
+                    <input asp-for="Report.File" type="file" accept=".doc,.docx" />
+                    <img src="~/images/download_icon.png" alt="Значок загрузки" class="add-thesis-upload-btn-icon" />
+                    <span>Загрузить файл</span>
+                </label>
+                <span asp-validation-for="Report.File" class="text-danger"></span>
+                <div class="add-thesis-upload-desc add-thesis-upload-desc-size">
+                    Максимальный размер файла 10 МБ. Если не выбирать файл, текущий останется без изменений.
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="add-thesis-btn">Сохранить изменения</button>
+        <a asp-action="Index" class="add-thesis-btn-cancel">Отмена</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const fileInput = document.querySelector('.add-thesis-upload-btn input[type="file"]');
+        const dropArea = document.getElementById('drop-area');
+        const uploadDesc = dropArea.querySelector('.add-thesis-upload-desc-main');
+        const uploadBtn = dropArea.querySelector('.add-thesis-upload-btn span');
+
+        fileInput.addEventListener('change', function (e) {
+            if (e.target.files.length > 0) {
+                uploadDesc.innerHTML = `<span style="color:#9D3FE7;">Файл выбран: ${e.target.files[0].name}</span>`;
+                uploadBtn.textContent = "Файл выбран";
+                dropArea.style.borderColor = "#9D3FE7";
+                dropArea.style.background = "#F3E6FA";
+            } else {
+                uploadDesc.innerHTML = 'Перетащите файл сюда<br />или';
+                uploadBtn.textContent = "Загрузить файл";
+                dropArea.style.borderColor = "#9D3FE7";
+                dropArea.style.background = "#F8F8F8";
+            }
+        });
+
+        dropArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropArea.style.borderColor = '#b81fd1';
+            dropArea.style.background = '#f3e6fa';
+        });
+        dropArea.addEventListener('dragleave', function(e) {
+            dropArea.style.borderColor = '#9D3FE7';
+            dropArea.style.background = '#F8F8F8';
+        });
+        dropArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropArea.style.borderColor = "#9D3FE7";
+            dropArea.style.background = "#F3E6FA";
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                fileInput.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
+}

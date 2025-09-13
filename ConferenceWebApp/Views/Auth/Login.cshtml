@@ -1,0 +1,57 @@
+﻿@using ConferenceWebApp.Application.DTOs.AuthDTOs
+@model LoginDTO
+@{
+    ViewData["Title"] = "Вход";
+}
+
+@{
+    Layout = "_AuthLayout";
+}
+<link rel="stylesheet" href="~/css/global.css" />
+<link rel="stylesheet" href="~/css/auth.css" />
+
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-left">
+            <div class="auth-left-overlay"></div>
+            <div class="auth-left-content">
+                <div class="auth-welcome-title">Рады видеть вас снова!</div>
+                <div class="auth-welcome-desc">
+                    Подключайтесь к новым открытиям и знаниям в мире квантовой физики
+                </div>
+            </div>
+        </div>
+        <div class="auth-right">
+            <div class="auth-form-block">
+                <h2>Вход в учетную запись</h2>
+                <form asp-action="Login" method="post">
+                    <div>
+                        <label asp-for="Email">Адрес электронной почты</label>
+                        <input asp-for="Email" type="email" placeholder="Введите ваш email" />
+                        <span asp-validation-for="Email"></span>
+                    </div>
+                    <div>
+                        <label asp-for="Password">Пароль</label>
+                        <input asp-for="Password" type="password" placeholder="********" />
+                        <span asp-validation-for="Password"></span>
+                    </div>
+                    <div class="form-link" style="text-align:left;">
+                        <a href="#">Забыли пароль?</a>
+                    </div>
+                    <div class="form-action">
+                        <button type="submit">Продолжить</button>
+                    </div>
+                    <div class="form-link">
+                        Еще нет учетной записи? <a href="/Auth/Register">Создать</a>
+                    </div>
+                    <div class="form-or">или</div>
+                    <div class="form-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-google"></i></a>
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

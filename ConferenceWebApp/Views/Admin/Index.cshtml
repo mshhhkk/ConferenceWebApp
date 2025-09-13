@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Панель администратора";
+}
+
+<h1>Панель администратора</h1>
+<p>Добро пожаловать в панель управления администратора. Выберите нужный раздел:</p>
+
+<ul>
+    <li>
+        <a href="@Url.Action("Index", "AdminSchedule")">Управление расписанием</a>
+    </li>
+    <li>
+        <a href="@Url.Action("Index", "AdminCommittee")">Управление комитетом</a>
+    </li>
+    <li>
+        <a href="@Url.Action("Index", "AdminReports")">Одобрение докладов</a>
+    </li>
+    <li>
+        <a href="@Url.Action("Index", "AdminCheckPayment")">Проверка оплаты</a>
+    </li>
+</ul>

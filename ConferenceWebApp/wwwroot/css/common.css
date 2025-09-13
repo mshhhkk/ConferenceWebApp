@@ -1,0 +1,40 @@
+﻿.title-purple {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 56px;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #8C25F4 0%, #F425F4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    margin-bottom: 16px;
+}
+
+.title-purple .title-black {
+    color: #222 !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+    text-fill-color: initial !important;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.text-typography {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 18px;
+    line-height: 1.5;
+    letter-spacing: 0;
+    color: #434343;
+}
+.gradient-text {
+    font-weight: 600;
+    background: linear-gradient(90deg, #8C25F4 0%, #F425F4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}

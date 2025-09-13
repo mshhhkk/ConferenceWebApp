@@ -1,0 +1,81 @@
+﻿@model ConferenceWebApp.Application.ViewModels.ReceiptFileViewModel
+@{
+    Layout = "_PersonalAccountLayout";
+}
+
+<link rel="stylesheet" href="~/css/payment.css" />
+
+<div class="payment-card">
+    <div class="payment-info" style="margin-bottom:18px;">
+        <p>Для участия в симпозиуме необходимо оплатить оргвзнос и загрузить чек об оплате.</p>
+        <p>Величина оргвзноса: 140 BYN. Для аспирантов, студентов и участников без докладов предусмотрена скидка 50%.</p>
+        <strong>Крайний срок оплаты:</strong> 24 ноября 2024 г.
+    </div>
+
+    <div class="payment-title">Оплата участия в конференции</div>
+    @if (Model.UserProfile.HasPaidFee == true)
+    {
+        <div class="alert alert-success" style="margin-bottom:18px;">
+            <span style="font-size:18px;"> Оплата подтверждена. Спасибо!</span>
+        </div>
+    }
+    <div class="payment-details" style="border:1px solid #e0e0e0; border-radius:8px; padding:18px; margin-bottom:24px;">
+        <div style="font-size:18px; font-weight:600; color:#8e24aa; margin-bottom:8px;">Сумма к оплате</div>
+        <div style="font-size:32px; font-weight:700; color:#6c2eb7; margin-bottom:16px;">140 BYN</div>
+        <div style="margin-bottom:12px;">Реквизиты для оплаты:</div>
+        <div style="font-size:15px; color:#444;">
+            <div>Получатель: ООО "Симпозиум"</div>
+            <div>УНП: 123456789</div>
+            <div>Банк: ОАО "Банк"</div>
+            <div>IBAN: BY00UNBS00000000000000000000</div>
+            <div>Назначение платежа: Оргвзнос за участие в конференции</div>
+        </div>
+    </div>
+
+    @if (Model?.ReceiptFile != null)
+    {
+        <div class="payment-label" style="margin-bottom:8px;">Ваш загруженный чек:</div>
+        <div class="receipt-preview">
+            @if (Model.ReceiptFile.FileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+            {
+                <embed src="@Url.Content($"~/receipts/{Model.ReceiptFile.FileName}")" type="application/pdf" width="100%" height="320px" />
+            }
+            else
+            {
+                <img src="@Url.Content($"~/receipts/{Model.ReceiptFile.FileName}")" alt="Чек" style="max-width:100%;max-height:320px;border-radius:8px;" />
+            }
+        </div>
+        <form asp-action="DownloadReceipt" method="post" style="margin-bottom:24px;">
+            <button type="submit" class="payment-btn" style="width:220px;">Скачать чек</button>
+        </form>
+    }
+
+    <form asp-action="UploadReceipt" method="post" enctype="multipart/form-data">
+        <label class="payment-label" for="Receipt">Загрузить новый чек</label>
+        <input type="file" name="Receipt" id="Receipt" class="payment-file" accept=".jpg,.jpeg,.png,.pdf" required style="display:none;" />
+        <button type="button" class="payment-btn" onclick="document.getElementById('Receipt').click();">Загрузить чек</button>
+        <span id="file-name" style="display:block;margin-top:10px;color:#6c2eb7;"></span>
+        <button type="submit" class="payment-btn" style="margin-top:12px;">Отправить чек</button>
+    </form>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Message"]
+        </div>
+    }
+
+    @if (TempData["UploadError"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["UploadError"]
+        </div>
+    }
+</div>
+
+<script>
+    document.getElementById('Receipt').addEventListener('change', function(){
+        var fileName = this.files[0] ? this.files[0].name : '';
+        document.getElementById('file-name').textContent = fileName;
+    });
+</script>

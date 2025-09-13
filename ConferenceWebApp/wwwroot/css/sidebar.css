@@ -1,0 +1,91 @@
+﻿.sidebar {
+    position: fixed;
+    top: 90px; /* высота header */
+    left: 0;
+    height: calc(100vh - 90px); /* пусть браузер сам рассчитывает высоту */
+    width: 320px;
+    transition: width 0.3s;
+    background: #fff;
+    transition: width 0.3s;
+    z-index: 100;
+}
+.sidebar.closed {
+    width: 60px;
+}
+.sidebar.closed ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.sidebar.closed li {
+    justify-content: center;
+}
+
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.sidebar li {
+    position: relative;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    margin: 16px 0;
+}
+.sidebar-icon-wrap {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sidebar-icon {
+    width: 24px;
+    height: 24px;
+    display: block;
+}
+
+.sidebar-toggle {
+    background: none;
+    border: none;
+    font-size: 24px;
+    margin: 8px;
+    cursor: pointer;
+}
+.sidebar-text {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.32;
+    color: #222;
+    letter-spacing: 0;
+    margin: 0;
+    padding: 0;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+    padding-left: 48px; 
+}
+.sidebar.closed .sidebar-text {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+}
+.sidebar.closed .sidebar-icon {
+    margin-right: 0;
+}
+.sidebar.closed .sidebar-icon-wrap {
+    position: static;
+    margin: 0 auto;
+    left: auto;
+    top: auto;
+    transform: none;
+}
+.sidebar a {
+    text-decoration: none;
+}

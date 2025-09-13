@@ -1,0 +1,36 @@
+﻿@model IEnumerable<ConferenceWebApp.Application.DTOs.Admin.AdminCommitteeDTO>
+
+<h1>Управление комитетом</h1>
+
+<a href="@Url.Action("Add", "AdminCommittee")" class="btn btn-primary">Добавить члена комитета</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Фото</th>
+            <th>ФИО</th>
+            <th>Описание</th>
+			<th>Председатель</th>   
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var committee in Model)
+        {
+            <tr>
+                <td><img src="@committee.PhotoUrl" alt="Фото" style="width: 100px; height: auto;" /></td>
+                <td>@committee.FullName</td>
+                <td>@committee.Description</td>
+				<td>@(committee.IsHead ? "Да" : "Нет")</td>
+                <td>
+                    <a href="@Url.Action("Edit", "AdminCommittee", new { id = committee.Id })" class="btn btn-warning">Редактировать</a>
+                    <form asp-action="Delete" asp-controller="AdminCommittee" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@committee.Id" />
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

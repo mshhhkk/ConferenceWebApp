@@ -1,0 +1,92 @@
+﻿@using ConferenceWebApp.Application.ViewModels;
+@model UserReportsViewModel;
+
+@{
+    Layout = "_PersonalAccountLayout";
+}
+
+<link rel="stylesheet" href="~/css/modal.css" />
+<link rel="stylesheet" href="~/css/reports.css" />
+
+@if (!Model.Reports.Any())
+{
+    <p>У вас пока нет загруженных докладов.</p>
+}
+else
+{
+    <div class="thesis-list">
+        @foreach (var talk in Model.Reports)
+        {
+            <div class="thesis-card" id="card-@talk.Id">
+                <div class="thesis-card-title">@talk.ReportTheme</div>
+                <div class="thesis-card-org">@talk.Section</div>
+                <div class="thesis-card-type">@talk.WorkType</div>
+                <div class="thesis-card-actions">
+                    @if (!talk.IsApproved)
+                    {
+                        <a asp-action="Edit" asp-route-id="@talk.Id" class="thesis-btn thesis-btn-edit">Редактировать</a>
+
+                        <!-- кнопку перевели на модалку -->
+                        <button type="button"
+                                class="thesis-btn thesis-btn-delete"
+                                onclick="openDeleteModal('@talk.Id')">
+                            Удалить
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<a asp-controller="Reports" asp-action="Add" class="thesis-btn thesis-btn-add">Добавить тезис</a>
+
+<!-- Скрытая форма для безопасного POST-удаления -->
+<form id="deleteForm" asp-controller="Reports" asp-action="Delete" method="post" style="display:none;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" id="deleteId" />
+</form>
+
+<!-- Мини-модалка подтверждения -->
+<div id="deleteModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-title">Подтверждение</span>
+        </div>
+        <div class="modal-body">
+            <p>Вы уверены, что хотите удалить тезис?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="modal-btn modal-btn-yes" onclick="confirmDelete()">Да, удалить</button>
+            <button type="button" class="modal-btn modal-btn-no" onclick="closeDeleteModal()">Отмена</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let deleteModal = document.getElementById("deleteModal");
+        let deleteIdInput = document.getElementById("deleteId");
+        let deleteForm = document.getElementById("deleteForm");
+
+        function openDeleteModal(id) {
+            deleteIdInput.value = id;      // кладём Guid в hidden
+            deleteModal.style.display = "flex";
+        }
+
+        function closeDeleteModal() {
+            deleteModal.style.display = "none";
+            deleteIdInput.value = "";
+        }
+
+        function confirmDelete() {
+            // Безопасный POST с анти-CSRF токеном
+            deleteForm.submit();
+        }
+
+        // Закрытие кликом по подложке (вне окна)
+        window.addEventListener("click", function (e) {
+            if (e.target === deleteModal) closeDeleteModal();
+        });
+    </script>
+}

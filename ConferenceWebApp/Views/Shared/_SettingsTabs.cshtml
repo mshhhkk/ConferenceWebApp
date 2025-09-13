@@ -1,0 +1,12 @@
+﻿@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    string selected = "";
+
+    if (controller == "PersonalAccount" && action == "Edit") selected = "Personal";
+    else if (controller == "UserSecurity" && action == "ChangePassword") selected = "Security";
+}
+<div class="settings-tabs">
+    <a href="@Url.Action("Edit", "PersonalAccount")" class="settings-tab-btn @(selected == "Personal" ? "selected" : "")">Личная информация</a>
+    <a href="@Url.Action("ChangePassword", "UserSecurity")" class="settings-tab-btn @(selected == "Security" ? "selected" : "")">Безопасность</a>
+</div>

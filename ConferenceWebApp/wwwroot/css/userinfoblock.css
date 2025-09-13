@@ -1,0 +1,141 @@
+﻿.user-info-block {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 16px 48px 0 rgba(91, 31, 166, 0.22), 0 2px 8px rgba(171, 167, 175, 0.18);
+    padding: 32px 24px;
+    max-width: 340px;
+    /* margin: 0 auto; */
+    font-family: 'Montserrat', Arial, sans-serif;
+    /* height: 400px; <-- УБРАТЬ! */
+    box-sizing: border-box;
+    height: 100%; /* ДОБАВЬ! */
+}
+
+.user-info-photo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.user-info-photo img {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 50%;
+    background: #F3F2F7;
+    border: 2px solid #E5E3EA;
+}
+
+.user-info-name {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: #222;
+    text-align: center;
+    line-height: 150%;
+    letter-spacing: 0;
+    margin-bottom: 18px;
+}
+.user-info-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #222;
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.user-info-section-title {
+    font-size: 15px;
+    font-weight: bold;
+    color: #ABA7AF;
+    margin-bottom: 8px;
+    margin-top: 18px;
+    letter-spacing: 0;
+    line-height: 150%;
+}
+
+.user-info-row {
+    display: flex;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.user-info-key {
+    font-size: 15px;
+    font-weight: 600;
+    color: #222;
+    min-width: 110px;
+    line-height: 150%;
+    letter-spacing: 0;
+}
+
+.user-info-value {
+    font-size: 15px;
+    font-weight: 500;
+    color: #222;
+    line-height: 150%;
+    letter-spacing: 0;
+    margin-left: 8px;
+}
+.participant-status {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    line-height: 150%;
+    letter-spacing: 0;
+    padding: 6px 16px;
+    border-radius: 6px;
+    display: block; /* Было inline-block */
+    margin-bottom: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.participant-status--active {
+    background: #9BDFC4;
+    color: #222;
+}
+
+.participant-status--inactive {
+    background: #D9D1E0;
+    color: #222;
+}
+.user-info-invite {
+    margin-top: 12px;
+    text-align: center;
+}
+
+.user-info-invite-label {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    color: #222;
+    margin-bottom: 20px;
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.user-info-invite-btn {
+    background: #8c3ae8;
+    color: #fff;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    cursor: pointer;
+    margin-top: 4px;
+    margin-bottom: 20px;
+    transition: background 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.user-info-invite-btn:hover {
+    background: #5B1FA6;
+}

@@ -1,0 +1,34 @@
+﻿@model ConferenceWebApp.Application.DTOs.InvitationDTO
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Приглашение</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .invitation {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .invitation h1 {
+            color: #333;
+        }
+        .invitation p {
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="invitation">
+        <h1>Уважаемый(ая) @Model.FullName!</h1>
+        <p>Приглашаем вас выступить на <strong>@Model.ConferenceName</strong>.</p>
+        <p>С уважением,<br />@Model.Organizer</p>
+    </div>
+</body>
+</html>

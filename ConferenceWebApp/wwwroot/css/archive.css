@@ -1,0 +1,76 @@
+﻿
+
+.archive-year-block {
+    margin-top: 100px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 100px;
+}
+
+.archive-year-title {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 56px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    color: #9D3FE7;
+    margin-bottom: 16px;
+    text-align: left;
+}
+.archive-year-row {
+    display: flex;
+    gap: 120px;
+    margin-bottom: 16px;
+    justify-content: center;
+    width: 100%;
+}
+
+.archive-year-item {
+    min-width: 200px;
+    max-width: 220px; 
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+}
+.archive-year-item > div {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 150%;
+    letter-spacing: 0;
+    color: #28303F;
+    text-align: left;
+    margin-bottom: 8px;
+    text-transform: none;
+    max-width: 220px;      /* ограничение ширины */
+    word-break: break-word; /* перенос длинных слов */
+    white-space: normal;    /* разрешить перенос строк */
+}
+    
+
+.archive-btn {
+    display: inline-block;
+    background: #9D3FE7;
+    color: #fff;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    border-radius: 12px;
+    padding: 10px 24px;
+    text-decoration: none;
+    margin-top: 8px;
+    margin-bottom: 0;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(180, 120, 255, 0.10);
+    text-align: left;
+    letter-spacing: 0;
+}
+
+.archive-btn:hover {
+    background: #8C25F4;
+}
+

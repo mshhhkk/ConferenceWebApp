@@ -1,0 +1,219 @@
+﻿.schedule-gradient-section {
+    margin-top: 0;
+    width: 100%;
+    background: url('/images/Gradient.png') center center/cover no-repeat;
+    padding: 80px 0 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 70px;
+}
+
+.schedule-inner {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0 32px 32px 32px;
+    box-sizing: border-box;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* было center */
+}
+
+.schedule-title-block {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 40px;
+    padding-top: 20px;
+}
+
+.schedule-title {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #D12DF7;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+.schedule-day-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 150px;
+    margin-bottom: 150px;
+}
+
+.schedule-day-info {
+    min-width: 180px;
+    max-width: 220px;
+    background: #fff;
+    border-radius: 16px; /* Increased for softer corners */
+    box-shadow: 0 2px 16px rgba(180, 120, 255, 0.10);
+    padding: 24px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 0;
+}
+
+.schedule-day-accent {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 150%;
+    letter-spacing: 0;
+    color: #D12DF7;
+    margin-bottom: 14px; /* paragraph spacing */
+}
+
+.schedule-day-date {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 150%;
+    letter-spacing: 0;
+    color: #7B7B93;
+    margin-bottom: 0;
+}
+
+.schedule-events-list {
+    flex: 1 1 0;
+    width: 100%;
+    background: none;
+    border-radius: 0;
+    padding: 0;
+}
+
+.schedule-event {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #e3e3e3;
+    padding: 18px 0 12px 0;
+}
+
+.schedule-event:last-child {
+    border-bottom: none;
+}
+
+.schedule-event-time {
+    font-family: 'Anton', Arial, sans-serif;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 150%;
+    letter-spacing: 0;
+    color: #222;
+    margin-bottom: 14px;
+}
+
+
+.schedule-event-desc {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 150%;
+    letter-spacing: 0;
+    color: #7B7B93;
+    max-width: 600px;
+    word-break: break-word;
+}
+
+
+.schedule-bottom-block {
+    width: 100%;
+    background: url('/images/Gradient_deep.png') center center/cover no-repeat;
+    border-radius: 32px;
+    box-shadow: 0;
+    margin: 0 auto 0 auto;
+    padding: 0px 0 64px 0;
+    display: flex;
+    justify-content: center;
+    min-height: 1000px;
+}
+
+.schedule-bottom-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 64px;
+    max-width: 1200px;
+    width: 100%;
+
+}
+
+.schedule-bottom-item {
+    flex: 1 1 0;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 320px;
+}
+
+.schedule-bottom-title {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 18px;
+    line-height: 1.1;
+}
+
+.schedule-bottom-title .accent {
+    color: #D12DF7;
+    font-weight: 800;
+}
+
+.schedule-bottom-desc {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 1.1rem;
+    color: #434343;
+    margin-bottom: 24px;
+}
+
+.schedule-bottom-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 8px;
+}
+
+.schedule-bottom-btn {
+    display: inline-block;
+    background: #D12DF7;
+    color: #fff;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 12px;
+    padding: 14px 32px;
+    text-decoration: none;
+    margin-bottom: 0;
+    margin-top: 0;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(180, 120, 255, 0.10);
+}
+
+.schedule-bottom-btn:hover {
+    background: #8C25F4;
+}
+
+.schedule-bottom-btn i {
+    margin-right: 8px;
+}
+
+.schedule-bottom-center {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.schedule-bottom-img {
+    width: 120px;
+    height: auto;
+    opacity: 0.9;
+}

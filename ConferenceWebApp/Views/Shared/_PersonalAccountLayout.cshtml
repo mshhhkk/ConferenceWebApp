@@ -1,0 +1,35 @@
+﻿@model IUserProfileViewModel
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="~/css/global.css" />
+    <link rel="stylesheet" href="~/css/userinfoblock.css" />
+    <link rel="stylesheet" href="~/css/footer.css" />
+    <link rel="stylesheet" href="~/css/header.css" />
+    <link rel="stylesheet" href="~/css/personalaccount.css" />
+</head>
+<body>
+    @await Html.PartialAsync("_HeaderPA")
+    <div class="up-gradient-pa-bg"></div>
+    <div class="personal-account-layout">
+        <aside class="personal-account-sidebar">
+            @await Html.PartialAsync("_UserInfoBlock", Model.UserProfile)
+        </aside>
+        <div class="personal-account-main">
+            @await Html.PartialAsync("_PersonalAccountTabs")
+            <div class="personal-account-content-box">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    <div class="down-gradient-bg"></div>
+    @await Html.PartialAsync("_Footer")
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

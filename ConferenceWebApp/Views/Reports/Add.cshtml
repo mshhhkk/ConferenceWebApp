@@ -1,0 +1,175 @@
+﻿@using ConferenceWebApp.Application.ViewModels
+@model AddReportViewModel
+
+@{
+    Layout = "_PersonalAccountLayout";
+}
+
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="~/css/reports.css" />
+
+<partial name="_ValidationScriptsPartial" />
+
+<div class="add-thesis-card">
+    <div class="add-thesis-title">Добавление тезиса</div>
+    <form asp-action="Add" enctype="multipart/form-data" method="post" id="reportForm">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div>
+            <label asp-for="Report.ReportTheme" class="add-thesis-label">Тема доклада</label>
+            <input asp-for="Report.ReportTheme" class="add-thesis-input" placeholder="Введите тему" />
+            <span asp-validation-for="Report.ReportTheme" class="text-danger"></span>
+        </div>
+
+        <div class="add-thesis-row">
+            <div class="add-thesis-col">
+                <label asp-for="Report.Section" class="add-thesis-label">Тема секции</label>
+                <select asp-for="Report.Section" asp-items="Html.GetEnumSelectList<SectionTopic>()" class="add-thesis-select">
+                    <option value="">Выбрать</option>
+                </select>
+                <span asp-validation-for="Report.Section" class="text-danger"></span>
+            </div>
+            <div class="add-thesis-col">
+                <label asp-for="Report.WorkType" class="add-thesis-label">Характер работы</label>
+                <select asp-for="Report.WorkType" asp-items="Html.GetEnumSelectList<WorkType>()" class="add-thesis-select">
+                    <option value="">Выбрать</option>
+                </select>
+                <span asp-validation-for="Report.WorkType" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div>
+            <label class="add-thesis-label">Загрузка доклада</label>
+            <div class="add-thesis-upload" id="drop-area">
+                <div class="add-thesis-upload-logo">
+                    <img src="~/images/upload_file_logo.svg" alt="Облако загрузки" />
+                </div>
+                <div class="add-thesis-upload-desc add-thesis-upload-desc-main">
+                    Перетащите файл сюда<br />или
+                </div>
+                <label class="add-thesis-upload-btn">
+                    <input asp-for="Report.File" type="file" accept=".doc,.docx" />
+                    <img src="~/images/download_icon.svg" alt="Значок загрузки" class="add-thesis-upload-btn-icon" />
+                    <span>Загрузить файл</span>
+                </label>
+                <span asp-validation-for="Report.File" class="text-danger"></span>
+                <div class="add-thesis-upload-desc add-thesis-upload-desc-size">
+                    Максимальный размер файла N MB
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="add-thesis-btn">Готово</button>
+    </form>
+</div>
+
+<!-- Модалка -->
+<div id="warningModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-title">Внимание!</span>
+        </div>
+        <div class="modal-body">
+            <p>Добавление тезиса не было завершено, вы уверены, что хотите отменить операцию?</p>
+        </div>
+        <div class="modal-footer">
+            <button id="modalYes" class="modal-btn modal-btn-yes">Да</button>
+            <button id="modalNo" class="modal-btn modal-btn-no">Нет</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const fileInput = document.querySelector('.add-thesis-upload-btn input[type="file"]');
+        const dropArea = document.getElementById('drop-area');
+        const uploadDesc = dropArea.querySelector('.add-thesis-upload-desc-main');
+        const uploadBtn = dropArea.querySelector('.add-thesis-upload-btn span');
+
+        // ==== Upload UI ====
+        fileInput.addEventListener('change', function (e) {
+            if (e.target.files.length > 0) {
+                uploadDesc.innerHTML = `<span style="color:#9D3FE7;">Файл выбран: ${e.target.files[0].name}</span>`;
+                uploadBtn.textContent = "Файл выбран";
+                dropArea.style.borderColor = "#9D3FE7";
+                dropArea.style.background = "#F3E6FA";
+            } else {
+                uploadDesc.innerHTML = 'Перетащите файл сюда<br />или';
+                uploadBtn.textContent = "Загрузить файл";
+                dropArea.style.borderColor = "#9D3FE7";
+                dropArea.style.background = "#F8F8F8";
+            }
+        });
+
+        dropArea.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            dropArea.style.borderColor = '#b81fd1';
+            dropArea.style.background = '#f3e6fa';
+        });
+        dropArea.addEventListener('dragleave', function (e) {
+            dropArea.style.borderColor = '#9D3FE7';
+            dropArea.style.background = '#F8F8F8';
+        });
+        dropArea.addEventListener('drop', function (e) {
+            e.preventDefault();
+            dropArea.style.borderColor = "#9D3FE7";
+            dropArea.style.background = "#F3E6FA";
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                fileInput.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // ==== Unsaved changes warning ====
+        let formChanged = false;
+        let pendingHref = null;
+
+        const form = document.getElementById("reportForm");
+        const links = document.querySelectorAll("a");
+        const modal = document.getElementById("warningModal");
+        const yesBtn = document.getElementById("modalYes");
+        const noBtn = document.getElementById("modalNo");
+
+        // отмечаем изменения
+        form.addEventListener("input", () => {
+            formChanged = true;
+        });
+
+        // сброс после отправки
+        form.addEventListener("submit", () => {
+            formChanged = false;
+        });
+
+        // обработка переходов по ссылкам
+        links.forEach(link => {
+            link.addEventListener("click", function (e) {
+                if (formChanged) {
+                    e.preventDefault();
+                    pendingHref = this.href;
+                    modal.style.display = "flex";
+                }
+            });
+        });
+
+        yesBtn.addEventListener("click", () => {
+            modal.style.display = "none";
+            if (pendingHref) {
+                window.location.href = pendingHref;
+            }
+        });
+
+        noBtn.addEventListener("click", () => {
+            modal.style.display = "none";
+            pendingHref = null;
+        });
+
+        // предупреждение при закрытии/обновлении вкладки
+        window.addEventListener("beforeunload", function (e) {
+            if (formChanged) {
+                e.preventDefault();
+                e.returnValue = "";
+            }
+        });
+    </script>
+}
