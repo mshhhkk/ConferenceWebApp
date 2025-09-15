@@ -1,8 +1,7 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Application.DTOs.Admin;
-using Microsoft.AspNetCore.Mvc;
+﻿using ConferenceWebApp.Application.DTOs.Admin;
+using ConferenceWebApp.Domain.Entities;
 
-namespace ConferenceWebApp.Infrastructure.Services.Abstract.Admin;
+namespace ConferenceWebApp.Application.Interfaces.Services.Admin;
 
 public interface IReportAdminService
 {

@@ -1,11 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Infrastructure.Services;
 using ConferenceWebApp.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
-using ConferenceWebApp.Infrastructure.Services.Realization;
-using ConferenceWebApp.Application.Interfaces.Services;
-using ConferenceWebApp.Infrastructuren.Services;
 
 namespace ConferenceWebApp.Infrastructure.Extensions;
 

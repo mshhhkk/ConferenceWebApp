@@ -1,57 +1,61 @@
-﻿// ReportsController.cs
+﻿using ConferenceWebApp.Application.Controllers;
+using ConferenceWebApp.Application.DTOs.ReportsDTOs;
+using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Application.Controllers;
-using ConferenceWebApp.Application.ViewModels;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
+using ConferenceWebApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ConferenceWebApp.Application;
 
 [Authorize]
 public class ReportsController : BaseController
 {
     private readonly IReportService _reportService;
     private readonly UserManager<User> _userManager;
-    private readonly IUserProfileRepository _userProfileRepository;
     private readonly IUserProfileService _userProfileService;
     public ReportsController(
         IReportService reportService,
         UserManager<User> userManager,
-        IUserProfileRepository userProfileRepository, IUserProfileService userProfileService) : base(userProfileRepository)
+        IUserProfileService userProfileService) : base(userProfileService)
     {
         _reportService = reportService;
         _userManager = userManager;
         _userProfileService = userProfileService;
-        _userProfileRepository = userProfileRepository;
 
     }
 
-    private async Task<Guid> GetCurrentUserIdAsync()
+    private async Task<(Guid? userId, IActionResult? redirect)> GetCurrentUserIdAsync()
     {
+
         var user = await _userManager.GetUserAsync(User);
-        return user?.Id ?? throw new InvalidOperationException("Пользователь не аутентифицирован");
+        if (user == null)
+        {
+            return (null, RedirectToAction("Login", "PersonalAccount"));
+        }
+        return (user.Id, null);
     }
 
     public async Task<IActionResult> Index()
     {
-        var userId = await GetCurrentUserIdAsync();
+        ViewBag.Message = TempData["Error"];
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
 
-        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId);
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId!.Value);
         if (!resultUserProfile.IsSuccess)
         {
-            ViewBag.Message = resultUserProfile.ErrorMessage;
-            return View();
+            TempData["Error"] = resultUserProfile.ErrorMessage;
+            return RedirectToAction("Login", "PersonalAccount");
         }
 
-        var reportsResult = await _reportService.GetReportsByUserIdAsync(userId);
+        var reportsResult = await _reportService.GetReportsByUserIdAsync(userId!.Value);
         if (!reportsResult.IsSuccess)
         {
             ViewBag.Message = reportsResult.ErrorMessage;
-            return View();
+            return View(new UserReportsViewModel { UserProfile = resultUserProfile.Value, Reports = new List<ReportDTO>() });
         }
-           
+
         var vm = new UserReportsViewModel
         {
             UserProfile = resultUserProfile.Value,
@@ -60,20 +64,22 @@ public class ReportsController : BaseController
 
         return View(vm);
     }
-
+    [ValidateAntiForgeryToken]
     [HttpPost]
     public async Task<IActionResult> Add(AddReportViewModel vm)
     {
-        var userId = await GetCurrentUserIdAsync();
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
 
-        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId);
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId!.Value);
         if (!resultUserProfile.IsSuccess)
         {
-            ViewBag.Message = resultUserProfile.ErrorMessage;
-            return View();
+            TempData["Error"] = resultUserProfile.ErrorMessage;
+            return RedirectToAction("Login", "PersonalAccount");
         }
 
-        var result = await _reportService.AddReportAsync(vm.Report, userId);
+        var result = await _reportService.AddReportAsync(vm.Report, userId!.Value);
         if (!result.IsSuccess)
         {
             ViewBag.Message = result.ErrorMessage;
@@ -87,20 +93,22 @@ public class ReportsController : BaseController
     [HttpGet]
     public async Task<IActionResult> Edit(Guid id)
     {
-        var userId = await GetCurrentUserIdAsync();
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
 
-        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId);
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId!.Value);
         if (!resultUserProfile.IsSuccess)
         {
-            ViewBag.Message = resultUserProfile.ErrorMessage;
-            return RedirectToAction("Index"); ;
+            TempData["Error"] = resultUserProfile.ErrorMessage;
+            return RedirectToAction("Login", "PersonalAccount");
         }
 
-        var result = await _reportService.GetReportForEditAsync(id, userId);
+        var result = await _reportService.GetReportForEditAsync(id, userId!.Value);
 
         if (!result.IsSuccess)
         {
-            ViewBag.Message = result.ErrorMessage;
+            TempData["Error"] = result.ErrorMessage;
             return RedirectToAction("Index");
         }
 
@@ -113,52 +121,56 @@ public class ReportsController : BaseController
         return View(result.Value);
     }
 
+    [ValidateAntiForgeryToken]
     [HttpPost]
     public async Task<IActionResult> Edit(EditReportViewModel vm)
     {
 
-        var userId = await GetCurrentUserIdAsync();
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
 
-        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId);
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId!.Value);
         if (!resultUserProfile.IsSuccess)
         {
-            ViewBag.Message = resultUserProfile.ErrorMessage;
-            return RedirectToAction("Index"); ;
+            TempData["Error"] = resultUserProfile.ErrorMessage;
+            return RedirectToAction("Login", "PersonalAccount");
         }
 
-        var result = await _reportService.UpdateReportAsync(vm.Report, userId);
+        var result = await _reportService.UpdateReportAsync(vm.Report, userId!.Value);
 
         if (!result.IsSuccess)
         {
-            if (!result.IsSuccess)
-            {
-                ViewBag.Message = result.ErrorMessage;
-                return View(vm);
-            }
+            ViewBag.Message = result.ErrorMessage;
+            return View(vm);
         }
 
         return RedirectToAction("Index");
     }
 
-
     [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken] 
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var userId = await GetCurrentUserIdAsync();
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
 
-        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId);
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId!.Value);
         if (!resultUserProfile.IsSuccess)
         {
-            ViewBag.Message = resultUserProfile.ErrorMessage;
-            return RedirectToAction("Index"); ;
+            TempData["Error"] = resultUserProfile.ErrorMessage;
+            return RedirectToAction("Login", "PersonalAccount");
         }
 
-        var result = await _reportService.DeleteReportAsync(id, userId);
-
+        var result = await _reportService.DeleteReportAsync(id, userId!.Value);
         if (!result.IsSuccess)
-            return View("Error", result.ErrorMessage);
+        {
+            TempData["Error"] = resultUserProfile.ErrorMessage;
+            return RedirectToAction("Index");
+        }
 
+        TempData["Success"] = "Доклад успешно удален!";
         return RedirectToAction("Index");
     }
 
@@ -166,19 +178,25 @@ public class ReportsController : BaseController
     [HttpGet]
     public async Task<IActionResult> Download(Guid id)
     {
-        var userId = await GetCurrentUserIdAsync();
-        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId);
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
+
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId!.Value);
 
         if (!resultUserProfile.IsSuccess)
         {
-            ViewBag.Message = resultUserProfile.ErrorMessage;
-            return RedirectToAction("Edit"); 
+            TempData["Error"] = resultUserProfile.ErrorMessage;
+            return RedirectToAction("Login", "PersonalAccount");
         }
 
-        var result = await _reportService.DownloadReportAsync(id, userId);
-
+        var result = await _reportService.DownloadReportAsync(id, userId!.Value);
         if (!result.IsSuccess)
-            return NotFound();
+        {
+            TempData["Error"] = resultUserProfile.ErrorMessage;
+            return RedirectToAction("Index");
+        }
+
 
         return result.Value;
     }

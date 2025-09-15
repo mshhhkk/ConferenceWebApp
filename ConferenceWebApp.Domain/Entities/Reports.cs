@@ -7,20 +7,20 @@ namespace ConferenceWebApp.Domain.Entities;
 public class Reports
 {
     [Key]
-    public Guid Id { get; set; } 
+    public Guid Id { get; set; }
 
     [Required]
     public string ReportTheme { get; set; } = string.Empty;
 
-    public string? ExtThesis { get; set; } 
+    public string? ExtThesis { get; set; }
 
     public string? ExtThesisFilePath { get; set; }
 
     [Required]
-    public SectionTopic Section { get; set; } 
+    public SectionTopic Section { get; set; }
 
     [Required]
-    public WorkType WorkType { get; set; } 
+    public WorkType WorkType { get; set; }
 
     [Required]
     public string FilePath { get; set; } = null!;
@@ -35,7 +35,7 @@ public class Reports
     public Guid UserId { get; set; }
 
     [ForeignKey("UserId")]
-    public User User { get; set; } = null!; 
+    public User User { get; set; } = null!;
 
     [Required]
     public bool IsAuthor { get; set; }

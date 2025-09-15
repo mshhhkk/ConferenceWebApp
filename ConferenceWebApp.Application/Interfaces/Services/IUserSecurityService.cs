@@ -1,6 +1,4 @@
-﻿using ConferenceWebApp.Application;
-
-namespace ConferenceWebApp.Infrastructure.Services.Abstract;
+﻿namespace ConferenceWebApp.Application.Interfaces.Services;
 
 public interface IUserSecurityService
 {

@@ -1,6 +1,6 @@
 ﻿using ConferenceWebApp.Application.DTOs.Schedule;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
 using ConferenceWebApp.Application.Interfaces.Repositories;
+using ConferenceWebApp.Application.Interfaces.Services;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization;
 

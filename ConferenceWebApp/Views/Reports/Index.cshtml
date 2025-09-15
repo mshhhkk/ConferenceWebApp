@@ -1,4 +1,4 @@
-﻿@using ConferenceWebApp.Application.ViewModels;
+﻿@using ConferenceWebApp.ViewModels;
 @model UserReportsViewModel;
 
 @{
@@ -26,7 +26,6 @@ else
                     {
                         <a asp-action="Edit" asp-route-id="@talk.Id" class="thesis-btn thesis-btn-edit">Редактировать</a>
 
-                        <!-- кнопку перевели на модалку -->
                         <button type="button"
                                 class="thesis-btn thesis-btn-delete"
                                 onclick="openDeleteModal('@talk.Id')">
@@ -80,11 +79,9 @@ else
         }
 
         function confirmDelete() {
-            // Безопасный POST с анти-CSRF токеном
             deleteForm.submit();
         }
 
-        // Закрытие кликом по подложке (вне окна)
         window.addEventListener("click", function (e) {
             if (e.target === deleteModal) closeDeleteModal();
         });

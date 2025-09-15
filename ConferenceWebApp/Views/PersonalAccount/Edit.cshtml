@@ -5,6 +5,8 @@
     Layout = "_SettingsLayout";
 }
 
+<link rel="stylesheet" href="~/css/modal.css" />
+
 @if (!Model.IsRegisteredForConference)
 {
     <div class="report-block waiting-block">
@@ -78,10 +80,57 @@
 
     <div class="settings-form-actions">
         <button type="submit" class="settings-save-btn">Сохранить изменения</button>
-        <a href="/PersonalAccount" class="settings-cancel-btn">Отмена</a>
+        <a href="/Reports/Index" class="settings-cancel-btn">Отмена</a>
     </div>
 
-    <div class="settings-delete-account">
-        Вы можете <a href="/PersonalAccount/Delete" style="color:#8c3ae8;text-decoration:underline;">удалить свою учетную запись</a>
+    <div class="delete-account-info">
+        <span class="delete-account-text">
+            Вы можете
+        </span>
+        <span class="delete-account-link" onclick="openDeleteAccountModal()">
+            удалить свою учетную запись
+        </span>
     </div>
+   
 </form>
+
+
+<form id="deleteAccountForm" asp-action="DeleteAccount" method="post" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+<!-- Кастомная модалка -->
+<div id="deleteAccountModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-title">Подтверждение удаления</span>
+        </div>
+        <div class="modal-body">
+            <p>Вы точно хотите удалить свою учетную запись? Это действие необратимо.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="modal-btn modal-btn-yes" onclick="confirmDeleteAccount()">Удалить</button>
+            <button type="button" class="modal-btn modal-btn-no" onclick="closeDeleteAccountModal()">Отмена</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openDeleteAccountModal() {
+            document.getElementById("deleteAccountModal").style.display = "flex";
+        }
+        function closeDeleteAccountModal() {
+            document.getElementById("deleteAccountModal").style.display = "none";
+        }
+        function confirmDeleteAccount() {
+            document.getElementById("deleteAccountForm").submit();
+        }
+
+
+        window.addEventListener("click", function (e) {
+            let modal = document.getElementById("deleteAccountModal");
+            if (e.target === modal) closeDeleteAccountModal();
+        });
+    </script>
+}

@@ -1,6 +1,6 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
-namespace ConferenceWebApp.Application.ViewModels;
+﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+using ConferenceWebApp.Domain.Entities;
+namespace ConferenceWebApp.ViewModels;
 
 public class ExtendedThesisViewModel : IUserProfileViewModel
 {

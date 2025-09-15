@@ -1,7 +1,6 @@
-﻿using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Application.Controllers;
+﻿using ConferenceWebApp.Application.Controllers;
 using ConferenceWebApp.Application.DTOs.CommiteeDTOs;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
+using ConferenceWebApp.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 public class CommitteeController : BaseController
@@ -10,8 +9,8 @@ public class CommitteeController : BaseController
 
     public CommitteeController(
         ICommitteeService committeeService,
-        IUserProfileRepository userProfileRepository)
-        : base(userProfileRepository)
+        IUserProfileService userProfileService)
+        : base(userProfileService)
     {
         _committeeService = committeeService;
     }
@@ -19,11 +18,11 @@ public class CommitteeController : BaseController
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var result = await _committeeService.GetAllCommitteesAsync();
+        var result = await _committeeService.GetAllAsync();
 
         if (!result.IsSuccess)
         {
-            TempData["Error"] = result.ErrorMessage;
+            ViewBag.Message = result.ErrorMessage;
             return View(new List<CommitteeDTO>());
         }
 

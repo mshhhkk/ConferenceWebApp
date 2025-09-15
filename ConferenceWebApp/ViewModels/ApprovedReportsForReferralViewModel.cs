@@ -1,7 +1,7 @@
 ﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.DTOs.ReportsRefferDTOs;
 
-namespace ConferenceWebApp.Application.ViewModels;
+namespace ConferenceWebApp.ViewModels;
 
 public class ApprovedReportsForReferralViewModel : IUserProfileViewModel
 {

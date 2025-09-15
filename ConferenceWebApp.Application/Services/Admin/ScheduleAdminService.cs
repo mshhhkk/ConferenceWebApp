@@ -1,8 +1,8 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Application.DTOs.Admin;
+﻿using ConferenceWebApp.Application.DTOs.Admin;
 using ConferenceWebApp.Application.DTOs.Schedule;
-using ConferenceWebApp.Infrastructure.Services.Abstract.Admin;
 using ConferenceWebApp.Application.Interfaces.Repositories;
+using ConferenceWebApp.Application.Interfaces.Services.Admin;
+using ConferenceWebApp.Domain.Entities;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization.Admin;
 

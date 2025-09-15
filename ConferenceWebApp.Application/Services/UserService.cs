@@ -1,9 +1,8 @@
-﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
+﻿using ConferenceWebApp.Application;
+using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Enums;
-using ConferenceWebApp.Application;
 namespace ConferenceWebApp.Infrastructure.Services.Realization;
 
 public class UserService : IUserProfileService
@@ -15,9 +14,9 @@ public class UserService : IUserProfileService
     }
     public async Task<Result<UserProfileDTO>> GetByUserIdAsync(Guid userId)
     {
-        
+
         var userProfile = await _userProfileRepository.GetByUserIdAsync(userId);
-        if (userProfile==null)
+        if (userProfile == null)
         {
             return Result<UserProfileDTO>.Failure("Профиль не найден");
         }
@@ -39,5 +38,12 @@ public class UserService : IUserProfileService
 
         return Result<UserProfileDTO>.Success(dto);
 
+    }
+
+    public async Task<string> GetUserNameByEmailAsync(string email)
+    {
+        var user = await _userProfileRepository.GetUserProfileByEmail(email);
+        var username = user.LastName + " " + user.FirstName[0] + ".";
+        return username;
     }
 }

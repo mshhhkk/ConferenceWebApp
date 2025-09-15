@@ -1,7 +1,6 @@
 ﻿using ConferenceWebApp.Application.DTOs.Admin;
-using ConferenceWebApp.Application;
 
-namespace ConferenceWebApp.Infrastructure.Services.Abstract.Admin;
+namespace ConferenceWebApp.Application.Interfaces.Services.Admin;
 
 public interface IAdminPaymentService
 {

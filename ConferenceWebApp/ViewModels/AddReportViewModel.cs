@@ -1,7 +1,7 @@
 ﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 
-namespace ConferenceWebApp.Application.ViewModels;
+namespace ConferenceWebApp.ViewModels;
 
 public class AddReportViewModel : IUserProfileViewModel
 {

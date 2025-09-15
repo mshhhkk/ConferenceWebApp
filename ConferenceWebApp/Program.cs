@@ -1,15 +1,9 @@
+using ConferenceWebApp.Application.Extensions;
 using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Persistence.Repositories.Realization;
-using ConferenceWebApp.Infrastructure.Services.Realization;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Razor;
 using ConferenceWebApp.Infrastructure.Extensions;
 using ConferenceWebApp.Persistence;
-using ConferenceWebApp.Application.Interfaces.Services;
-using ConferenceWebApp.Application.Extensions;
 using ConferenceWebApp.Persistence.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 namespace ConferenceWebApp;
 
@@ -24,7 +18,7 @@ public class Program
             .AddEnvironmentVariables();
 
         IConfiguration configuration = configBuild.Build();
-    
+
         builder.Services.AddDatabase(builder.Configuration);
         builder.Services.AddApplicationServices();
         builder.Services.AddPersistence();
@@ -32,8 +26,8 @@ public class Program
         builder.Services.AddInfrastructure(rootPath);
 
         builder.Services.AddScoped<UserManager<User>, CustomUserManager>();
-     
-        builder.Services.AddIdentity<User, IdentityRole<Guid>>(options => 
+
+        builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
         {
             options.Password.RequireDigit = false;
             options.Password.RequiredLength = 8;
@@ -59,9 +53,9 @@ public class Program
                 : CookieSecurePolicy.Always;
         });
 
-    
+
         builder.Services.AddControllersWithViews();
-       
+
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
@@ -79,7 +73,7 @@ public class Program
 
         app.UseRouting();
 
-        app.UseAuthentication(); 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");

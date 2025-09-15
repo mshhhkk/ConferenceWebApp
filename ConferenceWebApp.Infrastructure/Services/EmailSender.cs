@@ -1,7 +1,7 @@
-﻿using ConferenceWebApp.Infrastructure.Services.Abstract;
+﻿using ConferenceWebApp.Application.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 
-namespace ConferenceWebApp.Infrastructure.Services.Realization
+namespace ConferenceWebApp.Infrastructure.Services
 {
     public class EmailSender : IEmailSender
     {

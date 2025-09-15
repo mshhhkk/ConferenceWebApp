@@ -1,6 +1,6 @@
 ﻿using ConferenceWebApp.Application.DTOs.Schedule;
 
-namespace ConferenceWebApp.Infrastructure.Services.Abstract;
+namespace ConferenceWebApp.Application.Interfaces.Services;
 
 public interface IScheduleService
 {

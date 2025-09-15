@@ -1,9 +1,8 @@
 ﻿using ConferenceWebApp.Application.DTOs.CommiteeDTOs;
-using ConferenceWebApp.Application;
 
-namespace ConferenceWebApp.Infrastructure.Services.Abstract;
+namespace ConferenceWebApp.Application.Interfaces.Services;
 
 public interface ICommitteeService
 {
-    Task<Result<List<CommitteeDTO>>> GetAllCommitteesAsync();
+    Task<Result<List<CommitteeDTO>>> GetAllAsync();
 }

@@ -1,6 +1,6 @@
-﻿using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Application.Controllers;
-using ConferenceWebApp.Infrastructure.Services.Abstract.Admin;
+﻿using ConferenceWebApp.Application.Controllers;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Application.Interfaces.Services.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,8 +12,8 @@ public class AdminReportsController : BaseController
 
     public AdminReportsController(
         IReportAdminService reportService,
-        IUserProfileRepository userProfileRepository,
-        IWebHostEnvironment env) : base(userProfileRepository)
+        IUserProfileService userProfileService,
+        IWebHostEnvironment env) : base(userProfileService)
     {
         _reportService = reportService;
         _env = env;

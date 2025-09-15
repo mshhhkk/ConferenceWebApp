@@ -20,11 +20,9 @@ public interface IUserProfileRepository
     Task<UserProfile?> FindByLastNameAsync(string lastName);
 
     Task<List<UserProfile>> SearchByFullNameAsync(string fullName);
+
     Task<UserProfile?> GetUserProfileByReportIdAsync(Guid reportId);
 
     IQueryable<UserProfile> GetAllQueryable();
-
-
-
 
 }

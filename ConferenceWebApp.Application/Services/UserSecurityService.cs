@@ -1,9 +1,9 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
-using ConferenceWebApp.Application;
+﻿using ConferenceWebApp.Application;
+using ConferenceWebApp.Application.Interfaces.Repositories;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using ConferenceWebApp.Application.Interfaces.Repositories;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization;
 

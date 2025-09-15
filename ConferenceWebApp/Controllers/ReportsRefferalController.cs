@@ -1,12 +1,11 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Application.Controllers;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
+﻿using ConferenceWebApp.Application.Controllers;
+using ConferenceWebApp.Application.DTOs.ReportsRefferDTOs;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ConferenceWebApp.Application.ViewModels;
-using ConferenceWebApp.Application.DTOs.ReportsRefferDTOs;
 
 [Authorize]
 public class ReportsRefferalController : BaseController
@@ -18,8 +17,7 @@ public class ReportsRefferalController : BaseController
     public ReportsRefferalController(
         UserManager<User> userManager,
         IReportsReferralService reportsReferralService,
-        IUserProfileRepository userProfileRepository,
-        IUserProfileService userProfileService) : base(userProfileRepository)
+        IUserProfileService userProfileService) : base(userProfileService)
     {
         _userManager = userManager;
         _reportsReferralService = reportsReferralService;
@@ -28,11 +26,11 @@ public class ReportsRefferalController : BaseController
 
     private async Task<(Guid? userId, IActionResult? redirect)> GetCurrentUserIdAsync()
     {
-       
+
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
-            return (null, RedirectToAction("Login", "Account"));
+            return (null, RedirectToAction("Login", "PersonalAccount"));
         }
         return (user.Id, null);
     }
@@ -53,7 +51,7 @@ public class ReportsRefferalController : BaseController
 
         var resultReports = await _reportsReferralService.GetApprovedReportsForReferral(userId!.Value);
 
-        if(!resultReports.IsSuccess)
+        if (!resultReports.IsSuccess)
         {
             ViewBag.Message = resultReports.ErrorMessage;
             var emptyVm = new ApprovedReportsForReferralViewModel

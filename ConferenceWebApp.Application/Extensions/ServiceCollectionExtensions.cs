@@ -1,6 +1,5 @@
-﻿using System.Runtime.CompilerServices;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
-using ConferenceWebApp.Infrastructure.Services.Abstract.Admin;
+﻿using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Application.Interfaces.Services.Admin;
 using ConferenceWebApp.Infrastructure.Services.Realization;
 using ConferenceWebApp.Infrastructure.Services.Realization.Admin;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,57 +1,42 @@
-﻿using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Application.DTOs.AuthDTOs;
+﻿using ConferenceWebApp.Application.DTOs.AuthDTOs;
+using ConferenceWebApp.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+
 
 namespace ConferenceWebApp.Application.Controllers;
 
 public class BaseController : Controller
 {
-    private readonly IUserProfileRepository _userProfileRepository;
+    private readonly IUserProfileService _userProfileService;
 
-    public BaseController(IUserProfileRepository userProfileRepository)
+    public BaseController(IUserProfileService userProfileService)
     {
-        _userProfileRepository = userProfileRepository;
-    }
-
-    protected void AddError(string errorMessage)
-    {
-        TempData["Error"] = errorMessage;
+        _userProfileService = userProfileService;
     }
 
     public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
-        bool isRegisteredOnConference = false;
         string username = string.Empty;
-
         if (isAuthenticated)
         {
             var email = User.Identity?.Name;
+
             if (!string.IsNullOrEmpty(email))
             {
-                var user = await _userProfileRepository.GetUserProfileByEmail(email);
-                if (user != null)
-                {
-                    username = $"{user.LastName} {user.FirstName?[0]}";
-                }
+                username = await _userProfileService.GetUserNameByEmailAsync(email);
             }
         }
 
         var authStatus = new AuthStatusDTO
         {
             IsAuthenticated = isAuthenticated,
-            IsRegisteredOnConference = isRegisteredOnConference,
             UserName = username
         };
 
         ViewBag.AuthStatus = authStatus;
 
-        if (TempData["Error"] is string error)
-        {
-            ViewBag.Error = error;
-            TempData.Remove("Error");
-        }
-        await next(); 
+        await next();
     }
 }

@@ -1,7 +1,6 @@
 ﻿using ConferenceWebApp.Application.DTOs.AuthDTOs;
-using ConferenceWebApp.Application;
 
-namespace ConferenceWebApp.Infrastructure.Services.Abstract;
+namespace ConferenceWebApp.Application.Interfaces.Services;
 
 public interface IAuthService
 {
@@ -9,9 +8,9 @@ public interface IAuthService
 
     Task<Result> ConfirmEmailAsync(string userId, string token);
 
-    Task<Result> SendTwoFactorCodeAsync(LoginDTO dto);
+    Task<Result> SendTwoStepCodeAsync(LoginDTO dto);
 
-    Task<Result> VerifyTwoFactorCodeAsync(Verify2FADTO dto);
+    Task<Result> VerifyTwoFactorStepsAsync(Verify2FADTO dto);
 
     Task<Result> LogoutAsync();
 }

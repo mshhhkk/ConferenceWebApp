@@ -1,11 +1,9 @@
-﻿using ConferenceWebApp.Domain.Enums;
-using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+﻿using ConferenceWebApp.Application;
 using ConferenceWebApp.Application.DTOs.ReportsDTOs;
-using ConferenceWebApp.Application.ViewModels;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
-using ConferenceWebApp.Application;
 using ConferenceWebApp.Application.Interfaces.Repositories;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Domain.Enums;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization;
 
@@ -83,7 +81,7 @@ public class ExtendedThesisService : IExtendedThesisService
             Organization = profile.Organization!,
             ExtThesis = report.ExtThesis
         };
-     
+
         return Result<EditExtendedThesisDTO>.Success(dto);
     }
 

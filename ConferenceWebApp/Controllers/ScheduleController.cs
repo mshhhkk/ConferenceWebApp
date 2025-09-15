@@ -1,6 +1,5 @@
-﻿using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Application.Controllers;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
+﻿using ConferenceWebApp.Application.Controllers;
+using ConferenceWebApp.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 public class ScheduleController : BaseController
@@ -8,9 +7,9 @@ public class ScheduleController : BaseController
     private readonly IScheduleService _scheduleService;
 
     public ScheduleController(
-        IUserProfileRepository userProfileRepository,
+        IUserProfileService userProfileService,
         IScheduleService scheduleService)
-        : base(userProfileRepository)
+        : base(userProfileService)
     {
         _scheduleService = scheduleService;
     }

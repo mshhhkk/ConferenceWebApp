@@ -1,7 +1,7 @@
-﻿using ConferenceWebApp.Domain.Entities;
+﻿using ConferenceWebApp.Application;
 using ConferenceWebApp.Application.DTOs.AuthDTOs;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
-using ConferenceWebApp.Application;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization;
@@ -60,7 +60,7 @@ public class AuthService : IAuthService
         return Result.Success();
     }
 
-    public async Task<Result> SendTwoFactorCodeAsync(LoginDTO dto)
+    public async Task<Result> SendTwoStepCodeAsync(LoginDTO dto)
     {
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
@@ -73,7 +73,7 @@ public class AuthService : IAuthService
         return Result.Success();
     }
 
-    public async Task<Result> VerifyTwoFactorCodeAsync(Verify2FADTO dto)
+    public async Task<Result> VerifyTwoFactorStepsAsync(Verify2FADTO dto)
     {
         if (!await _twoFactorService.ValidateCodeAsync(dto.Email, dto.Code))
             return Result.Failure("Неверный или просроченный код");

@@ -1,6 +1,6 @@
-﻿using ConferenceWebApp.Domain.Entities;
+﻿using ConferenceWebApp.Application.Interfaces.Repositories;
+using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.Domain.Enums;
-using ConferenceWebApp.Application.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConferenceWebApp.Persistence.Repositories.Realization

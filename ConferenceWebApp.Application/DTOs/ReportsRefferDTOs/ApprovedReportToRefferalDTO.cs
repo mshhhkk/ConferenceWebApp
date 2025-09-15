@@ -1,7 +1,4 @@
-﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
-using ConferenceWebApp.Domain.Enums;
-
-namespace ConferenceWebApp.Application.DTOs.ReportsRefferDTOs;
+﻿namespace ConferenceWebApp.Application.DTOs.ReportsRefferDTOs;
 
 public class ApprovedReportToRefferalDTO
 {

@@ -1,9 +1,6 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Application.DTOs.ReportsDTOs;
-using ConferenceWebApp.Application.ViewModels;
-using ConferenceWebApp.Application;
+﻿using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 
-namespace ConferenceWebApp.Infrastructure.Services.Abstract;
+namespace ConferenceWebApp.Application.Interfaces.Services;
 
 public interface IExtendedThesisService
 {

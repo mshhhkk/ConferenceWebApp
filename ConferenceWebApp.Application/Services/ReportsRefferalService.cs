@@ -1,12 +1,10 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Domain.Enums;
-using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+﻿using ConferenceWebApp.Application;
 using ConferenceWebApp.Application.DTOs.RefferReport;
 using ConferenceWebApp.Application.DTOs.ReportsRefferDTOs;
-using ConferenceWebApp.Application.ViewModels;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
 using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Application;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Domain.Enums;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization;
 
@@ -36,7 +34,7 @@ public class ReportsReferralService : IReportsReferralService
                 Title = report.ReportTheme,
                 ExtThesis = report.ExtThesis ?? string.Empty,
             }).ToList();
-        
+
         if (reports == null)
         {
             return Result<ApprovedReportsForReferralDTO>.Failure("У вас нет одобренных расширенных тезисов");
@@ -44,13 +42,13 @@ public class ReportsReferralService : IReportsReferralService
 
         var incomingTransfersEntities = await _reportsRepository.GetApprovedReportsAsync();
         var incomingTransfers = incomingTransfersEntities
-            .Where(r => r.TargetUserId == userId && r.TransferStatus== ReportTransferStatus.Requested)
+            .Where(r => r.TargetUserId == userId && r.TransferStatus == ReportTransferStatus.Requested)
             .Select(report => new ApprovedReportToRefferalDTO
             {
                 UserId = report.UserId,
                 ReportId = report.Id,
                 Title = report.ReportTheme,
-                ExtThesis = report.ExtThesis ?? string.Empty,         
+                ExtThesis = report.ExtThesis ?? string.Empty,
             }).ToList();
 
         var dto = new ApprovedReportsForReferralDTO
@@ -147,7 +145,7 @@ public class ReportsReferralService : IReportsReferralService
             return Result.Failure("Доклад не найден");
         }
 
-        if (report.UserId != userId) 
+        if (report.UserId != userId)
         {
             return Result.Failure("Нет прав на отмену передачи");
         }

@@ -1,7 +1,7 @@
 ﻿using ConferenceWebApp.Application.DTOs.Admin;
 using ConferenceWebApp.Application.DTOs.Schedule;
 
-namespace ConferenceWebApp.Infrastructure.Services.Abstract.Admin;
+namespace ConferenceWebApp.Application.Interfaces.Services.Admin;
 
 public interface IScheduleAdminService
 {

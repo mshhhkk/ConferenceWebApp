@@ -1,9 +1,9 @@
-﻿using ConferenceWebApp.Application;
-using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 
-namespace ConferenceWebApp.Infrastructure.Services.Abstract;
+namespace ConferenceWebApp.Application.Interfaces.Services;
 
 public interface IUserProfileService
 {
     Task<Result<UserProfileDTO>> GetByUserIdAsync(Guid userId);
+    Task<string> GetUserNameByEmailAsync(string email);
 }

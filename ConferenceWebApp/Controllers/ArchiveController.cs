@@ -1,4 +1,4 @@
-﻿using ConferenceWebApp.Application.Interfaces.Repositories;
+﻿using ConferenceWebApp.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConferenceWebApp.Application.Controllers;
@@ -6,7 +6,7 @@ namespace ConferenceWebApp.Application.Controllers;
 public class ArchiveController : BaseController
 {
 
-    public ArchiveController(IUserProfileRepository userProfileRepository) : base(userProfileRepository) { }
+    public ArchiveController(IUserProfileService userProfileService) : base(userProfileService) { }
 
     public IActionResult Index()
     {

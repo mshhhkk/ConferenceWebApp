@@ -1,14 +1,12 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Domain.Enums;
+﻿using ConferenceWebApp.Application;
 using ConferenceWebApp.Application.DTOs;
-using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.DTOs.ReportsDTOs;
-using ConferenceWebApp.Application.ViewModels;
-using ConferenceWebApp.Application;
+using ConferenceWebApp.Application.Interfaces.Repositories;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ConferenceWebApp.Application.Interfaces.Services;
-using ConferenceWebApp.Application.Interfaces.Repositories;
 
 public class ReportService : IReportService
 {
@@ -31,8 +29,8 @@ public class ReportService : IReportService
     public async Task<Result<List<ReportDTO>>> GetReportsByUserIdAsync(Guid userId)
     {
         var userProfile = await _userProfileRepository.GetByUserIdAsync(userId);
-        if (userProfile == null || userProfile.Status==0)
-            return Result<List<ReportDTO>>.Failure("Пользователь не зарегистрирован на конференцию");
+        if (userProfile == null || userProfile.Status == 0)
+            return Result<List<ReportDTO>>.Failure("Пользователь не зарегистрирован на конференцию, заполните личну");
 
         var reports = await _reportRepository.GetReportsByUserIdAsync(userId);
         return Result<List<ReportDTO>>.Success(reports.Select(ToReportDTO).ToList());

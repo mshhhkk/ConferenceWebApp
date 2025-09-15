@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ConferenceWebApp.Domain.Enums
+﻿namespace ConferenceWebApp.Domain.Enums
 {
     public enum WorkType
     {

@@ -1,12 +1,10 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Domain.Enums;
+﻿using ConferenceWebApp.Application;
 using ConferenceWebApp.Application.DTOs;
 using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
-using ConferenceWebApp.Application.ViewModels;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
-using ConferenceWebApp.Application;
-using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Application.Interfaces.Repositories;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Domain.Enums;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization;
 
@@ -30,52 +28,12 @@ public class PersonalAccountService : IPersonalAccountService
         _fileService = fileService;
     }
 
-    public async Task<Result<UserProfileViewModel>> GetUserProfileAsync(Guid userId)
-    {
-        var userProfile = await _userProfileRepository.GetByUserIdAsync(userId);
-        if (userProfile == null)
-            return Result<UserProfileViewModel>.Failure("Профиль пользователя не найден");
 
-        var userReports = await _reportsRepository.GetApprovedReportsByUserIdAsync(userId);
-
-        var photoUrl = DefaultPhotoPath;
-        if (!string.IsNullOrEmpty(userProfile.PhotoUrl) &&
-        !userProfile.PhotoUrl.Equals(DefaultPhotoPath, StringComparison.OrdinalIgnoreCase))
-        {
-            var meta = await _fileService.TryGetFileMetadataAsync(userProfile.PhotoUrl);
-            if (meta?.Exists == true) photoUrl = userProfile.PhotoUrl;
-        }
-
-        var dto = new UserProfileDTO
-        {
-            FullName = $"{userProfile.LastName} {userProfile.FirstName} {userProfile.MiddleName}".Trim(),
-            Email = userProfile.User?.Email ?? string.Empty,
-            PhoneNumber = userProfile.PhoneNumber ?? string.Empty,
-            BirthDate = userProfile.BirthDate,
-            Organization = userProfile.Organization ?? string.Empty,
-            Specialization = userProfile.Specialization ?? string.Empty,
-            PhotoUrl = userProfile.PhotoUrl,
-            ParticipantType = userProfile.ParticipantType,
-            Status = userProfile.Status,
-            IsApprovedAnyReports = (userProfile.ApprovalStatus > UserApprovalStatus.None),
-            IsExtendedThesisApproved = (userProfile.ApprovalStatus == UserApprovalStatus.ExtendedThesisApproved)
-        };
-
-        var vm = new UserProfileViewModel
-        {
-            UserProfile = dto
-        };
-        return Result<UserProfileViewModel>.Success(vm);
-    }
-
-    public async Task<Result<EditUserDTO>> GetEditableProfileAsync(Guid userId)
+    public async Task<Result<EditUserDTO>> GetProfileToEditByUserIdAsync(Guid userId)
     {
         var userProfile = await _userProfileRepository.GetByUserIdAsync(userId);
         if (userProfile == null)
             return Result<EditUserDTO>.Failure("Профиль пользователя не найден");
-
-        if (userProfile.ParticipantType == ParticipantType.Speaker)
-            return Result<EditUserDTO>.Failure("Пользователь с одобренным докладом не может поменять профиль");
 
         return Result<EditUserDTO>.Success(new EditUserDTO
         {
@@ -95,6 +53,9 @@ public class PersonalAccountService : IPersonalAccountService
         var userProfile = await _userProfileRepository.GetByUserIdAsync(userId);
         if (userProfile == null)
             return Result.Failure("Профиль пользователя не найден");
+
+        if (userProfile.ParticipantType == ParticipantType.Speaker)
+            return Result<EditUserDTO>.Failure("Пользователь с одобренным докладом не может поменять профиль");
 
         try
         {

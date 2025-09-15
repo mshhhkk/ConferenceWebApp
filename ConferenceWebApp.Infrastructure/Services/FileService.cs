@@ -1,13 +1,13 @@
 ﻿using ConferenceWebApp.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 
-namespace ConferenceWebApp.Infrastructuren.Services;
+namespace ConferenceWebApp.Infrastructure.Services;
 
 public class FileService : IFileService
 {
     private readonly string _rootPath;
 
-    public FileService(string rootPath) 
+    public FileService(string rootPath)
     {
         _rootPath = rootPath;
     }
@@ -18,6 +18,7 @@ public class FileService : IFileService
         string[] allowedContentTypes,
         long maxFileSize)
     {
+
         if (file == null || file.Length == 0)
             throw new InvalidOperationException("Файл не предоставлен.");
 

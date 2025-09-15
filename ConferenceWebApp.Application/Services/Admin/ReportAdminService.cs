@@ -1,9 +1,9 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Domain.Enums;
-using ConferenceWebApp.Application.DTOs.Admin;
-using ConferenceWebApp.Infrastructure.Services.Abstract.Admin;
-using Microsoft.AspNetCore.Identity;
+﻿using ConferenceWebApp.Application.DTOs.Admin;
 using ConferenceWebApp.Application.Interfaces.Repositories;
+using ConferenceWebApp.Application.Interfaces.Services.Admin;
+using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization.Admin;
 

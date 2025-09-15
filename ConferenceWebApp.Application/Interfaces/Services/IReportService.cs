@@ -1,9 +1,7 @@
-﻿using ConferenceWebApp.Application.DTOs.ReportsDTOs;
-using ConferenceWebApp.Application.ViewModels;
-using ConferenceWebApp.Application;
-using Microsoft.AspNetCore.Mvc;
+﻿using ConferenceWebApp.Application;
 using ConferenceWebApp.Application.DTOs;
-using System.Threading.Tasks;
+using ConferenceWebApp.Application.DTOs.ReportsDTOs;
+using Microsoft.AspNetCore.Mvc;
 
 public interface IReportService
 {

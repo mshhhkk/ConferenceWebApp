@@ -1,7 +1,7 @@
-﻿using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Application.Controllers;
+﻿using ConferenceWebApp.Application.Controllers;
 using ConferenceWebApp.Application.DTOs.Admin;
-using ConferenceWebApp.Infrastructure.Services.Abstract.Admin;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Application.Interfaces.Services.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +11,9 @@ public class AdminCheckPaymentController : BaseController
     private readonly IAdminPaymentService _adminPaymentService;
 
     public AdminCheckPaymentController(
-        IUserProfileRepository userProfileRepository,
+        IUserProfileService userProfileService,
         IAdminPaymentService adminPaymentService)
-        : base(userProfileRepository)
+        : base(userProfileService)
     {
         _adminPaymentService = adminPaymentService;
     }

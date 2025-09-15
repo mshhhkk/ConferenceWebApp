@@ -1,8 +1,7 @@
-﻿using ConferenceWebApp.Application;
-using ConferenceWebApp.Application.DTOs.RefferReport;
+﻿using ConferenceWebApp.Application.DTOs.RefferReport;
 using ConferenceWebApp.Application.DTOs.ReportsRefferDTOs;
 
-namespace ConferenceWebApp.Infrastructure.Services.Abstract;
+namespace ConferenceWebApp.Application.Interfaces.Services;
 
 public interface IReportsReferralService
 {

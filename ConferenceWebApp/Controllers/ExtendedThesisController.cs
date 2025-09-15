@@ -1,8 +1,7 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Application.Controllers;
-using ConferenceWebApp.Application.ViewModels;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
+﻿using ConferenceWebApp.Application.Controllers;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,18 +11,16 @@ public class ExtendedThesisController : BaseController
 {
     private readonly UserManager<User> _userManager;
     private readonly IExtendedThesisService _thesisService;
-    private readonly IUserProfileRepository _userProfileRepository;
     private readonly IUserProfileService _userProfileService;
 
     public ExtendedThesisController(
         UserManager<User> userManager,
         IExtendedThesisService thesisService,
-        IUserProfileRepository userProfileRepository,
-        IUserProfileService userProfileService) : base(userProfileRepository)
+        IUserProfileService userProfileService) : base(userProfileService)
     {
         _userManager = userManager;
         _thesisService = thesisService;
-        _userProfileRepository = userProfileRepository;
+        _userProfileService = userProfileService;
         _userProfileService = userProfileService;
     }
 
@@ -33,7 +30,7 @@ public class ExtendedThesisController : BaseController
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
-            return (null, RedirectToAction("Login", "Account"));
+            return (null, RedirectToAction("Login", "PersonalAccount"));
         }
         return (user.Id, null);
     }

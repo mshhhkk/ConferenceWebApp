@@ -1,7 +1,6 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
+﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Domain.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,15 +12,21 @@ public class UserSecurityController : BaseController
     private readonly IUserSecurityService _userSecurityService;
     private readonly UserManager<User> _userManager;
 
-    public UserSecurityController(IUserProfileRepository userProfileRepository, IUserSecurityService userSecurityService, UserManager<User> userManager) : base(userProfileRepository)
+    public UserSecurityController(IUserProfileService userProfileService, IUserSecurityService userSecurityService, UserManager<User> userManager) : base(userProfileService)
     {
         _userSecurityService = userSecurityService;
         _userManager = userManager;
     }
 
-    public IActionResult Index()
+    private async Task<(Guid? userId, IActionResult? redirect)> GetCurrentUserIdAsync()
     {
-        return View();
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return (null, RedirectToAction("Login", "PersonalAccount"));
+        }
+        return (user.Id, null);
     }
 
     public IActionResult ChangePassword()
@@ -32,21 +37,19 @@ public class UserSecurityController : BaseController
     [HttpPost]
     public async Task<IActionResult> ChangePassword(ChangePasswordDTO model)
     {
-        if (!ModelState.IsValid)
-            return View(model);
 
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-            return NotFound("Пользователь не найден.");
+        ViewBag.Message = TempData["Error"];
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
 
         var result = await _userSecurityService.ChangePasswordAsync(
-            user.Id,
+            userId!.Value,
             model.CurrentPassword,
             model.NewPassword);
 
         if (!result.IsSuccess)
         {
-            // Обработка специфичных ошибок
             if (result.ErrorMessage?.Contains("Incorrect password") == true)
             {
                 ModelState.AddModelError(nameof(model.CurrentPassword), "Текущий пароль введён неверно.");

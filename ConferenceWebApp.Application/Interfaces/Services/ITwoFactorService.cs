@@ -1,4 +1,4 @@
-﻿namespace ConferenceWebApp.Infrastructure.Services.Abstract;
+﻿namespace ConferenceWebApp.Application.Interfaces.Services;
 
 public interface ITwoFactorService
 {

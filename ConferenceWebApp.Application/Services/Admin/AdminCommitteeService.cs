@@ -1,7 +1,7 @@
-﻿using ConferenceWebApp.Domain.Entities;
+﻿using ConferenceWebApp.Application.DTOs.Admin;
 using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Application.DTOs.Admin;
-using ConferenceWebApp.Infrastructure.Services.Abstract.Admin;
+using ConferenceWebApp.Application.Interfaces.Services.Admin;
+using ConferenceWebApp.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 
 public class AdminCommitteeService : IAdminCommitteeService
@@ -86,7 +86,7 @@ public class AdminCommitteeService : IAdminCommitteeService
         var filePath = Path.Combine("wwwroot/committee", fileName);
 
         using (var stream = new FileStream(filePath, FileMode.Create))
-        {   
+        {
             await photo.CopyToAsync(stream);
         }
 

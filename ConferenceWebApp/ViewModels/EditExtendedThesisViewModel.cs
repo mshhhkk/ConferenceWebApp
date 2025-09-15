@@ -1,11 +1,10 @@
 ﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 
-namespace ConferenceWebApp.Application.ViewModels;
+namespace ConferenceWebApp.ViewModels;
 
-public class UserReportsViewModel : IUserProfileViewModel
+public class EditExtendedThesisViewModel : IUserProfileViewModel
 {
     public UserProfileDTO UserProfile { get; set; } = null!;
-    public List<ReportDTO> Reports { get; set; } = new();
-
+    public EditExtendedThesisDTO Thesis { get; set; } = new();
 }

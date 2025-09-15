@@ -1,7 +1,6 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
+﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,25 +15,39 @@ public class PersonalAccountController : BaseController
 
     public PersonalAccountController(
         UserManager<User> userManager,
-        IUserProfileRepository userProfileRepository, IPersonalAccountService personalAccountService) : base(userProfileRepository)
+        IUserProfileService userProfileService, IPersonalAccountService personalAccountService) : base(userProfileService)
     {
 
         _userManager = userManager;
         _personalAccountService = personalAccountService;
     }
 
+    private async Task<(Guid? userId, IActionResult? redirect)> GetCurrentUserIdAsync()
+    {
 
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return (null, RedirectToAction("Login", "PersonalAccount"));
+        }
+        return (user.Id, null);
+    }
 
     public async Task<IActionResult> Edit()
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null) return NotFound();
-        var result = await _personalAccountService.GetEditableProfileAsync(user.Id);
+        ViewBag.Message = TempData["Error"];
+
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
+
+        var result = await _personalAccountService.GetProfileToEditByUserIdAsync(userId!.Value);
         if (!result.IsSuccess)
         {
-            AddError(result.ErrorMessage);
-            return RedirectToAction("Index");
+            TempData["Error"] = result.ErrorMessage;
+            return RedirectToAction("Login", "PersonalAccount");
         }
+
         return View(result.Value);
     }
 
@@ -42,36 +55,34 @@ public class PersonalAccountController : BaseController
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EditUserDTO dto)
     {
-        if (!ModelState.IsValid)
-            return View(dto);
 
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null) return NotFound();
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
 
-        var result = await _personalAccountService.UpdateProfileAsync(user.Id, dto);
+        var result = await _personalAccountService.UpdateProfileAsync(userId!.Value, dto);
 
         if (!result.IsSuccess)
         {
-            ViewBag.ErrorMessage = result.ErrorMessage;
-
-            return View("Error");
+            TempData["Error"] = result.ErrorMessage;
+            return View();
         }
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction("Index");
     }
 
     [HttpGet]
     public async Task<IActionResult> GenerateInvitation()
     {
-        // Получаем текущего пользователя
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null) return NotFound("Пользователь не найден.");
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
 
-        var result = await _personalAccountService.GenerateInvitationAsync(user.Id);
+        var result = await _personalAccountService.GenerateInvitationAsync(userId!.Value);
         if (!result.IsSuccess)
         {
-            ViewBag.ErrorMessage = result.ErrorMessage;
-            return View("Error");
+            TempData["Error"] = result.ErrorMessage;
+            return RedirectToAction("Login", "PersonalAccount");
         }
         return View(result.Value);
     }

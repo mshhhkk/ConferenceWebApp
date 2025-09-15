@@ -1,12 +1,9 @@
-﻿using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Domain.Enums;
+﻿using ConferenceWebApp.Application;
 using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
-using ConferenceWebApp.Application.ViewModels;
-using ConferenceWebApp.Infrastructure.Services.Abstract;
-using ConferenceWebApp.Application;
-using Microsoft.AspNetCore.Http;
-using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Application.Interfaces.Repositories;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Domain.Enums;
+using Microsoft.AspNetCore.Http;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization;
 
@@ -26,7 +23,7 @@ public class PaymentService : IPaymentService
         var profile = await _userProfileRepository.GetByUserIdAsync(userId);
         if (profile == null || profile.Status == ParticipantStatus.ProfileCompleted)
             return Result<ReceiptFileDTO>.Failure("Вы не зарегистрированы на конференцию.");
-       
+
         ReceiptFileDTO? receiptFileDto = null;
         if (!string.IsNullOrEmpty(profile.ReceiptFilePath))
         {
@@ -48,7 +45,7 @@ public class PaymentService : IPaymentService
     public async Task<Result> UploadReceiptAsync(Guid userId, IFormFile receipt)
     {
         var profile = await _userProfileRepository.GetByUserIdAsync(userId);
-      
+
         if (profile.Status == ParticipantStatus.ParticipationConfirmed)
             return Result.Failure("Оплата уже подтверждена. Загрузка нового чека невозможна.");
 

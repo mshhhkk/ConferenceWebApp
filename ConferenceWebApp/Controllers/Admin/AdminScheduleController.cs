@@ -1,7 +1,7 @@
-﻿using ConferenceWebApp.Application.Interfaces.Repositories;
-using ConferenceWebApp.Application.Controllers;
+﻿using ConferenceWebApp.Application.Controllers;
 using ConferenceWebApp.Application.DTOs.Admin;
-using ConferenceWebApp.Infrastructure.Services.Abstract.Admin;
+using ConferenceWebApp.Application.Interfaces.Services;
+using ConferenceWebApp.Application.Interfaces.Services.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,8 +10,8 @@ public class AdminScheduleController : BaseController
 {
     private readonly IScheduleAdminService _scheduleService;
 
-    public AdminScheduleController(IScheduleAdminService scheduleService, IUserProfileRepository userProfileRepository)
-        : base(userProfileRepository)
+    public AdminScheduleController(IScheduleAdminService scheduleService, IUserProfileService userProfileService)
+        : base(userProfileService)
     {
         _scheduleService = scheduleService;
     }

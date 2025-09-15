@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConferenceWebApp.Domain.Enums;
+﻿namespace ConferenceWebApp.Domain.Enums;
 public enum ReportStatus
 {
     SubmittedThesis = 0,

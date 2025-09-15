@@ -1,6 +1,6 @@
 ﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 
-namespace ConferenceWebApp.Application.ViewModels;
+namespace ConferenceWebApp.ViewModels;
 
 public class UserProfileViewModel : IUserProfileViewModel
 {
