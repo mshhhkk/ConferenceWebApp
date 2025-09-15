@@ -1,15 +1,17 @@
-﻿using ConferenceWebApp.Application.DTOs.RefferReport;
-using ConferenceWebApp.Application.ViewModels;
+﻿using ConferenceWebApp.Application;
+using ConferenceWebApp.Application.DTOs.RefferReport;
+using ConferenceWebApp.Application.DTOs.ReportsRefferDTOs;
 
 namespace ConferenceWebApp.Infrastructure.Services.Abstract;
 
 public interface IReportsReferralService
 {
-    Task<ApprovedReportsForReferralViewModel> GetApprovedReportsForReferral(Guid userId);
+    Task<Result<ApprovedReportsForReferralDTO>> GetApprovedReportsForReferral(Guid userId);
 
     Task<RefferSearchDTO> SearchUsersForReferral(Guid reportId, string query);
 
-    Task ReferReport(Guid reportId, Guid targetUserId, Guid currentUserId);
-    Task ConfirmTransfer(Guid reportId, Guid targetUserId);
-    Task CancelTransfer(Guid reportId, Guid userId);
+    Task<Result> ReferReport(Guid reportId, Guid targetUserId, Guid currentUserId);
+
+    Task<Result> ConfirmTransfer(Guid reportId, Guid targetUserId);
+    Task<Result> CancelTransfer(Guid reportId, Guid userId);
 }

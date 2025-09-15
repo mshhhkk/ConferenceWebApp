@@ -8,9 +8,8 @@ public class AboutController : BaseController
 
     public AboutController(IUserProfileRepository userProfileRepository) : base(userProfileRepository) { }
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-
         return View();
     }
 

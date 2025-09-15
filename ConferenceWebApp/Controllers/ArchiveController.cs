@@ -30,7 +30,6 @@ public class ArchiveController : BaseController
                 Volume2Url = "/files/2024_volume2.pdf",
                 PhotosUrl = "/files/2024_photos.zip"
             },
-            // Добавьте другие года
         }
         };
         return View(model);

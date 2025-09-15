@@ -12,7 +12,7 @@ public class Result
     }
 
     public static Result Success() => new(true, null);
-    public static Result Failureure(string errorMessage) => new(false, errorMessage);
+    public static Result Failure(string errorMessage) => new(false, errorMessage);
 }
 
 public class Result<T> : Result

@@ -19,7 +19,9 @@ public class UserProfileDTO
     }
 
     public ParticipantType ParticipantType { get; set; }
-    public bool HasPaidFee { get; set; }
-    public bool IsRegisteredForConference { get; set; }
+    public ParticipantStatus Status { get; set; }
+    public UserApprovalStatus ApprovalStatus { get; set; }
     public bool IsApprovedAnyReports { get; set; }
+    public bool IsExtendedThesisApproved { get; set; }
+
 }

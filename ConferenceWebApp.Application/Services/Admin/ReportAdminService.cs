@@ -49,7 +49,7 @@ public class ReportAdminService : IReportAdminService
                     ReportId = r.Id,
                     Title = r.ReportTheme,
                     FilePath = r.FilePath,
-                    IsApproved = r.IsApproved
+                    Status = r.Status,
                 };
 
                 if (r.UserId != Guid.Empty)
@@ -88,7 +88,7 @@ public class ReportAdminService : IReportAdminService
         var userProfile = await _userProfileRepository.GetUserProfileByReportIdAsync(id);
         if (userProfile == null || report == null) return false;
 
-        report.IsApproved = true;
+        report.Status = ReportStatus.ThesisApproved;
         userProfile.ParticipantType = ParticipantType.Speaker;
         await _reportsRepository.UpdateReportAsync(report);
         return true;
@@ -100,7 +100,7 @@ public class ReportAdminService : IReportAdminService
         var userProfile = await _userProfileRepository.GetUserProfileByReportIdAsync(id);
         if (userProfile == null || report == null) return false;
 
-        report.IsApproved = false;
+        report.Status = ReportStatus.SubmittedThesis;
         userProfile.ParticipantType = ParticipantType.Spectator;
         await _reportsRepository.UpdateReportAsync(report);
         return true;

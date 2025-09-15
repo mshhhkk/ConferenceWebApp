@@ -6,6 +6,7 @@ using ConferenceWebApp.Infrastructure.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ConferenceWebApp.Application.ViewModels;
 
 [Authorize]
 public class PaymentController : BaseController
@@ -13,30 +14,57 @@ public class PaymentController : BaseController
     private readonly UserManager<User> _userManager;
     private readonly IPaymentService _paymentService;
     private readonly IUserProfileRepository _userProfileRepository;
+    private readonly IUserProfileService _userProfileService;
 
     public PaymentController(
         UserManager<User> userManager,
         IPaymentService paymentService,
-        IUserProfileRepository userProfileRepository) : base(userProfileRepository)
+        IUserProfileRepository userProfileRepository, IUserProfileService userProfileService) : base(userProfileRepository)
     {
         _userManager = userManager;
         _paymentService = paymentService;
         _userProfileRepository = userProfileRepository;
+        _userProfileService = userProfileService;
+    }
+
+    private async Task<(Guid? userId, IActionResult? redirect)> GetCurrentUserIdAsync()
+    {
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return (null, RedirectToAction("Login", "Account"));
+        }
+        return (user.Id, null);
     }
 
     public async Task<IActionResult> Index()
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null) return NotFound("Пользователь не найден.");
+        ViewBag.Message = TempData["Error"];
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
 
-        var result = await _paymentService.GetReceiptAsync(user);
-        if (!result.IsSuccess)
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId!.Value);
+        if (!resultUserProfile.IsSuccess)
         {
-            ViewBag.Message = result.ErrorMessage;
-            return View("Error");
+            ViewBag.Message = resultUserProfile.ErrorMessage;
+            return View();
         }
 
-        return View(result.Value);
+        var resultReceipt = await _paymentService.GetReceiptByUserIdAsync(userId!.Value);
+        if (!resultReceipt.IsSuccess)
+        {
+            ViewBag.Message = resultReceipt.ErrorMessage;
+            return View(new ReceiptFileViewModel { UserProfile = resultUserProfile.Value, ReceiptFile = new ReceiptFileDTO() });
+        }
+
+        var vm = new ReceiptFileViewModel
+        {
+            UserProfile = resultUserProfile.Value,
+            ReceiptFile = resultReceipt.Value,
+        };
+        return View(vm);
     }
 
 
@@ -51,10 +79,12 @@ public class PaymentController : BaseController
             return RedirectToAction(nameof(Index));
         }
 
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null) return NotFound("Пользователь не найден.");
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
 
-        var result = await _paymentService.UploadReceiptAsync(user, model.Receipt);
+        var result = await _paymentService.UploadReceiptAsync(userId!.Value, model.Receipt);
+
         if (!result.IsSuccess)
         {
             TempData["UploadError"] = result.ErrorMessage;
@@ -69,10 +99,11 @@ public class PaymentController : BaseController
 
     public async Task<IActionResult> DownloadReceipt()
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null) return NotFound("Пользователь не найден.");
+        var(userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
 
-        var result = await _paymentService.DownloadReceiptAsync(user);
+        var result = await _paymentService.DownloadReceiptAsync(userId!.Value);
         if (!result.IsSuccess)
         {
             return NotFound(result.ErrorMessage);

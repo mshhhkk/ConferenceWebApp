@@ -17,9 +17,9 @@
         </p>
     </div>
 
-    <!-- Принятые доклады -->
+   
     <div class="payment-title">Принятые доклады</div>
-    @foreach (var report in Model.Reports.Where(r => !r.IsTransferRequested))
+    @foreach (var report in Model.Reports)
     {
         <div class="report-block">
             <div class="report-title">@report.Title</div>
@@ -29,25 +29,6 @@
                 <button type="button" class="payment-btn" onclick="openModal('@report.ReportId')">Передать доклад</button>
             </div>
         </div>
-    }
-
-    @if (Model.Reports.Any(r => r.IsTransferRequested && !r.IsTransferConfirmed))
-    {
-        <div class="payment-title">Ожидание одобрения передачи</div>
-        @foreach (var report in Model.Reports.Where(r => r.IsTransferRequested && !r.IsTransferConfirmed))
-        {
-            <div class="report-block waiting-block">
-                <div class="report-title">@report.Title</div>
-                <div class="report-thesis">@report.ExtThesis</div>
-                <span class="report-type">стендовый</span>
-                <div class="report-actions" style="text-align:center; margin-top:12px;">
-                    <form asp-action="CancelTransfer" method="post" style="display:inline;">
-                        <input type="hidden" name="reportId" value="@report.ReportId" />
-                        <button type="submit" class="payment-btn outline">Отменить запрос</button>
-                    </form>
-                </div>
-            </div>
-        }
     }
 
     @if (Model.IncomingTransfers != null && Model.IncomingTransfers.Any())

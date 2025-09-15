@@ -7,13 +7,35 @@
     else if (controller == "ExtendedThesis") selected = "ExtendedThesis";
     else if (controller == "Payment") selected = "Payment";
     else if (controller == "ReportsTransfer" || controller == "ReportsRefferal") selected = "ReportsTransfer";
-    // Добавьте другие условия при необходимости
 }
-<div class="section-tabs">
-    <a href="/Reports/Index" class="section-tab-btn @(selected == "Thesis" ? "selected" : "")">Тезисы</a>
-    <a href="/ExtendedThesis/Index" class="section-tab-btn @(selected == "ExtendedThesis" ? "selected" : "")">Расширенные тезисы</a>
-    <a href="/Payment/Index" class="section-tab-btn @(selected == "Payment" ? "selected" : "")">Оплата</a>
-    <a href="/ReportsRefferal/Index" class="section-tab-btn @(selected == "ReportsTransfer" ? "selected" : "")">Передача докладов</a>
-</div>
 
+<div class="section-tabs">
+    <a href="/Reports/Index"
+       class="section-tab-btn @(selected == "Thesis" ? "selected" : "")">
+        Тезисы
+    </a>
+    <a href="/Payment/Index"
+       class="section-tab-btn @(selected == "Payment" ? "selected" : "")">
+        Оплата
+    </a>
+    @if (Model.UserProfile.IsApprovedAnyReports)
+    {
+        <a href="/ExtendedThesis/Index"
+           class="section-tab-btn @(selected == "ExtendedThesis" ? "selected" : "")">
+            Расширенные тезисы
+        </a>
+        <a href="/ReportsRefferal/Index"
+           class="section-tab-btn @(selected == "ReportsTransfer" ? "selected" : "")">
+            Передача докладов
+        </a>
+    }
+    else
+    {
+        <span class="section-tab-btn disabled-tab">Расширенные тезисы</span>
+        <span class="section-tab-btn disabled-tab">Передача докладов</span>
+    }
+
+
+   
+</div>
 

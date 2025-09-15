@@ -2,14 +2,15 @@
 using ConferenceWebApp.Application.ViewModels;
 using ConferenceWebApp.Application;
 using Microsoft.AspNetCore.Http;
+using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 
 namespace ConferenceWebApp.Infrastructure.Services.Abstract;
 
 public interface IPaymentService
 {
-    Task<Result<ReceiptFileViewModel>> GetReceiptAsync(User user);
+    Task<Result<ReceiptFileDTO>> GetReceiptByUserIdAsync(Guid userId);
 
-    Task<Result> UploadReceiptAsync(User user, IFormFile receipt);
+    Task<Result> UploadReceiptAsync(Guid userId, IFormFile receipt);
 
-    Task<Result<(Stream FileStream, string ContentType, string FileName)>> DownloadReceiptAsync(User user);
+    Task<Result<(Stream FileStream, string ContentType, string FileName)>> DownloadReceiptAsync(Guid userId);
 }

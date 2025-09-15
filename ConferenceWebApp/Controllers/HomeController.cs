@@ -24,9 +24,4 @@ public class HomeController : BaseController
         }
         return View(result.Value);
     }
-    public IActionResult Error()
-    {
-        ViewBag.ErrorMessage = TempData["ErrorMessage"] ?? "Произошла ошибка";
-        return View();
-    }
 }

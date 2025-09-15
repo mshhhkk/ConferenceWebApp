@@ -1,4 +1,5 @@
-﻿using ConferenceWebApp.Domain.Entities;
+﻿using ConferenceWebApp.Domain.Enums;
+using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 using ConferenceWebApp.Application.ViewModels;
@@ -21,35 +22,19 @@ public class ExtendedThesisService : IExtendedThesisService
         _userProfileRepository = userProfileRepository;
     }
 
-    public async Task<Result<ExtendedThesisViewModel>> GetExtendedThesisesAsync(User user)
+    public async Task<Result<ExtendedThesisDTO>> GetExtendedThesisesAsync(Guid userId)
     {
-        var profile = await _userProfileRepository.GetByUserIdAsync(user.Id);
-        if (profile == null || !profile.IsRegisteredForConference)
-            return Result<ExtendedThesisViewModel>.Failure("Вы не зарегистрированы на конференцию.");
+        var profile = await _userProfileRepository.GetByUserIdAsync(userId);
+        if (profile == null || profile.Status < ParticipantStatus.ProfileCompleted)
+            return Result<ExtendedThesisDTO>.Failure("Вы не зарегистрированы на конференцию.");
 
-        var reports = await _reportsRepository.GetApprovedReportsByUserIdAsync(user.Id);
+        var reports = await _reportsRepository.GetApprovedReportsByUserIdAsync(userId);
         if (reports == null || reports.Count == 0)
-            return Result<ExtendedThesisViewModel>.Failure("У вас нет одобренных докладов.");
+            return Result<ExtendedThesisDTO>.Failure("У вас нет одобренных докладов.");
 
-        var userProfileDto = new UserProfileDTO
+        var dto = new ExtendedThesisDTO
         {
-            FullName = $"{profile.LastName} {profile.FirstName} {profile.MiddleName}".Trim(),
-            Email = profile.User?.Email ?? string.Empty,
-            PhoneNumber = profile.PhoneNumber ?? string.Empty,
-            BirthDate = profile.BirthDate,
-            Organization = profile.Organization ?? string.Empty,
-            Specialization = profile.Specialization ?? string.Empty,
-            PhotoUrl = profile.PhotoUrl,
-            ParticipantType = profile.ParticipantType,
-            HasPaidFee = profile.HasPaidFee,
-            IsRegisteredForConference = profile.IsRegisteredForConference,
-            IsApprovedAnyReports = reports.Any(r => r.IsApproved)
-        };
-
-        var vm = new ExtendedThesisViewModel
-        {
-            UserProfile = userProfileDto,
-            ReportsWithTheses = reports.Where(r => r.ExtThesis != null)
+            ReportsWithTheses = reports.Where(r => r.ExtThesis != null && r.Status == ReportStatus.ThesisApproved)
                                       .Select(r => new Reports
                                       {
                                           Id = r.Id,
@@ -58,9 +43,8 @@ public class ExtendedThesisService : IExtendedThesisService
                                           WorkType = r.WorkType,
                                           UploadedAt = r.UploadedAt,
                                           LastUpdatedAt = r.LastUpdatedAt,
-                                          IsApproved = r.IsApproved
                                       }).ToList(),
-            ReportsWithoutTheses = reports.Where(r => r.ExtThesis == null && r.IsApproved)
+            ReportsWithoutTheses = reports.Where(r => r.ExtThesis == null && r.Status == ReportStatus.ThesisApproved)
                                          .Select(r => new Reports
                                          {
                                              Id = r.Id,
@@ -69,41 +53,28 @@ public class ExtendedThesisService : IExtendedThesisService
                                              WorkType = r.WorkType,
                                              UploadedAt = r.UploadedAt,
                                              LastUpdatedAt = r.LastUpdatedAt,
-                                             IsApproved = r.IsApproved
                                          }).ToList()
         };
 
-        return Result<ExtendedThesisViewModel>.Success(vm);
+        return Result<ExtendedThesisDTO>.Success(dto);
     }
 
 
-    public async Task<Result<EditExtendedThesisViewModel>> GetThesisAsync(User user, Guid reportId)
+    public async Task<Result<EditExtendedThesisDTO>> GetThesisAsync(Guid userId, Guid reportId)
     {
-        var profile = await _userProfileRepository.GetByUserIdAsync(user.Id);
-        if (profile == null || !profile.IsRegisteredForConference)
-            return Result<EditExtendedThesisViewModel>.Failure("Вы не зарегистрированы на конференцию.");
+        var profile = await _userProfileRepository.GetByUserIdAsync(userId);
+        if (profile == null || profile.Status < ParticipantStatus.ProfileCompleted)
+            return Result<EditExtendedThesisDTO>.Failure("Вы не зарегистрированы на конференцию.");
 
         var report = await _reportsRepository.GetReportByIdAsync(reportId);
-        if (report == null || !report.IsApproved)
-            return Result<EditExtendedThesisViewModel>.Failure("Доклад не найден или не одобрен.");
 
-        var reports = await _reportsRepository.GetApprovedReportsByUserIdAsync(user.Id);
+        if (report == null)
+            return Result<EditExtendedThesisDTO>.Failure("Доклад не найден");
 
+        if (report.Status < ReportStatus.ThesisApproved)
+            return Result<EditExtendedThesisDTO>.Failure("У вас нет доступных одобренных тезисов");
 
-        var userProfileDto = new UserProfileDTO
-        {
-            FullName = $"{profile.LastName} {profile.FirstName} {profile.MiddleName}".Trim(),
-            Email = profile.User?.Email ?? string.Empty,
-            PhoneNumber = profile.PhoneNumber ?? string.Empty,
-            BirthDate = profile.BirthDate,
-            Organization = profile.Organization ?? string.Empty,
-            Specialization = profile.Specialization ?? string.Empty,
-            PhotoUrl = profile.PhotoUrl,
-            ParticipantType = profile.ParticipantType,
-            HasPaidFee = profile.HasPaidFee,
-            IsRegisteredForConference = profile.IsRegisteredForConference,
-            IsApprovedAnyReports = reports.Any(r => r.IsApproved)
-        };
+        var reports = await _reportsRepository.GetApprovedReportsByUserIdAsync(userId);
 
         var dto = new EditExtendedThesisDTO
         {
@@ -112,22 +83,20 @@ public class ExtendedThesisService : IExtendedThesisService
             Organization = profile.Organization!,
             ExtThesis = report.ExtThesis
         };
-
-        var vm = new EditExtendedThesisViewModel
-        {
-            UserProfile = userProfileDto,
-            Thesis = dto
-        };
-        return Result<EditExtendedThesisViewModel>.Success(vm);
+     
+        return Result<EditExtendedThesisDTO>.Success(dto);
     }
 
-    public async Task<Result> UpdateExtendedThesisAsync(User user, EditExtendedThesisDTO dto)
+    public async Task<Result> UpdateExtendedThesisAsync(Guid userId, EditExtendedThesisDTO dto)
     {
         var report = await _reportsRepository.GetReportByIdAsync(dto.ReportId);
-        if (report == null || !report.IsApproved)
-            return Result.Failureure("Доклад не найден или не одобрен.");
+        if (report == null)
+            return Result.Failure("Доклад не найден");
+        if (report.Status < ReportStatus.ThesisApproved)
+            return Result.Failure("У вас нет доступных одобренных тезисов");
 
         report.ExtThesis = dto.ExtThesis;
+        report.Status = ReportStatus.SubmittedExtendedThesis;
         await _reportsRepository.UpdateReportAsync(report);
 
         return Result.Success();

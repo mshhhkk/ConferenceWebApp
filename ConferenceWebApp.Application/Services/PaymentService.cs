@@ -1,4 +1,5 @@
 ﻿using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Domain.Enums;
 using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.ViewModels;
 using ConferenceWebApp.Infrastructure.Services.Abstract;
@@ -20,27 +21,12 @@ public class PaymentService : IPaymentService
         _fileService = fileService;
     }
 
-    public async Task<Result<ReceiptFileViewModel>> GetReceiptAsync(User user)
+    public async Task<Result<ReceiptFileDTO>> GetReceiptByUserIdAsync(Guid userId)
     {
-        var profile = await _userProfileRepository.GetByUserIdAsync(user.Id);
-        if (profile == null || !profile.IsRegisteredForConference)
-            return Result<ReceiptFileViewModel>.Failure("Вы не зарегистрированы на конференцию.");
-
-        var userProfileDto = new UserProfileDTO
-        {
-            FullName = $"{profile.FirstName} {profile.LastName} {profile.MiddleName}".Trim(),
-            Email = profile.User?.Email ?? string.Empty,
-            PhoneNumber = profile.PhoneNumber ?? string.Empty,
-            BirthDate = profile.BirthDate,
-            Organization = profile.Organization ?? string.Empty,
-            Specialization = profile.Specialization ?? string.Empty,
-            PhotoUrl = profile.PhotoUrl,
-            ParticipantType = profile.ParticipantType,
-            HasPaidFee = profile.HasPaidFee,
-            IsRegisteredForConference = profile.IsRegisteredForConference,
-            IsApprovedAnyReports = profile.HasPaidFee // или другой критерий
-        };
-
+        var profile = await _userProfileRepository.GetByUserIdAsync(userId);
+        if (profile == null || profile.Status == ParticipantStatus.ProfileCompleted)
+            return Result<ReceiptFileDTO>.Failure("Вы не зарегистрированы на конференцию.");
+       
         ReceiptFileDTO? receiptFileDto = null;
         if (!string.IsNullOrEmpty(profile.ReceiptFilePath))
         {
@@ -55,24 +41,16 @@ public class PaymentService : IPaymentService
             }
         }
 
-        var vm = new ReceiptFileViewModel
-        {
-            UserProfile = userProfileDto,
-            ReceiptFile = receiptFileDto
-        };
-
-        return Result<ReceiptFileViewModel>.Success(vm);
+        return Result<ReceiptFileDTO>.Success(receiptFileDto);
     }
 
 
-    public async Task<Result> UploadReceiptAsync(User user, IFormFile receipt)
+    public async Task<Result> UploadReceiptAsync(Guid userId, IFormFile receipt)
     {
-        var profile = await _userProfileRepository.GetByUserIdAsync(user.Id);
-        if (profile == null)
-            return Result.Failureure("Профиль пользователя не найден.");
-
-        if (profile.HasPaidFee)
-            return Result.Failureure("Оплата уже подтверждена. Загрузка нового чека невозможна.");
+        var profile = await _userProfileRepository.GetByUserIdAsync(userId);
+      
+        if (profile.Status == ParticipantStatus.ParticipationConfirmed)
+            return Result.Failure("Оплата уже подтверждена. Загрузка нового чека невозможна.");
 
         var allowedContentTypes = new[] { "image/jpeg", "image/png", "application/pdf" };
         const long maxSize = 10 * 1024 * 1024;
@@ -93,21 +71,22 @@ public class PaymentService : IPaymentService
             );
 
             profile.ReceiptFilePath = filePath;
+            profile.Status = ParticipantStatus.CheckSubmitted;
             await _userProfileRepository.UpdateAsync(profile);
 
             return Result.Success();
         }
         catch (Exception ex)
         {
-            return Result.Failureure(ex.Message);
+            return Result.Failure(ex.Message);
         }
     }
 
-    public async Task<Result<(Stream FileStream, string ContentType, string FileName)>> DownloadReceiptAsync(User user)
+    public async Task<Result<(Stream FileStream, string ContentType, string FileName)>> DownloadReceiptAsync(Guid userId)
     {
         try
         {
-            var profile = await _userProfileRepository.GetByUserIdAsync(user.Id);
+            var profile = await _userProfileRepository.GetByUserIdAsync(userId);
             if (profile == null || string.IsNullOrEmpty(profile.ReceiptFilePath))
                 return Result<(Stream, string, string)>.Failure("Чек не найден.");
 

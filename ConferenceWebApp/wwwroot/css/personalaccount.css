@@ -37,14 +37,14 @@
 
 .personal-account-gradient--top {
     top: 0;
-    height: 400px; /* подберите нужную высоту */
+    height: 400px;
     display: flex;
     justify-content: center;
 }
 
 .personal-account-gradient--bottom {
     bottom: 0;
-    height: 400px; /* подберите нужную высоту */
+    height: 400px; 
     display: flex;
     justify-content: center;
 }
@@ -65,7 +65,7 @@ body {
     display: flex;
     gap: 16px;
     margin-bottom: 24px;
-    align-items: flex-start; /* не растягивать по высоте */
+    align-items: flex-start; 
 }
 
 .section-tab-btn {
@@ -74,18 +74,18 @@ body {
     justify-content: center;
     font-family: 'Montserrat', Arial, sans-serif;
     font-size: 16px;
-    font-weight: 700;                /* Bold */
-    color: #9D3FE7;                  /* Corporate/Purple */
+    font-weight: 700;             
+    color: #9D3FE7;                 
     background: transparent;
-    border: 2px solid #9D3FE7;       /* Цвет границы как текст */
+    border: 2px solid #9D3FE7;      
     border-radius: 8px;
-    padding: 4px 14px;               /* Paragraph spacing */
+    padding: 4px 14px;              
     cursor: pointer;
     transition: background 0.2s, color 0.2s, border-color 0.2s;
     outline: none;
     min-width: 0;
     height: 45px;
-    line-height: 1.48;               /* 148% */
+    line-height: 1.48;            
     box-sizing: border-box;
     white-space: nowrap;
     text-align: center;
@@ -117,6 +117,14 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    height: 100%; /* растягиваем на всю высоту main */
+    height: 100%; 
     box-sizing: border-box;
+}
+
+.section-tab-btn.disabled-tab {
+    color: gray !important;
+    cursor: not-allowed;
+    pointer-events: none; 
+    opacity: 0.6;
+    text-decoration: none;
 }

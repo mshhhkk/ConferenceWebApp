@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAdminCommitteeService, AdminCommitteeService>();
         services.AddScoped<IReportAdminService, ReportAdminService>();
         services.AddScoped<IScheduleAdminService, ScheduleAdminService>();
-        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserProfileService, UserService>();
         return services;
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace ConferenceWebApp.Domain.Enums
+﻿namespace ConferenceWebApp.Domain.Enums;
+
+public enum ParticipantType
 {
-    public enum ParticipantType
-    {
-        Spectator,
-        Speaker
-    }
+    Spectator,
+    Speaker
 }

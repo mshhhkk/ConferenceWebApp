@@ -3,6 +3,7 @@ using ConferenceWebApp.Infrastructure.Services.Abstract.Admin;
 using ConferenceWebApp.Application;
 using Microsoft.EntityFrameworkCore;
 using ConferenceWebApp.Application.Interfaces.Repositories;
+using ConferenceWebApp.Domain.Enums;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization.Admin;
 
@@ -30,7 +31,7 @@ public class AdminPaymentService : IAdminPaymentService
                     FullName = $"{up.LastName} {up.FirstName} {up.MiddleName}",
                     Email = up.User.Email,
                     ReceiptFilePath = up.ReceiptFilePath!,
-                    HasPaid = up.HasPaidFee
+                    HasPaid = (up.Status == ParticipantStatus.CheckSubmitted)
                 })
                 .ToListAsync();
 
@@ -47,9 +48,9 @@ public class AdminPaymentService : IAdminPaymentService
         var profile = await _userProfileRepository.GetByUserIdAsync(userId);
 
         if (profile == null)
-            return Result.Failureure("Пользователь не найден.");
+            return Result.Failure("Пользователь не найден.");
 
-        profile.HasPaidFee = true;
+        profile.Status = ParticipantStatus.ParticipationConfirmed;
         await _userProfileRepository.UpdateAsync(profile);
 
         return Result.Success();

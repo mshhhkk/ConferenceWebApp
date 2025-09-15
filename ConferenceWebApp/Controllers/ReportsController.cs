@@ -7,6 +7,7 @@ using ConferenceWebApp.Infrastructure.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ConferenceWebApp.Application;
 
 [Authorize]
 public class ReportsController : BaseController
@@ -14,14 +15,15 @@ public class ReportsController : BaseController
     private readonly IReportService _reportService;
     private readonly UserManager<User> _userManager;
     private readonly IUserProfileRepository _userProfileRepository;
-    private readonly IUserService _userService;
+    private readonly IUserProfileService _userProfileService;
     public ReportsController(
         IReportService reportService,
         UserManager<User> userManager,
-        IUserProfileRepository userProfileRepository) : base(userProfileRepository)
+        IUserProfileRepository userProfileRepository, IUserProfileService userProfileService) : base(userProfileRepository)
     {
         _reportService = reportService;
         _userManager = userManager;
+        _userProfileService = userProfileService;
         _userProfileRepository = userProfileRepository;
 
     }
@@ -35,38 +37,46 @@ public class ReportsController : BaseController
     public async Task<IActionResult> Index()
     {
         var userId = await GetCurrentUserIdAsync();
-        var result = await _reportService.GetUserReportsAsync(userId);
 
-        if (!result.IsSuccess)
-            return View("Error", result.ErrorMessage);
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId);
+        if (!resultUserProfile.IsSuccess)
+        {
+            ViewBag.Message = resultUserProfile.ErrorMessage;
+            return View();
+        }
 
-        return View(result.Value);
-    }
+        var reportsResult = await _reportService.GetReportsByUserIdAsync(userId);
+        if (!reportsResult.IsSuccess)
+        {
+            ViewBag.Message = reportsResult.ErrorMessage;
+            return View();
+        }
+           
+        var vm = new UserReportsViewModel
+        {
+            UserProfile = resultUserProfile.Value,
+            Reports = reportsResult.Value
+        };
 
-    [HttpGet]
-    public async Task<IActionResult> Add()
-    {
-        var userId = await GetCurrentUserIdAsync();
-        var result = await _reportService.GetUserProfileForAddingReportsAsync(userId);
-        return View(result.Value);
+        return View(vm);
     }
 
     [HttpPost]
     public async Task<IActionResult> Add(AddReportViewModel vm)
     {
-        var userIdPost = await GetCurrentUserIdAsync();
-        var result = await _reportService.CreateReportAsync(vm.Report, userIdPost);
+        var userId = await GetCurrentUserIdAsync();
 
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId);
+        if (!resultUserProfile.IsSuccess)
+        {
+            ViewBag.Message = resultUserProfile.ErrorMessage;
+            return View();
+        }
+
+        var result = await _reportService.AddReportAsync(vm.Report, userId);
         if (!result.IsSuccess)
         {
-            // Получаем профиль пользователя
-            var profileResult = await _reportService.GetUserProfileForAddingReportsAsync(userIdPost);
-
-            if (profileResult.IsSuccess)
-            {
-                vm.UserProfile = profileResult.Value.UserProfile;
-            }
-            ModelState.AddModelError("", result.ErrorMessage);
+            ViewBag.Message = result.ErrorMessage;
             return View(vm);
         }
 
@@ -78,10 +88,27 @@ public class ReportsController : BaseController
     public async Task<IActionResult> Edit(Guid id)
     {
         var userId = await GetCurrentUserIdAsync();
+
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId);
+        if (!resultUserProfile.IsSuccess)
+        {
+            ViewBag.Message = resultUserProfile.ErrorMessage;
+            return RedirectToAction("Index"); ;
+        }
+
         var result = await _reportService.GetReportForEditAsync(id, userId);
 
         if (!result.IsSuccess)
-            return View("Error", result.ErrorMessage);
+        {
+            ViewBag.Message = result.ErrorMessage;
+            return RedirectToAction("Index");
+        }
+
+        var vm = new EditReportViewModel
+        {
+            UserProfile = resultUserProfile.Value,
+            Report = result.Value
+        };
 
         return View(result.Value);
     }
@@ -91,44 +118,42 @@ public class ReportsController : BaseController
     {
 
         var userId = await GetCurrentUserIdAsync();
-        var result = await _reportService.UpdateReportAsync(vm, userId);
+
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId);
+        if (!resultUserProfile.IsSuccess)
+        {
+            ViewBag.Message = resultUserProfile.ErrorMessage;
+            return RedirectToAction("Index"); ;
+        }
+
+        var result = await _reportService.UpdateReportAsync(vm.Report, userId);
 
         if (!result.IsSuccess)
         {
-            var profileResult = await _reportService.GetUserProfileForAddingReportsAsync(userId);
-
-            if (profileResult.IsSuccess)
+            if (!result.IsSuccess)
             {
-                vm.UserProfile = profileResult.Value.UserProfile;
+                ViewBag.Message = result.ErrorMessage;
+                return View(vm);
             }
-            ModelState.AddModelError("", result.ErrorMessage);
-            return View(vm);
         }
 
         return RedirectToAction("Index");
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Delete(Guid id)
-    {
-        var userId = await GetCurrentUserIdAsync();
-        var result = await _reportService.GetReportAsync(id, userId);
-
-        if (!result.IsSuccess)
-        {
-            TempData["ErrorMessage"] = result.ErrorMessage;
-            return View("Error");
-        }
-
-        // Останется как страница подтверждения, если зайдут напрямую (не через модалку)
-        return RedirectToAction("Index");
-    }
 
     [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken] // <-- важно
+    [ValidateAntiForgeryToken] 
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
         var userId = await GetCurrentUserIdAsync();
+
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId);
+        if (!resultUserProfile.IsSuccess)
+        {
+            ViewBag.Message = resultUserProfile.ErrorMessage;
+            return RedirectToAction("Index"); ;
+        }
+
         var result = await _reportService.DeleteReportAsync(id, userId);
 
         if (!result.IsSuccess)
@@ -142,6 +167,14 @@ public class ReportsController : BaseController
     public async Task<IActionResult> Download(Guid id)
     {
         var userId = await GetCurrentUserIdAsync();
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId);
+
+        if (!resultUserProfile.IsSuccess)
+        {
+            ViewBag.Message = resultUserProfile.ErrorMessage;
+            return RedirectToAction("Edit"); 
+        }
+
         var result = await _reportService.DownloadReportAsync(id, userId);
 
         if (!result.IsSuccess)

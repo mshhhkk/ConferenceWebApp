@@ -33,7 +33,6 @@ public class BaseController : Controller
                 var user = await _userProfileRepository.GetUserProfileByEmail(email);
                 if (user != null)
                 {
-                    isRegisteredOnConference = await _userProfileRepository.IsUserRegisteredForConferenceAsync(user.UserId);
                     username = $"{user.LastName} {user.FirstName?[0]}";
                 }
             }
@@ -53,6 +52,6 @@ public class BaseController : Controller
             ViewBag.Error = error;
             TempData.Remove("Error");
         }
-        await next(); // Продолжаем выполнение следующего действия
+        await next(); 
     }
 }

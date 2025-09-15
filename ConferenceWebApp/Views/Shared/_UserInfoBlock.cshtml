@@ -78,15 +78,15 @@
 
         <div class="user-info-row">
             <span class="user-info-key">Статус оплаты:</span>
-            <span class="user-info-value">@(Model.HasPaidFee ? "Оплачено" : "Не оплачено")</span>
+            <span class="user-info-value">@(Model.Status==ParticipantStatus.ParticipationConfirmed ? "Оплачено" : "Не оплачено")</span>
         </div>
         <div class="user-info-row">
             <span class="user-info-key">Регистрация:</span>
-            <span class="user-info-value">@(Model.IsRegisteredForConference ? "Зарегистрирован" : "Не зарегистрирован")</span>
+            <span class="user-info-value">@(Model.Status == ParticipantStatus.ProfileCompleted ? "Зарегистрирован" : "Не зарегистрирован")</span>
         </div>
         <div class="user-info-row">
             <span class="user-info-key">Доклады:</span>
-            <span class="user-info-value">@(Model.IsApprovedAnyReports ? "Есть одобренные" : "Нет одобренных")</span>
+            <span class="user-info-value">@(Model.ApprovalStatus == UserApprovalStatus.ThesisApproved ? "Есть одобренные" : "Нет одобренных")</span>
         </div>
     </div>
 </div>

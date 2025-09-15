@@ -1,6 +1,7 @@
 ﻿using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.Application.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
+using ConferenceWebApp.Domain.Enums;
 
 namespace ConferenceWebApp.Persistence.Repositories.Realization;
 
@@ -44,22 +45,20 @@ public class UserProfileRepository : IUserProfileRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> IsUserRegisteredForConferenceAsync(Guid userId)
+    public async Task<ParticipantStatus> IsUserRegisteredForConferenceAsync(Guid userId)
     {
         var userProfile = await _context.UserProfile
             .AsNoTracking()
             .FirstOrDefaultAsync(up => up.UserId == userId);
 
-        if (userProfile == null) return false;
-        return userProfile.IsRegisteredForConference;
+        return userProfile.Status;
     }
 
     public async Task<List<UserProfile>> GetUsersWithReceiptsAsync()
     {
         return await _context.UserProfile
             .Include(up => up.User) // Явная загрузка связанного User
-            .Where(up => !string.IsNullOrEmpty(up.ReceiptFilePath) &&
-                        up.IsRegisteredForConference)
+            .Where(up => !string.IsNullOrEmpty(up.ReceiptFilePath))
             .ToListAsync();
     }
 

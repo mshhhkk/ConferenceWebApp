@@ -1,4 +1,5 @@
 ﻿using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Domain.Enums;
 
 namespace ConferenceWebApp.Application.Interfaces.Repositories;
 
@@ -8,7 +9,7 @@ public interface IUserProfileRepository
 
     Task UpdateAsync(UserProfile userProfile);
 
-    Task<bool> IsUserRegisteredForConferenceAsync(Guid userId);
+    Task<ParticipantStatus> IsUserRegisteredForConferenceAsync(Guid userId);
 
     Task<UserProfile?> GetUserProfileByEmail(string email);
 

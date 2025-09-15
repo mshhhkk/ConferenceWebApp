@@ -13,38 +13,69 @@ public class ExtendedThesisController : BaseController
     private readonly UserManager<User> _userManager;
     private readonly IExtendedThesisService _thesisService;
     private readonly IUserProfileRepository _userProfileRepository;
+    private readonly IUserProfileService _userProfileService;
 
     public ExtendedThesisController(
         UserManager<User> userManager,
         IExtendedThesisService thesisService,
-        IUserProfileRepository userProfileRepository) : base(userProfileRepository)
+        IUserProfileRepository userProfileRepository,
+        IUserProfileService userProfileService) : base(userProfileRepository)
     {
         _userManager = userManager;
         _thesisService = thesisService;
         _userProfileRepository = userProfileRepository;
+        _userProfileService = userProfileService;
     }
 
+    private async Task<(Guid? userId, IActionResult? redirect)> GetCurrentUserIdAsync()
+    {
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return (null, RedirectToAction("Login", "Account"));
+        }
+        return (user.Id, null);
+    }
     public async Task<IActionResult> Index()
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null) return Unauthorized();
 
-        var result = await _thesisService.GetExtendedThesisesAsync(user);
-        if (!result.IsSuccess)
+        ViewBag.Message = TempData["Error"];
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
+
+        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId!.Value);
+        if (!resultUserProfile.IsSuccess)
         {
-            ViewBag.ErrorMessage = result.ErrorMessage;
-            return View("Error");
+            ViewBag.Message = resultUserProfile.ErrorMessage;
+            return View(new ExtendedThesisViewModel());
         }
 
-        return View(result.Value);
+        var resultExtThesis = await _thesisService.GetExtendedThesisesAsync(userId!.Value);
+
+        if (!resultExtThesis.IsSuccess)
+        {
+            ViewBag.ErrorMessage = resultExtThesis.ErrorMessage;
+            return View(new ExtendedThesisViewModel());
+        }
+
+        var vm = new ExtendedThesisViewModel
+        {
+            UserProfile = resultUserProfile.Value,
+            ReportsWithTheses = resultExtThesis.Value.ReportsWithTheses,
+            ReportsWithoutTheses = resultExtThesis.Value.ReportsWithoutTheses
+        };
+        return View(vm);
     }
 
     public async Task<IActionResult> Edit(Guid reportId)
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null) return Unauthorized();
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
 
-        var result = await _thesisService.GetThesisAsync(user, reportId);
+        var result = await _thesisService.GetThesisAsync(userId!.Value, reportId);
         if (!result.IsSuccess)
         {
             ViewBag.ErrorMessage = result.ErrorMessage;
@@ -58,23 +89,24 @@ public class ExtendedThesisController : BaseController
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EditExtendedThesisViewModel vm)
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null) return Unauthorized();
+        var (userId, redirect) = await GetCurrentUserIdAsync();
+        if (redirect != null)
+            return redirect;
 
-        var resultEdit = await _thesisService.GetThesisAsync(user, vm.Thesis.ReportId);
+        var resultEdit = await _thesisService.GetThesisAsync(userId!.Value, vm.Thesis.ReportId);
         if (!resultEdit.IsSuccess)
         {
             ViewBag.ErrorMessage = resultEdit.ErrorMessage;
             return View(vm);
         }
 
-        var result = await _thesisService.UpdateExtendedThesisAsync(user, vm.Thesis);
+        var result = await _thesisService.UpdateExtendedThesisAsync(userId!.Value, vm.Thesis);
         if (!result.IsSuccess)
         {
             ViewBag.ErrorMessage = result.ErrorMessage;
             return View(vm);
         }
+
         return RedirectToAction(nameof(Index));
     }
-
 }

@@ -48,18 +48,19 @@ public class PersonalAccountService : IPersonalAccountService
 
         var dto = new UserProfileDTO
         {
-            FullName = $"{userProfile.FirstName ?? "Имя"} {userProfile.LastName ?? "Фамилия"} {userProfile.MiddleName ?? ""}",
+            FullName = $"{userProfile.LastName} {userProfile.FirstName} {userProfile.MiddleName}".Trim(),
             Email = userProfile.User?.Email ?? string.Empty,
-            PhoneNumber = userProfile.PhoneNumber ?? "Не указан",
+            PhoneNumber = userProfile.PhoneNumber ?? string.Empty,
             BirthDate = userProfile.BirthDate,
-            Specialization = userProfile.Specialization ?? "Не указана",
-            Organization = userProfile.Organization ?? "Не указана",
-            PhotoUrl = photoUrl,
+            Organization = userProfile.Organization ?? string.Empty,
+            Specialization = userProfile.Specialization ?? string.Empty,
+            PhotoUrl = userProfile.PhotoUrl,
             ParticipantType = userProfile.ParticipantType,
-            HasPaidFee = userProfile.HasPaidFee,
-            IsRegisteredForConference = userProfile.IsRegisteredForConference,
-            IsApprovedAnyReports = userReports.Any()
+            Status = userProfile.Status,
+            IsApprovedAnyReports = (userProfile.ApprovalStatus > UserApprovalStatus.None),
+            IsExtendedThesisApproved = (userProfile.ApprovalStatus == UserApprovalStatus.ExtendedThesisApproved)
         };
+
         var vm = new UserProfileViewModel
         {
             UserProfile = dto
@@ -93,7 +94,7 @@ public class PersonalAccountService : IPersonalAccountService
     {
         var userProfile = await _userProfileRepository.GetByUserIdAsync(userId);
         if (userProfile == null)
-            return Result.Failureure("Профиль пользователя не найден");
+            return Result.Failure("Профиль пользователя не найден");
 
         try
         {
@@ -130,7 +131,7 @@ public class PersonalAccountService : IPersonalAccountService
         }
         catch (Exception ex)
         {
-            return Result.Failureure($"Ошибка при обновлении профиля: {ex.Message}");
+            return Result.Failure($"Ошибка при обновлении профиля: {ex.Message}");
         }
     }
 

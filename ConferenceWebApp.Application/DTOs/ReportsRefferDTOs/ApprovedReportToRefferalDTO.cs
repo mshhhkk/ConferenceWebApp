@@ -1,4 +1,7 @@
-﻿namespace ConferenceWebApp.Application.DTOs.ReportsRefferDTOs;
+﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+using ConferenceWebApp.Domain.Enums;
+
+namespace ConferenceWebApp.Application.DTOs.ReportsRefferDTOs;
 
 public class ApprovedReportToRefferalDTO
 {
@@ -6,6 +9,11 @@ public class ApprovedReportToRefferalDTO
     public Guid ReportId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string ExtThesis { get; set; } = string.Empty;
-    public bool IsTransferRequested { get; set; } = true;
-    public bool IsTransferConfirmed { get; set; }
+
+}
+
+public class ApprovedReportsForReferralDTO
+{
+    public List<ApprovedReportToRefferalDTO> Reports { get; set; } = new();
+    public List<ApprovedReportToRefferalDTO> IncomingTransfers { get; set; } = new();
 }

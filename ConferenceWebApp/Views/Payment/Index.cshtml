@@ -13,7 +13,7 @@
     </div>
 
     <div class="payment-title">Оплата участия в конференции</div>
-    @if (Model.UserProfile.HasPaidFee == true)
+    @if (Model.UserProfile.Status == ParticipantStatus.ParticipationConfirmed)
     {
         <div class="alert alert-success" style="margin-bottom:18px;">
             <span style="font-size:18px;"> Оплата подтверждена. Спасибо!</span>
@@ -58,19 +58,6 @@
         <button type="submit" class="payment-btn" style="margin-top:12px;">Отправить чек</button>
     </form>
 
-    @if (TempData["Message"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["Message"]
-        </div>
-    }
-
-    @if (TempData["UploadError"] != null)
-    {
-        <div class="alert alert-danger">
-            @TempData["UploadError"]
-        </div>
-    }
 </div>
 
 <script>

@@ -7,9 +7,9 @@ namespace ConferenceWebApp.Infrastructure.Services.Abstract;
 
 public interface IExtendedThesisService
 {
-    Task<Result<ExtendedThesisViewModel>> GetExtendedThesisesAsync(User user);
+    Task<Result<ExtendedThesisDTO>> GetExtendedThesisesAsync(Guid userId);
 
-    Task<Result<EditExtendedThesisViewModel>> GetThesisAsync(User user, Guid reportId);
+    Task<Result<EditExtendedThesisDTO>> GetThesisAsync(Guid userId, Guid reportId);
 
-    Task<Result> UpdateExtendedThesisAsync(User user, EditExtendedThesisDTO dto);
+    Task<Result> UpdateExtendedThesisAsync(Guid userId, EditExtendedThesisDTO dto);
 }

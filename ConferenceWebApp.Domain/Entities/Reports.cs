@@ -26,9 +26,6 @@ public class Reports
     public string FilePath { get; set; } = null!;
 
     [Required]
-    public bool IsApproved { get; set; } = false; 
-
-    [Required]
     public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
 
     [Required]
@@ -50,8 +47,8 @@ public class Reports
     public Guid TargetUserId { get; set; } = Guid.Empty;
 
     [Required]
-    public bool IsTransferRequested { get; set; }
+    public ReportStatus Status { get; set; }
 
     [Required]
-    public bool IsTransferConfirmed { get; set; }
+    public ReportTransferStatus TransferStatus { get; set; }
 }

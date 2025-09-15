@@ -31,15 +31,10 @@ public class UserProfile
     [Required]
     public ParticipantType ParticipantType { get; set; } = ParticipantType.Spectator;
 
-    public bool IsRegisteredForConference =>
-        !string.IsNullOrEmpty(FirstName) &&
-        !string.IsNullOrEmpty(LastName) &&
-        !string.IsNullOrEmpty(MiddleName) &&
-        !string.IsNullOrEmpty(Organization) &&
-        !string.IsNullOrEmpty(Specialization) &&
-        !string.IsNullOrEmpty(PhoneNumber);
+    [Required]
+    public ParticipantStatus Status { get; set; }
 
-    public bool HasPaidFee { get; set; } = false;
+    public UserApprovalStatus ApprovalStatus { get; set; }
 
     [MaxLength(255)]
     public string? ReceiptFilePath { get; set; }  // Путь до файла в wwwroot

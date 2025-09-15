@@ -29,13 +29,13 @@ public class AuthService : IAuthService
     {
         var existingUser = await _userManager.FindByEmailAsync(dto.Email);
         if (existingUser != null)
-            return Result.Failureure("Пользователь с таким email уже существует");
+            return Result.Failure("Пользователь с таким email уже существует");
 
         var user = new User(Guid.NewGuid(), dto.Email);
         var result = await _userManager.CreateAsync(user, dto.Password);
 
         if (!result.Succeeded)
-            return Result.Failureure(string.Join(", ", result.Errors.Select(e => e.Description)));
+            return Result.Failure(string.Join(", ", result.Errors.Select(e => e.Description)));
 
         await _userManager.AddToRoleAsync(user, "Participant");
 
@@ -50,11 +50,11 @@ public class AuthService : IAuthService
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
-            return Result.Failureure("Пользователь не найден");
+            return Result.Failure("Пользователь не найден");
 
         var result = await _userManager.ConfirmEmailAsync(user, token);
         if (!result.Succeeded)
-            return Result.Failureure("Ошибка подтверждения email");
+            return Result.Failure("Ошибка подтверждения email");
 
         await _signInManager.SignInAsync(user, isPersistent: true);
         return Result.Success();
@@ -64,7 +64,7 @@ public class AuthService : IAuthService
     {
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
-            return Result.Failureure("Неверный логин или пароль");
+            return Result.Failure("Неверный логин или пароль");
 
         var code = _twoFactorService.GenerateCode();
         await _twoFactorService.StoreCodeAsync(dto.Email, code);
@@ -76,11 +76,11 @@ public class AuthService : IAuthService
     public async Task<Result> VerifyTwoFactorCodeAsync(Verify2FADTO dto)
     {
         if (!await _twoFactorService.ValidateCodeAsync(dto.Email, dto.Code))
-            return Result.Failureure("Неверный или просроченный код");
+            return Result.Failure("Неверный или просроченный код");
 
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null)
-            return Result.Failureure("Пользователь не найден");
+            return Result.Failure("Пользователь не найден");
 
         await _signInManager.SignInAsync(user, isPersistent: true);
         return Result.Success();

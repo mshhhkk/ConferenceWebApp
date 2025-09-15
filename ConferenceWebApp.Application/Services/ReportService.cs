@@ -1,4 +1,5 @@
 ﻿using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Domain.Enums;
 using ConferenceWebApp.Application.DTOs;
 using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.DTOs.ReportsDTOs;
@@ -27,82 +28,34 @@ public class ReportService : IReportService
         _userProfileRepository = userProfileRepository;
     }
 
-    public async Task<Result<UserReportsViewModel>> GetUserReportsAsync(Guid userId)
+    public async Task<Result<List<ReportDTO>>> GetReportsByUserIdAsync(Guid userId)
     {
         var userProfile = await _userProfileRepository.GetByUserIdAsync(userId);
-        if (userProfile == null || !userProfile.IsRegisteredForConference)
-            return Result<UserReportsViewModel>.Failure("Пользователь не зарегистрирован на конференцию");
+        if (userProfile == null || userProfile.Status==0)
+            return Result<List<ReportDTO>>.Failure("Пользователь не зарегистрирован на конференцию");
 
         var reports = await _reportRepository.GetReportsByUserIdAsync(userId);
-
-        var userProfileDto = new UserProfileDTO
-        {
-            FullName = $"{userProfile.LastName} {userProfile.FirstName} {userProfile.MiddleName}".Trim(),
-            Email = userProfile.User?.Email ?? string.Empty,
-            PhoneNumber = userProfile.PhoneNumber ?? string.Empty,
-            BirthDate = userProfile.BirthDate,
-            Organization = userProfile.Organization ?? string.Empty,
-            Specialization = userProfile.Specialization ?? string.Empty,
-            PhotoUrl = userProfile.PhotoUrl,
-            ParticipantType = userProfile.ParticipantType,
-            HasPaidFee = userProfile.HasPaidFee,
-            IsRegisteredForConference = userProfile.IsRegisteredForConference,
-            IsApprovedAnyReports = reports.Any(r => r.IsApproved)
-        };
-
-        return Result<UserReportsViewModel>.Success(new UserReportsViewModel
-        {
-            UserProfile = userProfileDto,
-            Reports = reports.Select(ToReportDTO).ToList()
-        });
+        return Result<List<ReportDTO>>.Success(reports.Select(ToReportDTO).ToList());
     }
 
 
-
-    public async Task<Result<ReportDTO>> GetReportAsync(Guid reportId, Guid userId)
+    public async Task<Result<EditReportDTO>> GetReportForEditAsync(Guid reportId, Guid userId)
     {
-        var result = await ValidateReportAccess(reportId, userId);
-        if (!result.IsSuccess)
-            return Result<ReportDTO>.Failure(result.ErrorMessage);
-
-        return Result<ReportDTO>.Success(ToReportDTO(result.Value));
-    }
-
-    public async Task<Result<EditReportViewModel>> GetReportForEditAsync(Guid reportId, Guid userId)
-    {
-        var userProfile = await _userProfileRepository.GetByUserIdAsync(userId);
-        if (userProfile == null || !userProfile.IsRegisteredForConference)
-            return Result<EditReportViewModel>.Failure("Пользователь не зарегистрирован на конференцию");
-
-        var reports = await _reportRepository.GetReportsByUserIdAsync(userId);
-
-        var userProfileDto = new UserProfileDTO
-        {
-            FullName = $"{userProfile.LastName} {userProfile.FirstName} {userProfile.MiddleName}".Trim(),
-            Email = userProfile.User?.Email ?? string.Empty,
-            PhoneNumber = userProfile.PhoneNumber ?? string.Empty,
-            BirthDate = userProfile.BirthDate,
-            Organization = userProfile.Organization ?? string.Empty,
-            Specialization = userProfile.Specialization ?? string.Empty,
-            PhotoUrl = userProfile.PhotoUrl,
-            ParticipantType = userProfile.ParticipantType,
-            HasPaidFee = userProfile.HasPaidFee,
-            IsRegisteredForConference = userProfile.IsRegisteredForConference,
-            IsApprovedAnyReports = reports.Any(r => r.IsApproved)
-        };
-        var result = await ValidateReportAccess(reportId, userId);
-        if (!result.IsSuccess)
-            return Result<EditReportViewModel>.Failure(result.ErrorMessage);
         var report = await _reportRepository.GetReportByIdAsync(reportId);
+        if (report == null)
+            return Result<EditReportDTO>.Failure("Доклад не найден");
 
-        return Result<EditReportViewModel>.Success(new EditReportViewModel
-        {
-            UserProfile = userProfileDto,
-            Report = ToEditReportDTO(report)
-        });
+        if (report.UserId != userId || report.AuthorId != userId)
+            return Result<EditReportDTO>.Failure("Доступ к отчету запрещен");
+
+        if (report.Status == ReportStatus.ThesisApproved)
+            return Result<EditReportDTO>.Failure("Невозможно изменить утвержденный отчет");
+
+        return Result<EditReportDTO>.Success(ToEditReportDTO(report));
+
     }
 
-    public async Task<Result> CreateReportAsync(AddReportDTO dto, Guid userId)
+    public async Task<Result> AddReportAsync(AddReportDTO dto, Guid userId)
     {
         try
         {
@@ -121,14 +74,15 @@ public class ReportService : IReportService
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 ReportTheme = dto.ReportTheme,
-                IsApproved = false,
                 Section = dto.Section,
                 WorkType = dto.WorkType,
                 FilePath = filePath,
                 IsAuthor = true,
                 AuthorId = userId,
                 UploadedAt = DateTime.UtcNow,
-                LastUpdatedAt = DateTime.UtcNow
+                LastUpdatedAt = DateTime.UtcNow,
+                Status = ReportStatus.SubmittedThesis,
+                TransferStatus = ReportTransferStatus.None
             };
 
             await _reportRepository.AddReportAsync(report);
@@ -136,33 +90,28 @@ public class ReportService : IReportService
         }
         catch (Exception ex)
         {
-            return Result.Failureure($"Ошибка при создании отчета: {ex.Message}");
+            return Result.Failure($"Ошибка при создании отчета: {ex.Message}");
         }
     }
 
-    public async Task<Result> UpdateReportAsync(EditReportViewModel vm, Guid userId)
+    public async Task<Result> UpdateReportAsync(EditReportDTO dto, Guid userId)
     {
         try
         {
-
-            var result = await ValidateReportAccess(vm.Report.Id, userId);
-            if (!result.IsSuccess)
-                return Result.Failureure(result.ErrorMessage);
-
-            var report = result.Value;
-            report.ReportTheme = vm.Report.ReportTheme;
-            report.Section = vm.Report.Section;
-            report.WorkType = vm.Report.WorkType;
+            var report = await _reportRepository.GetReportByIdAsync(dto.Id);
+            report.ReportTheme = dto.ReportTheme;
+            report.Section = dto.Section;
+            report.WorkType = dto.WorkType;
             report.LastUpdatedAt = DateTime.UtcNow;
 
-            if (vm.Report.File != null)
+            if (dto.File != null)
             {
-                var resultFile = ValidateFile(vm.Report.File);
+                var resultFile = ValidateFile(dto.File);
                 if (!resultFile.IsSuccess)
-                    return result;
+                    return resultFile;
 
                 report.FilePath = await _fileService.UpdateFileAsync(
-                    vm.Report.File,
+                    dto.File,
                     report.FilePath,
                     "uploads",
                     new[] { "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document" },
@@ -174,7 +123,7 @@ public class ReportService : IReportService
         }
         catch (Exception ex)
         {
-            return Result.Failureure($"Ошибка при обновлении отчета: {ex.Message}");
+            return Result.Failure($"Ошибка при обновлении отчета: {ex.Message}");
         }
     }
 
@@ -182,17 +131,23 @@ public class ReportService : IReportService
     {
         try
         {
-            var result = await ValidateReportAccess(reportId, userId);
-            if (!result.IsSuccess)
-                return Result.Failureure(result.ErrorMessage);
+            var report = await _reportRepository.GetReportByIdAsync(reportId);
+            if (report == null)
+                return Result<EditReportDTO>.Failure("Доклад не найден");
 
-            _fileService.DeleteFile(result.Value.FilePath);
+            if (report.UserId != userId || report.AuthorId != userId)
+                return Result<EditReportDTO>.Failure("Доступ к отчету запрещен");
+
+            if (report.Status == ReportStatus.ThesisApproved)
+                return Result<EditReportDTO>.Failure("Невозможно изменить утвержденный отчет");
+
+            _fileService.DeleteFile(report.FilePath);
             await _reportRepository.DeleteReportAsync(reportId);
             return Result.Success();
         }
         catch (Exception ex)
         {
-            return Result.Failureure($"Ошибка при удалении отчета: {ex.Message}");
+            return Result.Failure($"Ошибка при удалении отчета: {ex.Message}");
         }
     }
 
@@ -200,11 +155,14 @@ public class ReportService : IReportService
     {
         try
         {
-            var result = await ValidateReportAccess(reportId, userId);
-            if (!result.IsSuccess)
-                return Result<FileStreamResult>.Failure(result.ErrorMessage);
+            var report = await _reportRepository.GetReportByIdAsync(reportId);
+            if (report == null)
+                return Result<FileStreamResult>.Failure("Доклад не найден");
 
-            var (fileStream, contentType, fileName) = await _fileService.GetFileAsync(result.Value.FilePath);
+            if (report.UserId != userId || report.AuthorId != userId)
+                return Result<FileStreamResult>.Failure("Доступ к отчету запрещен");
+
+            var (fileStream, contentType, fileName) = await _fileService.GetFileAsync(report.FilePath);
             return Result<FileStreamResult>.Success(
                 new FileStreamResult(fileStream, contentType) { FileDownloadName = fileName });
         }
@@ -215,51 +173,11 @@ public class ReportService : IReportService
     }
 
 
-    public async Task<Result<AddReportViewModel>> GetUserProfileForAddingReportsAsync(Guid userId)
-    {
-        var userProfile = await _userProfileRepository.GetByUserIdAsync(userId);
-        var dto = new UserProfileDTO
-        {
-            FullName = $"{userProfile?.FirstName ?? "Имя"} {userProfile?.LastName ?? "Фамилия"} {userProfile?.MiddleName ?? ""}",
-            Email = userProfile?.User?.Email ?? string.Empty,
-            PhoneNumber = userProfile?.PhoneNumber ?? "Не указан",
-            BirthDate = (DateOnly)(userProfile?.BirthDate),
-            Specialization = userProfile?.Specialization ?? "Не указана",
-            Organization = userProfile?.Organization ?? "Не указана",
-            PhotoUrl = userProfile?.PhotoUrl,
-            ParticipantType = (ConferenceWebApp.Domain.Enums.ParticipantType)(userProfile?.ParticipantType),
-            HasPaidFee = userProfile?.HasPaidFee ?? false,
-            IsRegisteredForConference = userProfile?.IsRegisteredForConference ?? false,
-            IsApprovedAnyReports = false
-        };
-        var vm = new AddReportViewModel
-        {
-            UserProfile = dto,
-            Report = new AddReportDTO()
-        };
-        return Result<AddReportViewModel>.Success(vm);
-    }
-
-    private async Task<Result<Reports>> ValidateReportAccess(Guid reportId, Guid userId)
-    {
-        var report = await _reportRepository.GetReportByIdAsync(reportId);
-        if (report == null)
-            return Result<Reports>.Failure("Отчет не найден");
-
-        if (report.UserId != userId || report.AuthorId != userId)
-            return Result<Reports>.Failure("Доступ к отчету запрещен");
-
-        if (report.IsApproved)
-            return Result<Reports>.Failure("Невозможно изменить утвержденный отчет");
-
-        return Result<Reports>.Success(report);
-    }
-
     private Result ValidateFile(IFormFile file)
     {
         var extension = Path.GetExtension(file.FileName).ToLower();
         if (!AllowedExtensions.Contains(extension))
-            return Result.Failureure("Допустимы только файлы .doc и .docx");
+            return Result.Failure("Допустимы только файлы .doc и .docx");
 
         return Result.Success();
     }
@@ -272,7 +190,6 @@ public class ReportService : IReportService
         WorkType = report.WorkType.ToString(),
         UploadedAt = TimeZoneInfo.ConvertTimeFromUtc(report.UploadedAt, TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time")),
         LastUpdatedAt = TimeZoneInfo.ConvertTimeFromUtc(report.LastUpdatedAt, TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time")),
-        IsApproved = report.IsApproved
     };
 
     private EditReportDTO ToEditReportDTO(Reports report) => new()

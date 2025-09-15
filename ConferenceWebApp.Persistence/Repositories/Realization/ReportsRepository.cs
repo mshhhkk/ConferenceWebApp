@@ -1,4 +1,5 @@
 ﻿using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Domain.Enums;
 using ConferenceWebApp.Application.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +36,7 @@ namespace ConferenceWebApp.Persistence.Repositories.Realization
         public async Task<List<Reports>> GetApprovedReportsByUserIdAsync(Guid userId)
         {
             return await _context.Reports
-                .Where(t => t.UserId == userId && t.IsApproved)
+                .Where(t => t.UserId == userId && t.Status == ReportStatus.ExtendedThesisApproved)
                 .ToListAsync();
         }
 
@@ -55,14 +56,14 @@ namespace ConferenceWebApp.Persistence.Repositories.Realization
         public async Task<List<Reports>> GetPendingReportsAsync()
         {
             return await _context.Reports
-                .Where(r => !r.IsApproved)
+                .Where(r => r.Status == ReportStatus.SubmittedThesis)
                 .ToListAsync();
         }
 
         public async Task<List<Reports>> GetApprovedReportsAsync()
         {
             return await _context.Reports
-                .Where(r => r.IsApproved)
+                .Where(r => r.Status > ReportStatus.SubmittedThesis)
                 .ToListAsync();
         }
 

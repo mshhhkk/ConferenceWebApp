@@ -30,19 +30,19 @@ public class UserSecurityService : IUserSecurityService
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
-                return Result.Failureure("Пользователь не найден.");
+                return Result.Failure("Пользователь не найден.");
             }
 
             var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
 
             return result.Succeeded
                 ? Result.Success()
-                : Result.Failureure(string.Join(", ", result.Errors.Select(e => e.Description)));
+                : Result.Failure(string.Join(", ", result.Errors.Select(e => e.Description)));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Ошибка при изменении пароля для пользователя {UserId}", userId);
-            return Result.Failureure("Произошла ошибка при изменении пароля.");
+            return Result.Failure("Произошла ошибка при изменении пароля.");
         }
     }
 
@@ -53,7 +53,7 @@ public class UserSecurityService : IUserSecurityService
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
-                return Result.Failureure("Пользователь не найден.");
+                return Result.Failure("Пользователь не найден.");
             }
 
             var userProfile = await _userProfileRepository.GetByUserIdAsync(userId);
@@ -66,12 +66,12 @@ public class UserSecurityService : IUserSecurityService
 
             return result.Succeeded
                 ? Result.Success()
-                : Result.Failureure(string.Join(", ", result.Errors.Select(e => e.Description)));
+                : Result.Failure(string.Join(", ", result.Errors.Select(e => e.Description)));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Ошибка при удалении аккаунта пользователя {UserId}", userId);
-            return Result.Failureure("Произошла ошибка при удалении аккаунта.");
+            return Result.Failure("Произошла ошибка при удалении аккаунта.");
         }
     }
 }
