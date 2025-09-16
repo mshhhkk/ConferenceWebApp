@@ -73,7 +73,7 @@ public class AuthService : IAuthService
         return Result.Success();
     }
 
-    public async Task<Result> VerifyTwoFactorStepsAsync(Verify2FADTO dto)
+    public async Task<Result> VerifyTwoStepsAuthAsync(Verify2SADTO dto)
     {
         if (!await _twoFactorService.ValidateCodeAsync(dto.Email, dto.Code))
             return Result.Failure("Неверный или просроченный код");

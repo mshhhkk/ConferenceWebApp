@@ -2,7 +2,7 @@
 
 namespace ConferenceWebApp.Application.DTOs.AuthDTOs;
 
-public class Verify2FADTO
+public class Verify2SADTO
 {
     public string Email { get; set; } = string.Empty;
 

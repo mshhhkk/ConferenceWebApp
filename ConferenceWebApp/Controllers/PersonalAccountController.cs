@@ -55,7 +55,10 @@ public class PersonalAccountController : BaseController
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EditUserDTO dto)
     {
-
+        if (!ModelState.IsValid)
+        {
+            return View(dto);
+        }
         var (userId, redirect) = await GetCurrentUserIdAsync();
         if (redirect != null)
             return redirect;
@@ -65,10 +68,11 @@ public class PersonalAccountController : BaseController
         if (!result.IsSuccess)
         {
             TempData["Error"] = result.ErrorMessage;
-            return View();
+            return View(dto);
         }
 
-        return RedirectToAction("Index");
+
+        return RedirectToAction("Index", "Reports");
     }
 
     [HttpGet]

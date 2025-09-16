@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 public class AuthController : BaseController
 {
     private readonly IAuthService _authService;
-    // private readonly IUserProfileService _userProfileService;
 
     public AuthController(IAuthService authService, IUserProfileService userProfileService)
         : base(userProfileService)
@@ -47,7 +46,7 @@ public class AuthController : BaseController
             return View();
         }
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Edit", "PersonalAccount");
     }
 
     [HttpGet]
@@ -70,18 +69,18 @@ public class AuthController : BaseController
         }
 
         TempData["2fa_email"] = dto.Email;
-        return RedirectToAction("Verify2FA", new { email = dto.Email });
+        return RedirectToAction("Verify2SA", new { email = dto.Email });
     }
 
     [HttpGet]
-    public IActionResult Verify2FA(string email) => View(new Verify2FADTO { Email = email });
+    public IActionResult Verify2SA(string email) => View(new Verify2SADTO { Email = email });
 
     [ValidateAntiForgeryToken]
     [HttpPost]
-    public async Task<IActionResult> Verify2SA(Verify2FADTO dto)
+    public async Task<IActionResult> Verify2SA(Verify2SADTO dto)
     {
 
-        var result = await _authService.VerifyTwoFactorStepsAsync(dto);
+        var result = await _authService.VerifyTwoStepsAuthAsync(dto);
         if (!result.IsSuccess)
         {
             TempData["Error"] = result.ErrorMessage;

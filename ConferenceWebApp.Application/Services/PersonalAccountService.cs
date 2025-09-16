@@ -12,7 +12,7 @@ public class PersonalAccountService : IPersonalAccountService
 {
     private const long MaxPhotoSize = 5 * 1024 * 1024;
     private static readonly string[] AllowedPhotoTypes = { "image/jpeg", "image/png", "image/gif" };
-    private const string DefaultPhotoPath = "/images/defaultUserPhoto.png";
+    private const string DefaultPhotoPath = "/images/user.svg";
 
     private readonly IUserProfileRepository _userProfileRepository;
     private readonly IReportsRepository _reportsRepository;
@@ -44,7 +44,9 @@ public class PersonalAccountService : IPersonalAccountService
             BirthDate = userProfile.BirthDate,
             Specialization = userProfile.Specialization,
             Organization = userProfile.Organization,
-            PhotoUrl = userProfile.PhotoUrl
+            PhotoUrl = userProfile.PhotoUrl,
+            Degree = userProfile.Degree,
+            Position = userProfile.Position
         });
     }
 
@@ -53,6 +55,12 @@ public class PersonalAccountService : IPersonalAccountService
         var userProfile = await _userProfileRepository.GetByUserIdAsync(userId);
         if (userProfile == null)
             return Result.Failure("Профиль пользователя не найден");
+
+        if (userProfile.PhotoUrl == "/images/user.svg" && dto.RemovePhoto)
+        {
+            return Result.Failure("Невозможно удалить дефолтное фото.");
+        }
+
 
         if (userProfile.ParticipantType == ParticipantType.Speaker)
             return Result<EditUserDTO>.Failure("Пользователь с одобренным докладом не может поменять профиль");
@@ -66,6 +74,8 @@ public class PersonalAccountService : IPersonalAccountService
             userProfile.BirthDate = (DateOnly)dto.BirthDate;
             userProfile.Organization = dto.Organization;
             userProfile.Specialization = dto.Specialization;
+            userProfile.Degree = dto.Degree!.Value;
+            userProfile.Position = dto.Position!.Value;
 
             if (dto.RemovePhoto)
             {

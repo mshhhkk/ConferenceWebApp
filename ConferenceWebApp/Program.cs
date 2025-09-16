@@ -4,6 +4,8 @@ using ConferenceWebApp.Infrastructure.Extensions;
 using ConferenceWebApp.Persistence;
 using ConferenceWebApp.Persistence.Extensions;
 using Microsoft.AspNetCore.Identity;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 namespace ConferenceWebApp;
 
@@ -22,6 +24,17 @@ public class Program
         builder.Services.AddDatabase(builder.Configuration);
         builder.Services.AddApplicationServices();
         builder.Services.AddPersistence();
+        
+
+
+        builder.Services.AddFluentValidationAutoValidation(options =>
+        {
+            // Можно настроить, например, чтобы пустые строки не воспринимались как null
+            options.DisableDataAnnotationsValidation = false;
+        });
+
+        builder.Services.AddValidators();
+
         var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
         builder.Services.AddInfrastructure(rootPath);
 

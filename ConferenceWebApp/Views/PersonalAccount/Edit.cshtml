@@ -6,28 +6,42 @@
 }
 
 <link rel="stylesheet" href="~/css/modal.css" />
+<link rel="stylesheet" href="~/css/settings.css" />
 
 @if (!Model.IsRegisteredForConference)
 {
-    <div class="report-block waiting-block">
-        <div class="report-thesis" style="text-align: justify;">
-            Внимание! При неполном заполнении ФИО, даты рождения, организации, специализации и номера телефона вы не будете зарегистрированы на конференцию.
-        </div>
+    <div class="settings-form-input" style="text-align: justify;">
+        Внимание! При неполном заполнении ФИО, даты рождения, организации, специализации и номера телефона вы не будете зарегистрированы на конференцию.
     </div>
 }
 
 <form asp-action="Edit" method="post" enctype="multipart/form-data">
     <div class="settings-avatar-block">
-        <img src="@Model.PhotoUrl" alt="Фото" class="settings-avatar" />
+        <img id="avatarPreview" src="@Model.PhotoUrl" alt="Фото" class="settings-avatar" />
         <div class="settings-photo-btns">
-            <label class="settings-photo-btn">
-                <input asp-for="Photo" type="file" style="display:none;" />
-                Загрузить новое фото
-            </label>
-            <label class="settings-photo-btn">
-                <input asp-for="RemovePhoto" type="checkbox" style="display:none;" />
-                Удалить фото
-            </label>
+            <!-- Кнопка загрузки нового фото -->
+            <input asp-for="Photo" type="file" id="Photo" style="display:none;" />
+            <button type="button" id="addPhotoBtn" class="settings-save-btn" onclick="document.getElementById('Photo').click();">
+                Добавить фото
+            </button>
+
+            <!-- Галочка для удаления фото -->
+            <div class="settings-photo-checkbox">
+                <input type="checkbox" id="removePhotoCheckbox" name="RemovePhoto" value="true"
+                @if (Model.PhotoUrl.Equals("/images/user.svg", StringComparison.OrdinalIgnoreCase))
+                {
+                    <text>disabled</text>
+                }
+                />
+                <label for="removePhotoCheckbox"
+                @if (Model.PhotoUrl.Equals("/images/user.svg", StringComparison.OrdinalIgnoreCase))
+                {
+                    <text>style="color: grey;"</text>
+                }
+                >
+                    Удалить фото
+                </label>
+            </div>
         </div>
     </div>
 
@@ -78,28 +92,43 @@
         </div>
     </div>
 
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="Position" class="settings-form-label">Должность</label>
+            <select asp-for="Position" class="settings-form-input" asp-items="Html.GetEnumSelectList<ConferenceWebApp.Domain.Enums.Position>()">
+                <option value="">-- Выберите должность --</option>
+            </select>
+            <span asp-validation-for="Position" class="text-danger"></span>
+        </div>
+
+        <div class="settings-form-group">
+            <label asp-for="Degree" class="settings-form-label">Учёная степень</label>
+            <select asp-for="Degree" class="settings-form-input" asp-items="Html.GetEnumSelectList<ConferenceWebApp.Domain.Enums.ScientificDegree>()">
+                <option value="">-- Выберите степень --</option>
+            </select>
+            <span asp-validation-for="Degree" class="text-danger"></span>
+        </div>
+    </div>
+
     <div class="settings-form-actions">
         <button type="submit" class="settings-save-btn">Сохранить изменения</button>
         <a href="/Reports/Index" class="settings-cancel-btn">Отмена</a>
     </div>
 
     <div class="delete-account-info">
-        <span class="delete-account-text">
-            Вы можете
-        </span>
-        <span class="delete-account-link" onclick="openDeleteAccountModal()">
-            удалить свою учетную запись
-        </span>
+        <span class="delete-account-text">Вы можете</span>
+        <span class="delete-account-link" onclick="openDeleteAccountModal()">удалить свою учетную запись</span>
     </div>
-   
-</form>
 
+    <!-- Скрытое поле для удаления фото -->
+    <input type="hidden" id="RemovePhoto" name="RemovePhoto" value="false" />
+
+</form>
 
 <form id="deleteAccountForm" asp-action="DeleteAccount" method="post" style="display:none;">
     @Html.AntiForgeryToken()
 </form>
 
-<!-- Кастомная модалка -->
 <div id="deleteAccountModal" class="modal" style="display:none;">
     <div class="modal-content">
         <div class="modal-header">
@@ -117,6 +146,7 @@
 
 @section Scripts {
     <script>
+        // Функция для открытия и закрытия модального окна удаления
         function openDeleteAccountModal() {
             document.getElementById("deleteAccountModal").style.display = "flex";
         }
@@ -127,10 +157,55 @@
             document.getElementById("deleteAccountForm").submit();
         }
 
-
+        // Закрытие модального окна при клике вне его
         window.addEventListener("click", function (e) {
             let modal = document.getElementById("deleteAccountModal");
             if (e.target === modal) closeDeleteAccountModal();
         });
+
+        document.getElementById('Photo').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarPreview').src = e.target.result;
+
+                    // Сделать кнопку удаления фото доступной
+                    document.getElementById('removePhotoBtn').disabled = false;
+                    document.getElementById('removePhotoBtn').style.border = ''; // Убираем серую границу
+                    document.getElementById('removePhotoBtn').style.backgroundColor = ''; // Убираем серый фон
+                    document.getElementById('removePhotoBtn').style.color = ''; // Убираем серый текст
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+         function removePhoto() {
+            const preview = document.getElementById('avatarPreview');
+
+            // Если фото дефолтное
+            if (preview.src.includes('/images/user.svg')) {
+                alert('Фото не может быть удалено, так как оно дефолтное.');
+                return;  // Останавливаем выполнение, если фото дефолтное
+            }
+
+            // Если фото не дефолтное, меняем его на дефолтное
+            preview.src = '/images/user.svg';  // Путь к дефолтному фото
+
+            // Устанавливаем скрытое поле для удаления фото
+            const removePhotoInput = document.createElement('input');
+            removePhotoInput.type = 'hidden';
+            removePhotoInput.name = 'RemovePhoto';
+            removePhotoInput.value = 'true'; // Устанавливаем, что фото должно быть удалено
+
+            // Добавляем скрытое поле в форму
+            document.querySelector('form').appendChild(removePhotoInput);
+
+            // Сделаем кнопку неактивной, если фото снова дефолтное
+            document.getElementById('removePhotoBtn').disabled = true;
+            document.getElementById('removePhotoBtn').style.border = '1px solid grey';
+            document.getElementById('removePhotoBtn').style.backgroundColor = '#f0f0f0';
+            document.getElementById('removePhotoBtn').style.color = 'grey';
+        }
     </script>
 }

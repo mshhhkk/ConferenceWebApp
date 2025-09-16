@@ -2,6 +2,8 @@
 using ConferenceWebApp.Application.Interfaces.Services.Admin;
 using ConferenceWebApp.Infrastructure.Services.Realization;
 using ConferenceWebApp.Infrastructure.Services.Realization.Admin;
+using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 namespace ConferenceWebApp.Application.Extensions;
 
@@ -24,6 +26,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IReportAdminService, ReportAdminService>();
         services.AddScoped<IScheduleAdminService, ScheduleAdminService>();
         services.AddScoped<IUserProfileService, UserService>();
+        return services;
+    }
+    public static IServiceCollection AddValidators(this IServiceCollection services)
+    {
+        
+        services.AddScoped<IValidator<EditUserDTO>, EditUserProfileValidator>();
         return services;
     }
 }

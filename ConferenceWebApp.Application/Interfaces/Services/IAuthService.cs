@@ -10,7 +10,7 @@ public interface IAuthService
 
     Task<Result> SendTwoStepCodeAsync(LoginDTO dto);
 
-    Task<Result> VerifyTwoFactorStepsAsync(Verify2FADTO dto);
+    Task<Result> VerifyTwoStepsAuthAsync(Verify2SADTO dto);
 
     Task<Result> LogoutAsync();
 }

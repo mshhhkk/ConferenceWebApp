@@ -201,3 +201,26 @@
     text-decoration: none;
     vertical-align: middle;
 }
+
+.settings-photo-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 15px;
+    color: #222;
+}
+
+    .settings-photo-checkbox input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        border: 1px solid #8c3ae8;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .settings-photo-checkbox label {
+        cursor: pointer;
+        font-weight: 500;
+    }
+

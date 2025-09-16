@@ -10,7 +10,7 @@ public class UserProfile
     [ForeignKey(nameof(User))]
     public Guid UserId { get; set; }
 
-    public User User { get; set; } = null; // явно указываем, что EF заполнит
+    public User User { get; set; } = null; 
 
     public string? FirstName { get; set; }
 
@@ -37,5 +37,11 @@ public class UserProfile
     public UserApprovalStatus ApprovalStatus { get; set; }
 
     [MaxLength(255)]
-    public string? ReceiptFilePath { get; set; }  // Путь до файла в wwwroot
+    public string? ReceiptFilePath { get; set; }
+
+    [Required]
+    public Position Position { get; set; }
+
+    [Required]
+    public ScientificDegree Degree { get; set; }
 }
