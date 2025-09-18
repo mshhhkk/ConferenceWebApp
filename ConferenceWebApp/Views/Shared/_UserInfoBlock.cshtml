@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="~/css/userinfoblock.css" />
 @{
     var photoUrl = string.IsNullOrWhiteSpace(Model.PhotoUrl)
-        ? Url.Content("~/images/default_user.png")
+        ? Url.Content("~/images/user.svg")
         : Model.PhotoUrl;
     bool isParticipant = Model.ParticipantType == ParticipantType.Speaker;
 }

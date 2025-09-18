@@ -8,35 +8,30 @@
 <link rel="stylesheet" href="~/css/modal.css" />
 <link rel="stylesheet" href="~/css/reports.css" />
 
-@if (!Model.Reports.Any())
-{
-    <p>У вас пока нет загруженных докладов.</p>
-}
-else
-{
-    <div class="thesis-list">
-        @foreach (var talk in Model.Reports)
-        {
-            <div class="thesis-card" id="card-@talk.Id">
-                <div class="thesis-card-title">@talk.ReportTheme</div>
-                <div class="thesis-card-org">@talk.Section</div>
-                <div class="thesis-card-type">@talk.WorkType</div>
-                <div class="thesis-card-actions">
-                    @if (!talk.IsApproved)
-                    {
-                        <a asp-action="Edit" asp-route-id="@talk.Id" class="thesis-btn thesis-btn-edit">Редактировать</a>
 
-                        <button type="button"
-                                class="thesis-btn thesis-btn-delete"
-                                onclick="openDeleteModal('@talk.Id')">
-                            Удалить
-                        </button>
-                    }
-                </div>
+<div class="thesis-list">
+    @foreach (var talk in Model.Reports)
+    {
+        <div class="thesis-card" id="card-@talk.Id">
+            <div class="thesis-card-title">@talk.ReportTheme</div>
+            <div class="thesis-card-org">@talk.Section</div>
+            <div class="thesis-card-type">@talk.WorkType</div>
+            <div class="thesis-card-actions">
+                @if (!talk.IsApproved)
+                {
+                    <a asp-action="Edit" asp-route-id="@talk.Id" class="thesis-btn thesis-btn-edit">Редактировать</a>
+
+                    <button type="button"
+                            class="thesis-btn thesis-btn-delete"
+                            onclick="openDeleteModal('@talk.Id')">
+                        Удалить
+                    </button>
+                }
             </div>
-        }
-    </div>
-}
+        </div>
+    }
+</div>
+
 
 <a asp-controller="Reports" asp-action="Add" class="thesis-btn thesis-btn-add">Добавить тезис</a>
 

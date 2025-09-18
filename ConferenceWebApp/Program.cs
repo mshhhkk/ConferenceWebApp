@@ -3,9 +3,9 @@ using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.Infrastructure.Extensions;
 using ConferenceWebApp.Persistence;
 using ConferenceWebApp.Persistence.Extensions;
-using Microsoft.AspNetCore.Identity;
-using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Session;
 
 namespace ConferenceWebApp;
 
@@ -13,33 +13,34 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-        IConfigurationBuilder configBuild = new ConfigurationBuilder()
+        var builder = WebApplication.CreateBuilder(args);
+
+        var configBuild = new ConfigurationBuilder()
             .SetBasePath(builder.Environment.ContentRootPath)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddEnvironmentVariables();
 
-        IConfiguration configuration = configBuild.Build();
+        var configuration = configBuild.Build();
+
+        builder.Services.AddHttpContextAccessor();
+
+        builder.Services.AddDistributedMemoryCache();
 
         builder.Services.AddDatabase(builder.Configuration);
         builder.Services.AddApplicationServices();
         builder.Services.AddPersistence();
-        
 
 
         builder.Services.AddFluentValidationAutoValidation(options =>
         {
-            // Можно настроить, например, чтобы пустые строки не воспринимались как null
             options.DisableDataAnnotationsValidation = false;
         });
-
         builder.Services.AddValidators();
 
         var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
         builder.Services.AddInfrastructure(rootPath);
 
         builder.Services.AddScoped<UserManager<User>, CustomUserManager>();
-
         builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
         {
             options.Password.RequireDigit = false;
@@ -53,23 +54,31 @@ public class Program
         .AddEntityFrameworkStores<AppDbContext>()
         .AddDefaultTokenProviders();
 
+        builder.Services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromHours(20);
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+        });
+
         builder.Services.ConfigureApplicationCookie(options =>
         {
             options.LoginPath = "/Auth/Login";
             options.LogoutPath = "/Auth/Logout";
             options.AccessDeniedPath = "/Auth/AccessDenied";
             options.ExpireTimeSpan = TimeSpan.FromHours(20);
-            options.Cookie.HttpOnly = true;
             options.SlidingExpiration = true;
+            options.Cookie.HttpOnly = true;
             options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
                 ? CookieSecurePolicy.None
                 : CookieSecurePolicy.Always;
         });
 
-
         builder.Services.AddControllersWithViews();
 
         var app = builder.Build();
+
+        app.UseMiddleware<SessionMiddleware>();
 
         if (app.Environment.IsDevelopment())
         {
@@ -83,25 +92,30 @@ public class Program
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
-
+        app.UseSession();
         app.UseRouting();
-
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}"
+        );
 
         using (var scope = app.Services.CreateScope())
         {
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-
             var roles = new[] { "Participant", "Admin", "SuperAdmin" };
 
             foreach (var role in roles)
             {
                 if (!await roleManager.RoleExistsAsync(role))
                 {
-                    await roleManager.CreateAsync(new IdentityRole<Guid> { Name = role, NormalizedName = role.ToUpper() });
+                    await roleManager.CreateAsync(new IdentityRole<Guid>
+                    {
+                        Name = role,
+                        NormalizedName = role.ToUpper()
+                    });
                 }
             }
         }

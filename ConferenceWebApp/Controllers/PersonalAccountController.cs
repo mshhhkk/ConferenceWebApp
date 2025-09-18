@@ -1,6 +1,7 @@
 ﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,14 +13,18 @@ public class PersonalAccountController : BaseController
 {
     private readonly UserManager<User> _userManager;
     private readonly IPersonalAccountService _personalAccountService;
-
+    private readonly ISessionService _sessionService;
+    private readonly IUserProfileService _userProfileService;
     public PersonalAccountController(
         UserManager<User> userManager,
-        IUserProfileService userProfileService, IPersonalAccountService personalAccountService) : base(userProfileService)
+        IUserProfileService userProfileService, IPersonalAccountService personalAccountService, ISessionService sessionService) : base(userProfileService)
     {
 
         _userManager = userManager;
         _personalAccountService = personalAccountService;
+        _sessionService = sessionService;
+        _userProfileService = userProfileService;
+
     }
 
     private async Task<(Guid? userId, IActionResult? redirect)> GetCurrentUserIdAsync()
@@ -28,7 +33,7 @@ public class PersonalAccountController : BaseController
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
-            return (null, RedirectToAction("Login", "PersonalAccount"));
+            return (null, RedirectToAction("Login", "Auth"));
         }
         return (user.Id, null);
     }
@@ -45,7 +50,7 @@ public class PersonalAccountController : BaseController
         if (!result.IsSuccess)
         {
             TempData["Error"] = result.ErrorMessage;
-            return RedirectToAction("Login", "PersonalAccount");
+            return RedirectToAction("Login", "Auth");
         }
 
         return View(result.Value);
@@ -70,7 +75,9 @@ public class PersonalAccountController : BaseController
             TempData["Error"] = result.ErrorMessage;
             return View(dto);
         }
-
+        var userprofile = await _userProfileService.GetByUserIdAsync(userId!.Value);
+     
+        _sessionService.UpdateSession("UserProfile", userprofile.Value);
 
         return RedirectToAction("Index", "Reports");
     }
@@ -86,7 +93,7 @@ public class PersonalAccountController : BaseController
         if (!result.IsSuccess)
         {
             TempData["Error"] = result.ErrorMessage;
-            return RedirectToAction("Login", "PersonalAccount");
+            return RedirectToAction("Login", "Auth");
         }
         return View(result.Value);
     }

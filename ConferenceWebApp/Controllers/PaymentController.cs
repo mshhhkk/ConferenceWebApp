@@ -29,7 +29,7 @@ public class PaymentController : BaseController
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
-            return (null, RedirectToAction("Login", "PersonalAccount"));
+            return (null, RedirectToAction("Login", "Auth"));
         }
         return (user.Id, null);
     }

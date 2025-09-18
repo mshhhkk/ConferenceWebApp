@@ -57,26 +57,29 @@
 
 .user-info-row {
     display: flex;
-    margin-bottom: 8px;
-    align-items: center;
+    align-items: flex-start; /* выравнивание по верхнему краю */
+    flex-wrap: wrap
 }
 
 .user-info-key {
     font-size: 15px;
     font-weight: 600;
     color: #222;
-    min-width: 110px;
     line-height: 150%;
     letter-spacing: 0;
+    min-width: auto;
+    white-space: nowrap; 
+    margin-right: 8px;
 }
-
 .user-info-value {
     font-size: 15px;
     font-weight: 500;
     color: #222;
     line-height: 150%;
     letter-spacing: 0;
-    margin-left: 8px;
+    text-align: left; /* выравнивание по левому краю */
+    flex: 1; /* занимает всё оставшееся пространство */
+    min-width: 0; /* предотвращает переполнение */
 }
 .participant-status {
     font-family: 'Montserrat', Arial, sans-serif;
