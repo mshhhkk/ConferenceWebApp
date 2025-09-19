@@ -1,27 +1,40 @@
 ﻿@model ConferenceWebApp.Domain.Entities.Schedule
-
-<h1>Добавить запись в расписание</h1>
+@{
+    Layout = "_AdminLayout";
+}
+<h1 class="settings-title">Добавить запись в расписание</h1>
 
 <form asp-action="Add" method="post">
-    <div class="form-group">
-        <label asp-for="Date"></label>
-        <input asp-for="Date" class="form-control" type="date" />
-        <span asp-validation-for="Date" class="text-danger"></span>
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="Date" class="settings-form-label">Дата</label>
+            <input asp-for="Date" class="settings-form-input" type="date" />
+            <span asp-validation-for="Date" class="text-danger"></span>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="StartingTime"></label>
-        <input asp-for="StartingTime" class="form-control" type="time" />
-        <span asp-validation-for="StartingTime" class="text-danger"></span>
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="StartingTime" class="settings-form-label">Время начала</label>
+            <input asp-for="StartingTime" class="settings-form-input" type="time" />
+            <span asp-validation-for="StartingTime" class="text-danger"></span>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="EndingTime"></label>
-        <input asp-for="EndingTime" class="form-control" type="time" />
-        <span asp-validation-for="EndingTime" class="text-danger"></span>
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="EndingTime" class="settings-form-label">Время окончания</label>
+            <input asp-for="EndingTime" class="settings-form-input" type="time" />
+            <span asp-validation-for="EndingTime" class="text-danger"></span>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="Description" class="settings-form-label">Описание</label>
+            <textarea asp-for="Description" class="settings-form-input"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Добавить</button>
+    <div class="settings-form-actions">
+        <button type="submit" class="settings-save-btn">Добавить</button>
+        <button type="button" class="settings-cancel-btn" onclick="window.history.back();">Отмена</button>
+    </div>
 </form>

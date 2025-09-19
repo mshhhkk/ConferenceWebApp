@@ -15,4 +15,6 @@ public interface IReportAdminService
 
     Task<Reports?> GetReportByIdAsync(Guid id);
     Task<string?> GetReportFilePathAsync(Guid id);
+    Task RejectReportAsync(Guid id, string comment);
+    
 }

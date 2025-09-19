@@ -69,4 +69,26 @@ public class AdminReportsController : BaseController
         await _reportService.RollbackReportAsync(id);
         return RedirectToAction(nameof(Index));
     }
+    [HttpGet]
+    public async Task<IActionResult> Reject(Guid id)
+    {
+        var report = await _reportService.GetReportByIdAsync(id);
+        if (report == null) return NotFound();
+
+      
+        return View(id);
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> Reject(Guid id, string comment)
+    {
+        var report = await _reportService.GetReportByIdAsync(id);
+        if (report == null) return NotFound();
+
+        await _reportService.RejectReportAsync(id, comment);
+
+        TempData["Message"] = "Доклад отклонен успешно с комментариями.";
+        return RedirectToAction(nameof(Index));
+    }
 }

@@ -5,6 +5,7 @@ using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 
+
 namespace ConferenceWebApp.Infrastructure.Services.Realization.Admin;
 
 public class ReportAdminService : IReportAdminService
@@ -25,8 +26,13 @@ public class ReportAdminService : IReportAdminService
 
     public async Task<AdminFilteredReportsListDTO> GetFilteredReportsAsync(string? search)
     {
-        var pending = await _reportsRepository.GetPendingReportsAsync();
-        var approved = await _reportsRepository.GetApprovedReportsAsync();
+
+        var pendingReports = await _reportsRepository.GetPendingReportsAsync();
+        var approvedReports = await _reportsRepository.GetApprovedReportsAsync();
+        var rejectedReports = await _reportsRepository.GetRejectedReportsAsync();
+        var pendingExtendedTheses = await _reportsRepository.GetPendingExtendedThesesAsync();
+        var approvedExtendedTheses = await _reportsRepository.GetApprovedExtendedThesesAsync();
+        var rejectedExtendedTheses = await _reportsRepository.GetRejectedExtendedThesesAsync();  
 
         List<UserProfile>? filteredUsers = null;
         if (!string.IsNullOrWhiteSpace(search))
@@ -70,12 +76,15 @@ public class ReportAdminService : IReportAdminService
         return new AdminFilteredReportsListDTO
         {
             SearchQuery = search ?? "",
-            PendingReports = await Map(Filter(pending)),
-            ApprovedReports = await Map(Filter(approved))
+            PendingReports = await Map(Filter(pendingReports)),
+            ApprovedReports = await Map(Filter(approvedReports)),
+            RejectedReports = await Map(Filter(rejectedReports)),
+            PendingExtendedTheses = await Map(Filter(pendingExtendedTheses)),
+            ApprovedExtendedTheses = await Map(Filter(approvedExtendedTheses)),
+            RejectedExtendedTheses = await Map(Filter(rejectedExtendedTheses)),  
         };
     }
 
-    // 🚩 Теперь просто отдаём путь
     public async Task<string?> GetReportFilePathAsync(Guid id)
     {
         var report = await _reportsRepository.GetReportByIdAsync(id);
@@ -109,6 +118,17 @@ public class ReportAdminService : IReportAdminService
     public async Task<Reports?> GetReportByIdAsync(Guid id)
     {
         return await _reportsRepository.GetReportByIdAsync(id);
+    }
+
+    public async Task RejectReportAsync(Guid id, string comment)
+    {
+        var report = await _reportsRepository.GetReportByIdAsync(id);
+        if (report != null)
+        {
+            report.Status = ReportStatus.ThesisReturnedForCorrection; 
+            report.RejectionComment = comment; 
+            await _reportsRepository.UpdateReportAsync(report);
+        }
     }
 
 }

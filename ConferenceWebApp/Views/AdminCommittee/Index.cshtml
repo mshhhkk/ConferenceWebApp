@@ -1,16 +1,20 @@
 ﻿@model IEnumerable<ConferenceWebApp.Application.DTOs.Admin.AdminCommitteeDTO>
+@{
+    Layout = "_AdminLayout";
+}
+<h1 class="settings-title">Управление комитетом</h1>
 
-<h1>Управление комитетом</h1>
+<div class="text-end mb-4">
+    <a href="@Url.Action("Add", "AdminCommittee")" class="settings-save-btn">Добавить члена комитета</a>
+</div>
 
-<a href="@Url.Action("Add", "AdminCommittee")" class="btn btn-primary">Добавить члена комитета</a>
-
-<table class="table">
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>Фото</th>
             <th>ФИО</th>
             <th>Описание</th>
-			<th>Председатель</th>   
+            <th>Председатель</th>
             <th>Действия</th>
         </tr>
     </thead>
@@ -18,19 +22,18 @@
         @foreach (var committee in Model)
         {
             <tr>
-                <td><img src="@committee.PhotoUrl" alt="Фото" style="width: 100px; height: auto;" /></td>
+                <td><img src="@committee.PhotoUrl" alt="Фото" class="committee-photo" /></td>
                 <td>@committee.FullName</td>
                 <td>@committee.Description</td>
-				<td>@(committee.IsHead ? "Да" : "Нет")</td>
+                <td>@(committee.IsHead ? "Да" : "Нет")</td>
                 <td>
-                    <a href="@Url.Action("Edit", "AdminCommittee", new { id = committee.Id })" class="btn btn-warning">Редактировать</a>
-                    <form asp-action="Delete" asp-controller="AdminCommittee" method="post" style="display:inline;">
+                    <a href="@Url.Action("Edit", "AdminCommittee", new { id = committee.Id })" class="settings-photo-btn me-2">Редактировать</a>
+                    <form asp-action="Delete" asp-controller="AdminCommittee" method="post" class="d-inline">
                         <input type="hidden" name="id" value="@committee.Id" />
-                        <button type="submit" class="btn btn-danger">Удалить</button>
+                        <button type="submit" class="settings-photo-btn settings-photo-btn-delete">Удалить</button>
                     </form>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-

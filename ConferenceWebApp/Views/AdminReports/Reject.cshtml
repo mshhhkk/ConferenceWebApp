@@ -1,0 +1,17 @@
+﻿@{
+    Layout = "_AdminLayout";
+}
+
+<h2>Отклонить доклад</h2>
+
+<form asp-action="Reject" method="post">
+    <input type="hidden" name="id" value="@Model" />
+
+    <div class="form-group">
+        <label for="comment" class="form-label">Комментарий</label>
+        <textarea id="comment" name="comment" class="form-control" rows="4" placeholder="Введите комментарий" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-danger">Отклонить</button>
+    <a href="@Url.Action("Index", "AdminReports")" class="btn btn-secondary">Отмена</a>
+</form>

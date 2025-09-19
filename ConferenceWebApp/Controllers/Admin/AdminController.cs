@@ -10,7 +10,6 @@ namespace ConferenceWebApp.Application.Controllers.Admin
         public AdminController(IUserProfileService userProfileService) : base(userProfileService)
         { }
 
-        // GET: AdminController
         public ActionResult Index()
         {
             return View();

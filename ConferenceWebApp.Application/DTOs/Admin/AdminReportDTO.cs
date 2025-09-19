@@ -10,4 +10,5 @@ public class AdminReportDTO
     public string? FilePath { get; set; }
     public string AuthorFullName { get; set; } = string.Empty;
     public string AuthorEmail { get; set; } = string.Empty;
+    public string Organization { get; internal set; }
 }

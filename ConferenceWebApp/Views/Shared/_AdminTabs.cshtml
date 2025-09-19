@@ -1,0 +1,18 @@
+﻿@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    string selected = "";
+
+    if (controller == "AdminSchedule" && action == "Index") selected = "Schedule";
+    else if (controller == "AdminCommittee" && action == "Index") selected = "Committee";
+    else if (controller == "AdminReports" && action == "Index") selected = "Reports";
+    else if (controller == "AdminCheckPayment" && action == "Index") selected = "CheckPayment";
+}
+
+<div class="settings-tabs">
+    <a href="@Url.Action("Index", "AdminSchedule")" class="settings-tab-btn @(selected == "Schedule" ? "selected" : "")">Управление расписанием</a>
+    <a href="@Url.Action("Index", "AdminCommittee")" class="settings-tab-btn @(selected == "Committee" ? "selected" : "")">Управление комитетом</a>
+    <a href="@Url.Action("Index", "AdminReports")" class="settings-tab-btn @(selected == "Reports" ? "selected" : "")">Одобрение докладов</a>
+    <a href="@Url.Action("Index", "AdminCheckPayment")" class="settings-tab-btn @(selected == "CheckPayment" ? "selected" : "")">Проверка оплаты</a>
+</div>
+

@@ -1,44 +1,41 @@
 ﻿@using ConferenceWebApp.Application.DTOs
 @using ConferenceWebApp.Application.DTOs.Schedule
 @model List<GroupedScheduleDTO>
-
-<h1>Управление расписанием</h1>
-
+@{
+    Layout = "_AdminLayout";
+}
+<h1 class="settings-title">Управление расписанием</h1>
 
 <div class="container">
     @foreach (var group in Model)
     {
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="bg-light p-3 rounded shadow-sm">
-                    <h3 class="text-secondary mb-1">
-                        @group.Date.ToString("dddd", new System.Globalization.CultureInfo("ru-RU"))
-                    </h3>
-                    <p class="text-muted mb-3">
-                        @group.Date.ToString("d MMMM, yyyy", new System.Globalization.CultureInfo("ru-RU"))
-                    </p>
-                    <div class="day-events">
-                        @foreach (var ev in group.Events)
-                        {
-                            <div class="event mb-3 p-3 border-start border-3 border-primary d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h4 class="text-dark mb-1">@ev.Time</h4>
-                                    <p class="text-muted mb-0">@ev.Event</p>
-                                </div>
-                                <div>
-                                    <a asp-action="Edit" asp-route-id="@ev.Id" class="btn btn-warning btn-sm me-2">Редактировать</a>
-                                    <form asp-action="Delete" method="post" asp-route-id="@ev.Id" class="d-inline">
-                                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
-                                    </form>
-                                </div>
-                            </div>
-                        }
+        <div class="settings-content-box mb-4">
+            <h3 class="text-secondary mb-1">
+                @group.Date.ToString("dddd", new System.Globalization.CultureInfo("ru-RU"))
+            </h3>
+            <p class="text-muted mb-3">
+                @group.Date.ToString("d MMMM, yyyy", new System.Globalization.CultureInfo("ru-RU"))
+            </p>
+            <div class="day-events">
+                @foreach (var ev in group.Events)
+                {
+                    <div class="event mb-3 p-3 border-start border-3 border-primary d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="text-dark mb-1">@ev.Time</h4>
+                            <p class="text-muted mb-0">@ev.Event</p>
+                        </div>
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@ev.Id" class="settings-photo-btn me-2">Редактировать</a>
+                            <form asp-action="Delete" method="post" asp-route-id="@ev.Id" class="d-inline">
+                                <button type="submit" class="settings-photo-btn settings-photo-btn-delete">Удалить</button>
+                            </form>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
     }
     <div class="text-center mt-4">
-        <a asp-action="Add" class="btn btn-primary">Добавить запись</a>
+        <a asp-action="Add" class="settings-save-btn">Добавить запись</a>
     </div>
 </div>

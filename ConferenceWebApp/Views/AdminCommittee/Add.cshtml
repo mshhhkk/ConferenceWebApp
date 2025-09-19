@@ -1,26 +1,42 @@
 ﻿@model ConferenceWebApp.Application.DTOs.Admin.AdminCommitteeDTO
-
-<h1>Добавить члена комитета</h1>
+@{
+    Layout = "_AdminLayout";
+}
+<h1 class="settings-title">Добавить члена комитета</h1>
 
 <form asp-action="Add" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-        <label asp-for="FullName"></label>
-        <input asp-for="FullName" class="form-control" />
-        <span asp-validation-for="FullName" class="text-danger"></span>
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="FullName" class="settings-form-label">ФИО</label>
+            <input asp-for="FullName" class="settings-form-input" />
+            <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="Photo">Загрузить фотографию</label>
-        <input type="file" name="Photo" class="form-control" />
-    </div>
-    <div class="form-group form-check">
-        <input asp-for="IsHead" class="form-check-input" type="checkbox" />
-        <label asp-for="IsHead" class="form-check-label">Председатель комитета</label>
-    </div>
-    <button type="submit" class="btn btn-primary">Добавить</button>
-</form>
 
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="Description" class="settings-form-label">Описание</label>
+            <textarea asp-for="Description" class="settings-form-input"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label for="Photo" class="settings-form-label">Загрузить фотографию</label>
+            <input type="file" name="Photo" class="settings-form-input" />
+        </div>
+    </div>
+
+    <div class="settings-form-row">
+        <div class="settings-form-group form-check">
+            <input asp-for="IsHead" class="form-check-input" type="checkbox" />
+            <label asp-for="IsHead" class="form-check-label settings-form-label">Председатель комитета</label>
+        </div>
+    </div>
+
+    <div class="settings-form-actions">
+        <button type="submit" class="settings-save-btn">Добавить</button>
+        <a href="@Url.Action("Index", "AdminCommittee")" class="settings-cancel-btn">Отмена</a>
+    </div>
+</form>
