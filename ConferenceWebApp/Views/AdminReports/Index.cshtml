@@ -8,12 +8,20 @@
 
 <form method="get" asp-action="Index" class="mb-4">
     <input type="text" name="search" value="@Model.SearchQuery" placeholder="Поиск по ФИО" class="settings-form-input w-25 d-inline-block" />
+    <input type="text" name="organization" value="@Model.Organization" placeholder="Поиск по организации" class="settings-form-input w-25 d-inline-block" />
+    <button type="submit" class="settings-save-btn">Поиск</button>
+</form>
+
+<form method="get" asp-action="Index" class="mb-4">
+    <input type="text" name="search" value="@Model.SearchQuery" placeholder="Поиск по ФИО" class="settings-form-input w-25 d-inline-block" />
+    <input type="text" name="organization" value="@Model.Organization" placeholder="Поиск по организации" class="settings-form-input w-25 d-inline-block" />
     <button type="submit" class="settings-save-btn">Поиск</button>
 </form>
 
 <hr />
 
 <h3 class="settings-title">Ожидают одобрения</h3>
+
 @if (!Model.PendingReports.Any())
 {
     <p>Нет докладов, ожидающих одобрения.</p>
@@ -26,6 +34,7 @@ else
                 <th>ФИО</th>
                 <th>Email</th>
                 <th>Тема</th>
+                <th>Организация</th>
                 <th>Файл</th>
                 <th>Действия</th>
             </tr>
@@ -37,6 +46,7 @@ else
                     <td>@report.AuthorFullName</td>
                     <td>@report.AuthorEmail</td>
                     <td>@report.Title</td>
+                    <td>@report.Organization</td>
                     <td>
                         @if (!string.IsNullOrEmpty(report.FilePath))
                         {
@@ -58,7 +68,9 @@ else
 }
 
 <hr />
+
 <h3 class="settings-title">Одобренные доклады</h3>
+
 @if (!Model.ApprovedReports.Any())
 {
     <p>Нет одобренных докладов.</p>
@@ -71,6 +83,7 @@ else
                 <th>ФИО</th>
                 <th>Email</th>
                 <th>Тема</th>
+                <th>Организация</th>
                 <th>Файл</th>
                 <th>Действия</th>
             </tr>
@@ -82,6 +95,7 @@ else
                     <td>@report.AuthorFullName</td>
                     <td>@report.AuthorEmail</td>
                     <td>@report.Title</td>
+                    <td>@report.Organization</td>
                     <td>
                         @if (!string.IsNullOrEmpty(report.FilePath))
                         {
@@ -103,6 +117,7 @@ else
 }
 
 <hr />
+
 <h3 class="settings-title">Отклоненные доклады</h3>
 @if (!Model.RejectedReports.Any())
 {
@@ -116,6 +131,7 @@ else
                 <th>ФИО</th>
                 <th>Email</th>
                 <th>Тема</th>
+                <th>Организация</th>
                 <th>Файл</th>
             </tr>
         </thead>
@@ -126,6 +142,7 @@ else
                     <td>@report.AuthorFullName</td>
                     <td>@report.AuthorEmail</td>
                     <td>@report.Title</td>
+                    <td>@report.Organization</td>
                     <td>
                         @if (!string.IsNullOrEmpty(report.FilePath))
                         {
@@ -139,7 +156,9 @@ else
 }
 
 <hr />
+
 <h3 class="settings-title">Ожидают одобрения расширенные тезисы</h3>
+
 @if (!Model.PendingExtendedTheses.Any())
 {
     <p>Нет предложенных расширенных тезисов.</p>
@@ -170,12 +189,11 @@ else
                         }
                     </td>
                     <td>
-                        <form asp-action="Approve" method="post" class="d-inline">
+                        <form asp-action="ApproveExtendedThesis" method="post" class="d-inline">
                             <input type="hidden" name="id" value="@report.ReportId" />
-                            <input type="hidden" name="confirm" value="true" />
                             <button type="submit" class="settings-photo-btn settings-photo-btn-approve">Одобрить</button>
                         </form>
-                        <a href="@Url.Action("Reject", "AdminReports", new { id = report.ReportId })" class="settings-photo-btn settings-photo-btn-warning">Отклонить</a>
+                        <a href="@Url.Action("RejectExtendedThesis", "AdminReports", new { id = report.ReportId })" class="settings-photo-btn settings-photo-btn-warning">Отклонить</a>
                     </td>
                 </tr>
             }
@@ -184,7 +202,9 @@ else
 }
 
 <hr />
+
 <h3 class="settings-title">Одобренные расширенные тезисы</h3>
+
 @if (!Model.ApprovedExtendedTheses.Any())
 {
     <p>Нет одобренных расширенных тезисов.</p>
@@ -215,12 +235,11 @@ else
                         }
                     </td>
                     <td>
-                        <form asp-action="Rollback" method="post" class="d-inline">
+                        <form asp-action="RollbackExtendedThesis" method="post" class="d-inline">
                             <input type="hidden" name="id" value="@report.ReportId" />
-                            <input type="hidden" name="confirm" value="true" />
                             <button type="submit" class="settings-photo-btn settings-photo-btn-warning">Откатить</button>
                         </form>
-                        <a href="@Url.Action("Reject", "AdminReports", new { id = report.ReportId })" class="settings-photo-btn settings-photo-btn-warning">Отклонить</a>
+                        <a href="@Url.Action("RejectExtendedThesis", "AdminReports", new { id = report.ReportId })" class="settings-photo-btn settings-photo-btn-warning">Отклонить</a>
                     </td>
                 </tr>
             }
@@ -229,7 +248,9 @@ else
 }
 
 <hr />
+
 <h3 class="settings-title">Отклоненные расширенные тезисы</h3>
+
 @if (!Model.RejectedExtendedTheses.Any())
 {
     <p>Нет отклоненных расширенных тезисов.</p>

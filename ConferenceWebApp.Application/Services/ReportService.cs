@@ -7,6 +7,7 @@ using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 public class ReportService : IReportService
 {
@@ -30,7 +31,7 @@ public class ReportService : IReportService
     {
         var userProfile = await _userProfileRepository.GetByUserIdAsync(userId);
         if (userProfile == null || userProfile.Status == 0)
-            return Result<List<ReportDTO>>.Failure("Пользователь не зарегистрирован на конференцию, заполните личну");
+            return Result<List<ReportDTO>>.Failure("Пользователь не зарегистрирован на конференцию, заполните личную информацию");
 
         var reports = await _reportRepository.GetReportsByUserIdAsync(userId);
         return Result<List<ReportDTO>>.Success(reports.Select(ToReportDTO).ToList());
@@ -53,6 +54,14 @@ public class ReportService : IReportService
 
     }
 
+    public async Task<Result<List<EditReportDTO>>> GetReportsForEditAsync(Guid userId)
+    {
+        var reports = await _reportRepository.GetReportsByUserIdAsync(userId);
+        var editReportDTOs = reports.Select(report => ToEditReportDTO(report)).ToList();
+
+        return Result<List<EditReportDTO>>.Success(editReportDTOs);
+
+    }
     public async Task<Result> AddReportAsync(AddReportDTO dto, Guid userId)
     {
         try
@@ -80,6 +89,7 @@ public class ReportService : IReportService
                 UploadedAt = DateTime.UtcNow,
                 LastUpdatedAt = DateTime.UtcNow,
                 Status = ReportStatus.SubmittedThesis,
+                RejectionComment = string.Empty,
                 TransferStatus = ReportTransferStatus.None
             };
 
@@ -124,7 +134,6 @@ public class ReportService : IReportService
             return Result.Failure($"Ошибка при обновлении отчета: {ex.Message}");
         }
     }
-
     public async Task<Result> DeleteReportAsync(Guid reportId, Guid userId)
     {
         try

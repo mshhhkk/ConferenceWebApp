@@ -1,7 +1,64 @@
-﻿@{
+﻿@using ConferenceWebApp
+@model List<ConferenceWebApp.Application.DTOs.Admin.AdminUserProfileDTO>
+
+@{
     Layout = "_AdminLayout";
 }
 
-<div class="settings-title">Добро пожаловать в панель управления администратора. Выберите нужный раздел</div>
-   
-
+@if (!Model.Any())
+{
+    <p>Нет пользователей для отображения.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <!-- добавлено -->
+        <table class="table table-bordered table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Email</th>
+                    <th class="d-none d-md-table-cell">Телефон</th>
+                    <th class="d-none d-xl-table-cell">Дата рождения</th>
+                    <th class="d-none d-lg-table-cell">Организация</th>
+                    <th class="d-none d-xl-table-cell">Специализация</th>
+                    <th class="d-none d-xl-table-cell">Статус</th>
+                    <th class="d-none d-xl-table-cell">Тип участника</th>
+                    <th class="d-none d-xxl-table-cell">Статус одобрения</th>
+                    <th class="d-none d-xxl-table-cell">Степень</th>
+                    <th class="d-none d-xxl-table-cell">Должность</th>
+                    <th class="text-end">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr style="font-size: 0.85rem;">
+                        <td>@user.FullName</td>
+                        <td class="text-truncate" style="max-width:220px;">@user.Email</td>
+                        <td class="d-none d-md-table-cell">@user.PhoneNumber</td>
+                        <td class="d-none d-xl-table-cell">@user.BirthDate</td>
+                        <td class="d-none d-lg-table-cell text-wrap" style="max-width:260px;">@user.Organization</td>
+                        <td class="d-none d-xl-table-cell text-wrap" style="max-width:260px;">@user.Specialization</td>
+                        <td class="d-none d-xl-table-cell">@EnumHelper.GetEnumDescription(user.Status)</td>
+                        <td class="d-none d-xl-table-cell">@EnumHelper.GetEnumDescription(user.ParticipantType)</td>
+                        <td class="d-none d-xxl-table-cell">@EnumHelper.GetEnumDescription(user.ApprovalStatus)</td>
+                        <td class="d-none d-xxl-table-cell">@EnumHelper.GetEnumDescription(user.Degree)</td>
+                        <td class="d-none d-xxl-table-cell">@EnumHelper.GetEnumDescription(user.Position)</td>
+                        <td class="text-end text-nowrap">
+                            <!-- nowrap только тут -->
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="@Url.Action("EditUser", "Admin", new { id = user.UserId })"
+                                   class="btn btn-primary">Ред.</a>
+                                <a href="@Url.Action("UserReports", "Admin", new { id = user.UserId })"
+                                   class="btn btn-outline-secondary">Докл.</a>
+                                <a href="@Url.Action("AddReport", "Admin", new { userId = user.UserId })"
+                                   class="btn btn-success">Добав.</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

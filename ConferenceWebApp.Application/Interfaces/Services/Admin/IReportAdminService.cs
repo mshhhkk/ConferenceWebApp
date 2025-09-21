@@ -16,5 +16,10 @@ public interface IReportAdminService
     Task<Reports?> GetReportByIdAsync(Guid id);
     Task<string?> GetReportFilePathAsync(Guid id);
     Task RejectReportAsync(Guid id, string comment);
-    
+
+    Task<bool> RejectExtendedThesisAsync(Guid id, string comment);
+
+    Task<bool> ApproveExtendedThesisAsync(Guid id);
+
+
 }

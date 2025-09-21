@@ -1,0 +1,58 @@
+﻿@model ConferenceWebApp.Application.DTOs.ReportsDTOs.EditReportDTO
+@{
+    Layout = "_AdminLayout";
+    var userId = Context.Request.Query["userId"].ToString();
+}
+
+<h2>Редактировать доклад</h2>
+
+<form asp-action="EditReport" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="userId" value="@userId" />
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="ReportTheme">Тема доклада</label>
+        <input asp-for="ReportTheme" class="form-control" />
+        <span asp-validation-for="ReportTheme" class="text-danger"></span>
+    </div>
+
+    <div class="add-thesis-row">
+        <div class="add-thesis-col">
+            <label asp-for="Section" class="add-thesis-label">Тема секции</label>
+            <select asp-for="Section" asp-items="Html.GetEnumSelectList<SectionTopic>()" class="add-thesis-select">
+                <option value="">Выбрать</option>
+            </select>
+            <span asp-validation-for="Section" class="text-danger"></span>
+        </div>
+        <div class="add-thesis-col">
+            <label asp-for="WorkType" class="add-thesis-label">Характер работы</label>
+            <select asp-for="WorkType" asp-items="Html.GetEnumSelectList<WorkType>()" class="add-thesis-select">
+                <option value="">Выбрать</option>
+            </select>
+            <span asp-validation-for="WorkType" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Текущий файл</label>
+        @if (!string.IsNullOrEmpty(Model.CurrentFilePath))
+        {
+            <div class="mb-2">
+                <a asp-action="DownloadReport" asp-route-userId="@userId" asp-route-reportId="@Model.Id">Скачать текущий</a>
+                <span class="ms-2 text-muted">(@Model.CurrentFileName)</span>
+            </div>
+        }
+        <label asp-for="File">Заменить файлом (.doc/.docx)</label>
+        <input type="file" asp-for="File" class="form-control" />
+        <span asp-validation-for="File" class="text-danger"></span>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a asp-action="UserReports" asp-route-id="@userId" class="btn btn-secondary">Отмена</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,18 @@
+﻿@model Guid
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<h2 class="settings-title">Отклонение расширенного тезиса</h2>
+
+<form method="post" asp-action="RejectExtendedThesis">
+    <input type="hidden" name="id" value="@Model" />
+
+    <div class="mb-3">
+        <label for="comment" class="form-label">Комментарий</label>
+        <textarea id="comment" name="comment" class="form-control" rows="4" placeholder="Введите комментарий" required></textarea>
+    </div>
+
+    <button type="submit" class="settings-photo-btn settings-photo-btn-warning">Отклонить</button>
+</form>

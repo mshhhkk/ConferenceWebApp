@@ -1,8 +1,11 @@
-﻿using ConferenceWebApp.Application.Interfaces.Services;
+﻿using ConferenceWebApp.Application.DTOs.Admin;
+using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+using ConferenceWebApp.Application.DTOs.ReportsDTOs;
+using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Application.Interfaces.Services.Admin;
+using ConferenceWebApp.Application.Validation;
 using ConferenceWebApp.Infrastructure.Services.Realization;
 using ConferenceWebApp.Infrastructure.Services.Realization.Admin;
-using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 namespace ConferenceWebApp.Application.Extensions;
@@ -25,13 +28,17 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAdminCommitteeService, AdminCommitteeService>();
         services.AddScoped<IReportAdminService, ReportAdminService>();
         services.AddScoped<IScheduleAdminService, ScheduleAdminService>();
-        services.AddScoped<IUserProfileService, UserService>();
+        services.AddScoped<IUserProfileService, UserProfileService>();
         return services;
     }
     public static IServiceCollection AddValidators(this IServiceCollection services)
     {
         
         services.AddScoped<IValidator<EditUserDTO>, EditUserProfileValidator>();
+        services.AddScoped<IValidator<AddReportDTO>, AddReportValidator>();
+        services.AddScoped<IValidator<EditReportDTO>, EditReportValidator>();
+        services.AddScoped<IValidator<AdminEditUserDTO>, AdminEditUserValidator>();
+
         return services;
     }
 }

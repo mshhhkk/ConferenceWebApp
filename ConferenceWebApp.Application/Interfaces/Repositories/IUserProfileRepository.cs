@@ -25,4 +25,7 @@ public interface IUserProfileRepository
 
     IQueryable<UserProfile> GetAllQueryable();
 
+    List<UserProfile> GetAllList();
+
+
 }

@@ -1,12 +1,18 @@
-﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+﻿using ConferenceWebApp.Application.DTOs.Admin;
+using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+using ConferenceWebApp.Domain.Enums;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
 using System;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public class EditUserProfileValidator : AbstractValidator<EditUserDTO>
+namespace ConferenceWebApp.Application.Validation;
+
+public class AdminEditUserValidator : AbstractValidator<AdminEditUserDTO>
 {
-    public EditUserProfileValidator()
+    public AdminEditUserValidator()
     {
         RuleFor(x => x.FirstName)
             .Matches(@"^[A-Za-zА-Яа-яЁё]+$").WithMessage("Имя может содержать только буквы.")
@@ -39,12 +45,7 @@ public class EditUserProfileValidator : AbstractValidator<EditUserDTO>
             .NotEmpty().WithMessage("Специализация обязательна для заполнения.")
             .MaximumLength(100).WithMessage("Специализация не может быть длиннее 100 символов.");
 
-        RuleFor(x => x.Photo)
-            .Must(photo => photo == null || photo.Length < 10 * 1024 * 1024)
-            .WithMessage("Фото не может быть больше 10 МБ.")
-            .When(x => x.Photo != null);
-
-
+      
         RuleFor(x => x.Position)
             .NotNull().WithMessage("Выберите должность.")
             .IsInEnum().WithMessage("Выбранная должность недопустима.");
@@ -54,8 +55,21 @@ public class EditUserProfileValidator : AbstractValidator<EditUserDTO>
             .IsInEnum().WithMessage("Выбранная ученая степень недопустима.");
 
 
-  
+        RuleFor(x => x.Status)
+          .NotNull().WithMessage("Выберите статус")
+          .IsInEnum().WithMessage("Выбранный статус недопустим.");
 
+
+        RuleFor(x => x.ApprovalStatus)
+          .NotNull().WithMessage("Выберите статус одобрения.")
+          .IsInEnum().WithMessage("Выбранный  статус одобрения недопустим.");
+
+
+
+        RuleFor(x => x.ParticipantType)
+          .NotNull().WithMessage("Выберите тип участия.")
+          .IsInEnum().WithMessage("Выбранный тип участия недопустим.");
     }
+
 
 }

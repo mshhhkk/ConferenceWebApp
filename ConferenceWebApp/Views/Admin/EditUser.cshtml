@@ -1,0 +1,156 @@
+﻿@model ConferenceWebApp.ViewModels.Admin.AdminEditUserViewModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<h2>Редактирование пользователя</h2>
+
+<form asp-action="EditUser"
+      asp-route-id="@Model.UserProfile.UserId"
+      method="post"
+      enctype="application/x-www-form-urlencoded">
+    @Html.AntiForgeryToken()
+
+    <div class="text-danger">
+        @Html.ValidationSummary(excludePropertyErrors: true)
+    </div>
+
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="Email" class="settings-form-label">Email</label>
+            <input asp-for="Email" class="settings-form-input" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+
+
+    <input type="hidden" asp-for="UserProfile.Email" />
+
+    <h3>Профиль пользователя</h3>
+
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="UserProfile.FirstName" class="settings-form-label">Имя</label>
+            <input asp-for="UserProfile.FirstName" class="settings-form-input" />
+            <span asp-validation-for="UserProfile.FirstName" class="text-danger"></span>
+        </div>
+
+        <div class="settings-form-group">
+            <label asp-for="UserProfile.LastName" class="settings-form-label">Фамилия</label>
+            <input asp-for="UserProfile.LastName" class="settings-form-input" />
+            <span asp-validation-for="UserProfile.LastName" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="UserProfile.MiddleName" class="settings-form-label">Отчество</label>
+            <input asp-for="UserProfile.MiddleName" class="settings-form-input" />
+            <span asp-validation-for="UserProfile.MiddleName" class="text-danger"></span>
+        </div>
+
+        <div class="settings-form-group">
+            <label asp-for="UserProfile.PhoneNumber" class="settings-form-label">Телефон</label>
+            <input asp-for="UserProfile.PhoneNumber" class="settings-form-input" />
+            <span asp-validation-for="UserProfile.PhoneNumber" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="UserProfile.BirthDate" class="settings-form-label">Дата рождения</label>
+            <!-- DateOnly удобно форматировать так -->
+            <input asp-for="UserProfile.BirthDate" type="date" asp-format="{0:yyyy-MM-dd}" class="settings-form-input" />
+            <span asp-validation-for="UserProfile.BirthDate" class="text-danger"></span>
+        </div>
+
+        <div class="settings-form-group">
+            <label asp-for="UserProfile.Organization" class="settings-form-label">Организация</label>
+            <input asp-for="UserProfile.Organization" class="settings-form-input" />
+            <span asp-validation-for="UserProfile.Organization" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="UserProfile.Specialization" class="settings-form-label">Специализация</label>
+            <input asp-for="UserProfile.Specialization" class="settings-form-input" />
+            <span asp-validation-for="UserProfile.Specialization" class="text-danger"></span>
+        </div>
+
+        <div class="settings-form-group">
+            <label asp-for="UserProfile.Position" class="settings-form-label">Должность</label>
+            <select asp-for="UserProfile.Position"
+                    class="settings-form-input"
+                    asp-items="Html.GetEnumSelectList<ConferenceWebApp.Domain.Enums.Position>()">
+                <option value="">-- Выберите должность --</option>
+            </select>
+            <span asp-validation-for="UserProfile.Position" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="UserProfile.Degree" class="settings-form-label">Научная степень</label>
+            <select asp-for="UserProfile.Degree"
+                    class="settings-form-input"
+                    asp-items="Html.GetEnumSelectList<ConferenceWebApp.Domain.Enums.ScientificDegree>()">
+                <option value="">-- Выберите степень --</option>
+            </select>
+            <span asp-validation-for="UserProfile.Degree" class="text-danger"></span>
+        </div>
+
+        <div class="settings-form-group">
+            <label asp-for="UserProfile.ParticipantType" class="settings-form-label">Тип участника</label>
+            <select asp-for="UserProfile.ParticipantType"
+                    class="settings-form-input"
+                    asp-items="Html.GetEnumSelectList<ConferenceWebApp.Domain.Enums.ParticipantType>()">
+                <option value="">-- Выберите тип --</option>
+            </select>
+            <span asp-validation-for="UserProfile.ParticipantType" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="settings-form-row">
+        <div class="settings-form-group">
+            <label asp-for="UserProfile.Status" class="settings-form-label">Статус участия</label>
+            <select asp-for="UserProfile.Status"
+                    class="settings-form-input"
+                    asp-items="Html.GetEnumSelectList<ConferenceWebApp.Domain.Enums.ParticipantStatus>()">
+                <option value="">-- Выберите статус --</option>
+            </select>
+            <span asp-validation-for="UserProfile.Status" class="text-danger"></span>
+        </div>
+
+        <div class="settings-form-group">
+            <label asp-for="UserProfile.ApprovalStatus" class="settings-form-label">Модерация</label>
+            <select asp-for="UserProfile.ApprovalStatus"
+                    class="settings-form-input"
+                    asp-items="Html.GetEnumSelectList<ConferenceWebApp.Domain.Enums.UserApprovalStatus>()">
+                <option value="">-- Выберите статус --</option>
+            </select>
+            <span asp-validation-for="UserProfile.ApprovalStatus" class="text-danger"></span>
+        </div>
+    </div>
+    <input type="hidden" asp-for="UserProfile.UserId" />
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+        <a asp-action="Index" class="btn btn-secondary">Отмена</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const emailTop = document.querySelector('[name="Email"]');
+            const emailDto = document.querySelector('[name="UserProfile.Email"]');
+            if (emailTop && emailDto) {
+                const sync = () => { emailDto.value = emailTop.value || ""; };
+                sync();
+                emailTop.addEventListener('input', sync);
+            }
+        })();
+    </script>
+}

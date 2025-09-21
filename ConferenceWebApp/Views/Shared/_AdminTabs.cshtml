@@ -7,6 +7,7 @@
     else if (controller == "AdminCommittee" && action == "Index") selected = "Committee";
     else if (controller == "AdminReports" && action == "Index") selected = "Reports";
     else if (controller == "AdminCheckPayment" && action == "Index") selected = "CheckPayment";
+    else if (controller == "Admin" && action == "CreateUserWithReport") selected = "CreateUserWithReport";
 }
 
 <div class="settings-tabs">
@@ -14,5 +15,6 @@
     <a href="@Url.Action("Index", "AdminCommittee")" class="settings-tab-btn @(selected == "Committee" ? "selected" : "")">Управление комитетом</a>
     <a href="@Url.Action("Index", "AdminReports")" class="settings-tab-btn @(selected == "Reports" ? "selected" : "")">Одобрение докладов</a>
     <a href="@Url.Action("Index", "AdminCheckPayment")" class="settings-tab-btn @(selected == "CheckPayment" ? "selected" : "")">Проверка оплаты</a>
+    <a href="@Url.Action("CreateUserWithReport", "Admin")" class="settings-tab-btn @(selected == "CreateUserWithReport" ? "selected" : "")">Добавить пользователя</a>
 </div>
 

@@ -2,7 +2,7 @@
 using ConferenceWebApp.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
-namespace ConferenceWebApp.Application.DTOs
+namespace ConferenceWebApp.Application.DTOs.ReportsDTOs
 {
     public class EditReportDTO
     {

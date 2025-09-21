@@ -1,10 +1,12 @@
 ﻿using ConferenceWebApp.Application;
 using ConferenceWebApp.Application.DTOs;
+using ConferenceWebApp.Application.DTOs.Admin;
 using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.Interfaces.Repositories;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization;
 
@@ -76,7 +78,7 @@ public class PersonalAccountService : IPersonalAccountService
             userProfile.Specialization = dto.Specialization;
             userProfile.Degree = dto.Degree!.Value;
             userProfile.Position = dto.Position!.Value;
-
+            userProfile.Status = ParticipantStatus.ProfileCompleted;
             if (dto.RemovePhoto)
             {
                 await HandlePhotoRemoval(userProfile);
@@ -129,4 +131,39 @@ public class PersonalAccountService : IPersonalAccountService
             Organizer = "Организационный комитет"
         });
     }
+
+
+    public async Task<Result> AdminUpdateProfileAsync(Guid userId, AdminEditUserDTO dto)
+    {
+        var user = await _userProfileRepository.GetByUserIdAsync(userId);
+
+        if (user == null)
+        {
+            return Result.Failure("Пользователь не найден.");
+        }
+
+        user.FirstName = dto.FirstName ?? user.FirstName;
+        user.LastName = dto.LastName ?? user.LastName;
+        user.MiddleName = dto.MiddleName ?? user.MiddleName;
+        user.PhoneNumber = dto.PhoneNumber;
+        user.BirthDate = dto.BirthDate;
+        user.Organization = dto.Organization;
+        user.Specialization = dto.Specialization;
+        user.ParticipantType = dto.ParticipantType;
+        user.Status = dto.Status;
+        user.ApprovalStatus = dto.ApprovalStatus;
+        user.Degree = dto.Degree;
+        user.Position = dto.Position;
+
+        try
+        {
+            await _userProfileRepository.UpdateAsync(user);
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure($"Произошла ошибка при обновлении профиля: {ex.Message}");
+        }
+    }
 }
+

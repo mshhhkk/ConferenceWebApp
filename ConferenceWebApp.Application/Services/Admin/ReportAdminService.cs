@@ -65,7 +65,10 @@ public class ReportAdminService : IReportAdminService
 
                     var profile = await _userProfileRepository.GetByUserIdAsync(r.UserId);
                     if (profile != null)
+                    {
                         dto.AuthorFullName = $"{profile.LastName} {profile.FirstName} {profile.MiddleName}";
+                        dto.Organization = profile.Organization;
+                    }
                 }
 
                 dtos.Add(dto);
@@ -131,4 +134,24 @@ public class ReportAdminService : IReportAdminService
         }
     }
 
+    public async Task<bool> ApproveExtendedThesisAsync(Guid id)
+    {
+        var report = await _reportsRepository.GetReportByIdAsync(id);
+        if (report == null) return false;
+
+        report.Status = ReportStatus.ExtendedThesisApproved;
+        await _reportsRepository.UpdateReportAsync(report);
+        return true;
+    }
+
+    public async Task<bool> RejectExtendedThesisAsync(Guid id, string comment)
+    {
+        var report = await _reportsRepository.GetReportByIdAsync(id);
+        if (report == null) return false;
+
+        report.Status = ReportStatus.ExtendedThesisReturnedForCorrection;
+        report.RejectionComment = comment;
+        await _reportsRepository.UpdateReportAsync(report);
+        return true;
+    }
 }

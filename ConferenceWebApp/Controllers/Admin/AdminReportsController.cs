@@ -91,4 +91,28 @@ public class AdminReportsController : BaseController
         TempData["Message"] = "Доклад отклонен успешно с комментариями.";
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpPost]
+    public async Task<IActionResult> ApproveExtendedThesis(Guid id)
+    {
+        var report = await _reportService.GetReportByIdAsync(id);
+        if (report == null) return NotFound();
+
+        await _reportService.ApproveExtendedThesisAsync(id);  // Одобряем расширенный тезис
+
+        TempData["Message"] = "Расширенный тезис одобрен.";
+        return RedirectToAction(nameof(Index));  // Перенаправляем обратно на список отчетов
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> RejectExtendedThesis(Guid id, string comment)
+    {
+        var report = await _reportService.GetReportByIdAsync(id);
+        if (report == null) return NotFound();
+
+        await _reportService.RejectExtendedThesisAsync(id, comment);  // Отклоняем расширенный тезис с комментарием
+
+        TempData["Message"] = "Расширенный тезис отклонен с комментариями.";
+        return RedirectToAction(nameof(Index));  
+    }
 }

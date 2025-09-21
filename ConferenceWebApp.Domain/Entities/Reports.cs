@@ -51,4 +51,7 @@ public class Reports
 
     [Required]
     public ReportTransferStatus TransferStatus { get; set; }
+
+    [Required]
+    public string? RejectionComment { get; set; }
 }

@@ -1,25 +1,31 @@
 ﻿using ConferenceWebApp.Domain.Entities;
 
-namespace ConferenceWebApp.Application.Interfaces.Repositories
+namespace ConferenceWebApp.Application.Interfaces.Repositories;
+
+public interface IReportsRepository
 {
-    public interface IReportsRepository
-    {
-        Task<List<Reports>> GetReportsByUserIdAsync(Guid userId);
+    Task<List<Reports>> GetReportsByUserIdAsync(Guid userId);
+    Task AddReportAsync(Reports report);
 
-        Task AddReportAsync(Reports report);
+    Task UpdateReportAsync(Reports report);
 
-        Task UpdateReportAsync(Reports report);
+    Task<List<Reports>> GetApprovedReportsByUserIdAsync(Guid userId);
 
-        Task<List<Reports>> GetApprovedReportsByUserIdAsync(Guid userId);
+    Task<List<Reports>> GetReportsWithThesesByUserIdAsync(Guid userId);
 
-        Task<List<Reports>> GetReportsWithThesesByUserIdAsync(Guid userId);
+    Task<Reports?> GetReportByIdAsync(Guid reportId);
 
-        Task<Reports?> GetReportByIdAsync(Guid reportId);
+    Task<List<Reports>> GetPendingReportsAsync();
 
-        Task<List<Reports>> GetPendingReportsAsync();
+    Task<List<Reports>> GetApprovedReportsAsync();
 
-        Task<List<Reports>> GetApprovedReportsAsync();
+    Task<List<Reports>> GetRejectedReportsAsync();
 
-        Task DeleteReportAsync(Guid id);
-    }
+    Task<List<Reports>> GetPendingExtendedThesesAsync();
+
+    Task<List<Reports>> GetApprovedExtendedThesesAsync();
+
+    Task<List<Reports>> GetRejectedExtendedThesesAsync();
+
+    Task DeleteReportAsync(Guid id);
 }

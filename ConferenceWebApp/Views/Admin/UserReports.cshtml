@@ -1,0 +1,87 @@
+﻿@model ConferenceWebApp.ViewModels.Admin.AdminUserReportsViewModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<h2>Доклады пользователя @Model.Email</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-warning">@ViewBag.Message</div>
+}
+
+<div class="mb-3">
+    <a class="btn btn-primary"
+       asp-action="AddReport"
+       asp-route-userId="@Model.UserId">
+        Добавить доклад
+    </a>
+</div>
+
+@if (Model.Reports == null || !Model.Reports.Any())
+{
+    <p>У пользователя пока нет докладов.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Тема</th>
+                    <th>Секция</th>
+                    <th>Тип работы</th>
+                    <th>Загружен</th>
+                    <th>Обновлён</th>
+                    <th class="text-end">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.Reports)
+                {
+                    <tr>
+                        <td>@r.ReportTheme</td>
+                        <td>@r.Section</td>
+                        <td>@r.WorkType</td>
+                        <td>@r.UploadedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>@r.LastUpdatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-secondary me-1"
+                               asp-action="DownloadReport"
+                               asp-route-userId="@Model.UserId"
+                               asp-route-reportId="@r.Id">
+                                Скачать
+                            </a>
+
+                            <a class="btn btn-sm btn-primary me-1"
+                               asp-action="EditReport"
+                               asp-route-userId="@Model.UserId"
+                               asp-route-reportId="@r.Id">
+                                Редактировать
+                            </a>
+
+                            <form asp-action="DeleteReport"
+                                  method="post"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Удалить доклад?');">
+                                <input type="hidden" name="userId" value="@Model.UserId" />
+                                <input type="hidden" name="reportId" value="@r.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    Удалить
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,4 +1,5 @@
 ﻿using ConferenceWebApp.Application.DTOs;
+using ConferenceWebApp.Application.DTOs.Admin;
 using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 
 namespace ConferenceWebApp.Application.Interfaces.Services;
@@ -10,4 +11,6 @@ public interface IPersonalAccountService
     Task<Result> UpdateProfileAsync(Guid userId, EditUserDTO dto);
 
     Task<Result<InvitationDTO>> GenerateInvitationAsync(Guid userId);
+
+    Task<Result> AdminUpdateProfileAsync(Guid userId, AdminEditUserDTO dto);
 }

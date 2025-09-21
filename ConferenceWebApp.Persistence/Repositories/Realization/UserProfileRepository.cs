@@ -107,4 +107,9 @@ public class UserProfileRepository : IUserProfileRepository
     {
         return _context.UserProfile.AsQueryable();
     }
+
+    public List<UserProfile> GetAllList()
+    {
+        return _context.UserProfile.ToList();
+    }
 }
