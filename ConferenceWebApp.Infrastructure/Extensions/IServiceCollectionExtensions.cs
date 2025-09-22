@@ -36,6 +36,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IEmailSender, EmailSender>();
         services.AddSingleton<IFileService>(provider => new FileService(rootPath));
+        services.AddScoped<ISessionService, SessionService>();
         return services;
     }
 }

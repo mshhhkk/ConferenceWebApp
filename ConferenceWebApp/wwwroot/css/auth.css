@@ -331,3 +331,202 @@
     z-index: 1;
     pointer-events: none;
 }
+
+:root{
+  --err: #e25563;        /* основной красный */
+  --err-bg: #ffeef0;     /* мягкий фон */
+  --border: #e5e7eb;     /* базовая граница */
+  --text: #111827;
+  --muted: #6b7280;
+  --ok: #0ba95b;
+}
+
+.auth-form { display:block; }
+
+.form-field { margin-bottom: 16px; }
+.form-label { display:block; margin-bottom:6px; color:var(--text); font-weight:600; }
+
+.form-input {
+  width:100%;
+  padding:12px 14px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#fff;
+  transition:border-color .2s, box-shadow .2s, background-color .2s;
+}
+
+/* ASP.NET ставит класс input-validation-error — подкрашиваем мягко */
+.form-input.input-validation-error {
+  border-color: var(--err);
+  background: var(--err-bg);
+  box-shadow: 0 0 0 3px rgba(226,85,99,0.12);
+}
+
+/* Текст ошибки под полем */
+.form-error,
+.field-validation-error {
+  display:block;
+  margin-top:6px;
+  font-size: 12px;
+  color: var(--err);
+  line-height:1.3;
+  position: relative;
+  padding-left: 18px;
+}
+.form-error::before,
+.field-validation-error::before{
+  content: "!";
+  position:absolute; left:0; top:1px;
+  width:14px; height:14px;
+  border-radius:50%;
+  background: var(--err);
+  color:#fff; font-size:10px; line-height:14px; text-align:center;
+}
+
+/* Пустые ошибки скрываем */
+.field-validation-valid { display:none; }
+
+/* Сводка ошибок */
+.auth-errors-card,
+.validation-summary-errors{
+  border:1px solid var(--err);
+  background: var(--err-bg);
+  color: var(--err);
+  border-left:4px solid var(--err);
+  border-radius:10px;
+  padding:10px 12px;
+  margin-bottom:14px;
+}
+.auth-errors-card ul,
+.validation-summary-errors ul{
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+/* Кнопка */
+.btn-primary{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:none;
+  background:#1054e5;
+  color:#fff; font-weight:600;
+  cursor:pointer; transition:opacity .2s, transform .02s;
+}
+.btn-primary[disabled]{ opacity:.6; cursor:not-allowed; }
+.btn-primary:active{ transform: translateY(1px); }
+
+/* Чек-лист пароля (опционально) */
+.pwd-checklist{
+  list-style:none; margin:8px 0 0; padding:0; font-size:12px; color:var(--muted);
+}
+.pwd-checklist li{
+  display:flex; align-items:center; gap:8px; margin:4px 0;
+}
+.pwd-checklist li::before{
+  content:"";
+  width:14px; height:14px; border-radius:50%;
+  border:1px solid var(--muted);
+  display:inline-block;
+}
+.pwd-checklist li.ok{ color: var(--ok); }
+.pwd-checklist li.ok::before{
+  background: var(--ok);
+  border-color: var(--ok);
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"><path fill="white" d="M4.5 9.5L1.5 6.5L2.56 5.44L4.5 7.38L9.44 2.44L10.5 3.5Z"/></svg>') center/10px 10px no-repeat;
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"><path fill="white" d="M4.5 9.5L1.5 6.5L2.56 5.44L4.5 7.38L9.44 2.44L10.5 3.5Z"/></svg>') center/10px 10px no-repeat;
+}
+
+/* было: top: 50%; transform: translateY(-50%); */
+/* контейнер и отступ под кнопку */
+.input-with-eye {
+    position: relative;
+}
+
+    .input-with-eye .form-input {
+        padding-right: 44px;
+        top: calc(50% - 20px);
+    }
+
+/* сама кнопка-иконка, позиционируем поверх поля справа */
+.eye-btn {
+    appearance: none;
+    margin-bottom:-20px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: absolute;
+    right: 10px;
+    top: calc(50% - 4px); /* ↑ можно подстроить */
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    z-index: 2;
+}
+
+    .eye-btn:focus-visible {
+        outline: 2px solid rgba(16,84,229,.35);
+    }
+
+    /* вид иконок */
+    .eye-btn svg {
+        width: 22px;
+        height: 22px;
+        fill: #6b7280;
+    }
+
+    .eye-btn[aria-pressed="true"] svg {
+        fill: #374151;
+    }
+
+/* переключение видимости: по умолчанию открыт глаз */
+.icon-eye-off {
+    display: none;
+}
+
+.eye-btn[aria-pressed="true"] .icon-eye {
+    display: none;
+}
+
+.eye-btn[aria-pressed="true"] .icon-eye-off {
+    display: block;
+}
+
+
+/* твоя обычная кнопка */
+.btn-primary{
+  width:100%;
+  padding:12px 14px;
+  border:none;
+  border-radius:12px;
+  font-weight:700;
+  color:#fff;
+  background: linear-gradient(90deg, #a24cf6, #ff4dc1);
+  box-shadow: 0 8px 20px rgba(162,76,246,.25);
+  transition: filter .2s, opacity .2s, transform .02s, box-shadow .2s;
+}
+
+/* явный неактивный вид */
+.btn-primary[disabled]{
+  cursor: not-allowed;
+  opacity: .55;
+  filter: grayscale(.25) saturate(.8) contrast(.9);
+  background: linear-gradient(90deg, #c9c9d3, #bfc2cc);
+  box-shadow: none;
+}
+
+/* на всякий случай, если disabled снимается/ставится классом */
+.btn-primary.is-disabled{
+  cursor: not-allowed;
+  opacity: .55;
+  filter: grayscale(.25) saturate(.8) contrast(.9);
+  background: linear-gradient(90deg, #c9c9d3, #bfc2cc);
+  box-shadow: none;
+  pointer-events: none;
+}

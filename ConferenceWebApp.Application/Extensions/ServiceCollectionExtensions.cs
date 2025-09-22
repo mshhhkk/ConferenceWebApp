@@ -1,4 +1,5 @@
 ﻿using ConferenceWebApp.Application.DTOs.Admin;
+using ConferenceWebApp.Application.DTOs.AuthDTOs;
 using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 using ConferenceWebApp.Application.Interfaces.Services;
@@ -38,7 +39,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IValidator<AddReportDTO>, AddReportValidator>();
         services.AddScoped<IValidator<EditReportDTO>, EditReportValidator>();
         services.AddScoped<IValidator<AdminEditUserDTO>, AdminEditUserValidator>();
-
+        services.AddScoped<IValidator<RegisterDTO>, RegisterValidator>();
         return services;
     }
 }

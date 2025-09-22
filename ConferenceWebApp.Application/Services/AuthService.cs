@@ -2,7 +2,9 @@
 using ConferenceWebApp.Application.DTOs.AuthDTOs;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization;
 
@@ -12,17 +14,21 @@ public class AuthService : IAuthService
     private readonly SignInManager<User> _signInManager;
     private readonly IEmailSender _emailSender;
     private readonly ITwoFactorService _twoFactorService;
-
+    private readonly IUserProfileService _userProfileService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+  
     public AuthService(
         UserManager<User> userManager,
         SignInManager<User> signInManager,
-        IEmailSender emailSender,
-        ITwoFactorService twoFactorService)
+        IUserProfileService userProfileService,
+        IHttpContextAccessor httpContextAccessor, ITwoFactorService twoFactorService, IEmailSender emailSender)
     {
+        _twoFactorService = twoFactorService;
         _userManager = userManager;
         _signInManager = signInManager;
+        _userProfileService = userProfileService;
+        _httpContextAccessor = httpContextAccessor;
         _emailSender = emailSender;
-        _twoFactorService = twoFactorService;
     }
 
     public async Task<Result> RegisterAsync(RegisterDTO dto)
@@ -57,6 +63,9 @@ public class AuthService : IAuthService
             return Result.Failure("Ошибка подтверждения email");
 
         await _signInManager.SignInAsync(user, isPersistent: true);
+        
+
+
         return Result.Success();
     }
 
@@ -82,13 +91,24 @@ public class AuthService : IAuthService
         if (user == null)
             return Result.Failure("Пользователь не найден");
 
+        var userProfileResult = await _userProfileService.GetByUserIdAsync(user.Id);
+
+        if (!userProfileResult.IsSuccess)
+        {
+            return Result.Failure("Не удалось получить профиль пользователя.");
+        }
+
         await _signInManager.SignInAsync(user, isPersistent: true);
+
+        _httpContextAccessor.HttpContext.Session.SetString("UserProfile", JsonConvert.SerializeObject(userProfileResult.Value));
+
         return Result.Success();
     }
 
     public async Task<Result> LogoutAsync()
     {
         await _signInManager.SignOutAsync();
+        _httpContextAccessor.HttpContext.Session.Clear();
         return Result.Success();
     }
 }

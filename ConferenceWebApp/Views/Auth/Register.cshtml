@@ -2,10 +2,9 @@
 @model RegisterDTO
 @{
     ViewData["Title"] = "Register";
-}
-@{
     Layout = "_AuthLayout";
 }
+
 <link rel="stylesheet" href="~/css/global.css" />
 <link rel="stylesheet" href="~/css/auth.css" />
 
@@ -21,36 +20,141 @@
                 </h4>
             </div>
         </div>
+
         <div class="auth-right">
             <div class="auth-form-block">
-                <h2>Регистрация</h2>
-                <form asp-action="Register" method="post">
-                    <div>
-                        <label asp-for="Email">Адрес электронной почты</label>
-                        <input asp-for="Email" type="email" placeholder="Введите ваш email" />
-                        <span asp-validation-for="Email"></span>
+                <form asp-action="Register" method="post" novalidate class="auth-form">
+                    @Html.AntiForgeryToken()
+
+                    <!-- Сводка ошибок -->
+                    <div asp-validation-summary="ModelOnly" class="auth-errors-card"></div>
+
+                    <div class="form-field">
+                        <label asp-for="Email" class="form-label">Адрес электронной почты</label>
+                        <input asp-for="Email" type="email" class="form-input" autocomplete="email" />
+                        <span asp-validation-for="Email" class="form-error"></span>
                     </div>
-                    <div>
-                        <label asp-for="Password">Пароль</label>
-                        <input asp-for="Password" type="password" placeholder="Введите пароль" />
-                        <span asp-validation-for="Password"></span>
+
+                    <!-- ПАРОЛЬ -->
+                    <div class="form-field">
+                        <label asp-for="Password" class="form-label">Пароль</label>
+
+                        <!-- один-единственный инпут внутри обёртки с глазом -->
+                        <div class="input-with-eye">
+                            <input asp-for="Password"
+                                   id="@Html.IdFor(m => m.Password)"
+                                   type="password"
+                                   class="form-input"
+                                   autocomplete="new-password" />
+                            <button type="button"
+                                    class="eye-btn"
+                                    title="Показать/скрыть пароль"
+                                    aria-label="Показать/скрыть пароль"
+                                    aria-pressed="false"
+                                    data-target="@Html.IdFor(m => m.Password)">
+                                <!-- открытый глаз -->
+                                <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 5c5.5 0 9.5 4.2 10.8 6.3a1 1 0 0 1 0 1.4C21.5 14.8 17.5 19 12 19S2.5 14.8 1.2 12.7a1 1 0 0 1 0-1.4C2.5 9.2 6.5 5 12 5Zm0 2C7.9 7 4.6 9.9 3.3 12 4.6 14.1 7.9 17 12 17s7.4-2.9 8.7-5C19.4 9.9 16.1 7 12 7Zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z" />
+                                </svg>
+                                <!-- перечёркнутый глаз -->
+                                <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2.1 3.5 3.5 2.1 21.9 20.5 20.5 21.9 17.7 19.1C16.1 20.1 14.2 20.8 12 20.8 6.5 20.8 2.5 16.6 1.2 14.5a1.5 1.5 0 0 1 0-1.9c.7-1.1 2.7-3.6 5.7-5.2l-1.6-1.9ZM12 5.2c5.5 0 9.5 4.2 10.8 6.3.3.4.3 1 0 1.4-.5.9-1.7 2.4-3.4 3.9l-1.5-1.5c1.5-1.2 2.6-2.5 3.1-3.4C19.4 9.8 16.1 7 12 7c-.6 0-1.1 0-1.7.1l-1.6-1.6c1-.2 2.1-.3 3.3-.3Zm0 4a3.7 3.7 0 0 1 3.7 3.7c0 .6-.1 1.2-.3 1.7l-5.2-5.2c.5-.2 1.1-.2 1.8-.2Zm-3.7 3.7c0-.6.1-1.2.3-1.7l5.2 5.2c-.5.2-1.1.3-1.8.3A3.7 3.7 0 0 1 8.3 13Z" />
+                                </svg>
+                            </button>
+
+                        </div>
+
+                        <span asp-validation-for="Password" class="form-error"></span>
+
+                        <!-- чек-лист требований ОСТАВЛЯЕМ -->
+                        <ul class="pwd-checklist" id="pwdChecklist">
+                            <li data-re=".{8,}">Минимум 8 символов</li>
+                            <li data-re="[A-Z]">Заглавная буква</li>
+                            <li data-re="[a-z]">Строчная буква</li>
+                            <li data-re="\d">Цифра</li>
+                            <li data-re="[^A-Za-z0-9]">Спец-символ</li>
+                        </ul>
                     </div>
-                    <div>
-                        <label asp-for="PasswordRepeat">Повторите пароль</label>
-                        <input asp-for="PasswordRepeat" type="password" placeholder="Повторите пароль" />
-                        <span asp-validation-for="PasswordRepeat"></span>
+
+                    <!-- ПОВТОР ПАРОЛЯ -->
+                    <div class="form-field">
+                        <label asp-for="PasswordRepeat" class="form-label">Повторите пароль</label>
+
+                        <div class="input-with-eye">
+                            <input asp-for="PasswordRepeat"
+                                   id="@Html.IdFor(m => m.PasswordRepeat)"
+                                   type="password"
+                                   class="form-input"
+                                   autocomplete="new-password" />
+                            <button type="button"
+                                    class="eye-btn"
+                                    title="Показать/скрыть пароль"
+                                    aria-label="Показать/скрыть пароль"
+                                    aria-pressed="false"
+                                    data-target="@Html.IdFor(m => m.PasswordRepeat)">
+                                <!-- открытый глаз -->
+                                <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 5c5.5 0 9.5 4.2 10.8 6.3a1 1 0 0 1 0 1.4C21.5 14.8 17.5 19 12 19S2.5 14.8 1.2 12.7a1 1 0 0 1 0-1.4C2.5 9.2 6.5 5 12 5Zm0 2C7.9 7 4.6 9.9 3.3 12 4.6 14.1 7.9 17 12 17s7.4-2.9 8.7-5C19.4 9.9 16.1 7 12 7Zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z" />
+                                </svg>
+                                <!-- перечёркнутый глаз -->
+                                <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2.1 3.5 3.5 2.1 21.9 20.5 20.5 21.9 17.7 19.1C16.1 20.1 14.2 20.8 12 20.8 6.5 20.8 2.5 16.6 1.2 14.5a1.5 1.5 0 0 1 0-1.9c.7-1.1 2.7-3.6 5.7-5.2l-1.6-1.9ZM12 5.2c5.5 0 9.5 4.2 10.8 6.3.3.4.3 1 0 1.4-.5.9-1.7 2.4-3.4 3.9l-1.5-1.5c1.5-1.2 2.6-2.5 3.1-3.4C19.4 9.8 16.1 7 12 7c-.6 0-1.1 0-1.7.1l-1.6-1.6c1-.2 2.1-.3 3.3-.3Zm0 4a3.7 3.7 0 0 1 3.7 3.7c0 .6-.1 1.2-.3 1.7l-5.2-5.2c.5-.2 1.1-.2 1.8-.2Zm-3.7 3.7c0-.6.1-1.2.3-1.7l5.2 5.2c-.5.2-1.1.3-1.8.3A3.7 3.7 0 0 1 8.3 13Z" />
+                                </svg>
+                            </button>
+
+                        </div>
+
+                        <span asp-validation-for="PasswordRepeat" class="form-error"></span>
                     </div>
+
+
                     <div class="form-check">
-                        <input type="checkbox" id="agreement" />
-                        <label for="agreement">
+                        <input type="checkbox" id="agreement" class="form-check-input" />
+                        <label for="agreement" class="form-check-label">
                             Я принимаю условия <a href="#">пользовательского соглашения</a>
                         </label>
                     </div>
-                    <button type="submit">Продолжить</button>
-                    <div class="form-link">
-                        У вас уже есть учетная запись? <a href="/Auth/Login">Войти</a>
-                    </div>
+
+                    <button type="submit" class="btn-primary">Продолжить</button>
+
                 </form>
+
+               
+
             </div>
+        </div>
     </div>
 </div>
+
+
+
+<script>
+    // глазик
+    (function(){
+      document.querySelectorAll('.eye-btn').forEach(btn => {
+        const id = btn.dataset.target;
+        const input = document.getElementById(id);
+        if (!input) return;
+        btn.addEventListener('click', () => {
+          const show = input.type === 'password';
+          input.type = show ? 'text' : 'password';
+          btn.setAttribute('aria-pressed', String(show));
+        });
+      });
+    })();
+
+    // чек-лист требований к паролю (оставляем)
+    (function(){
+      const pwd = document.getElementById('@Html.IdFor(m => m.Password)');
+      const list = document.getElementById('pwdChecklist');
+      if (!pwd || !list) return;
+      const items = [...list.querySelectorAll('li')].map(li => ({li, re: new RegExp(li.dataset.re)}));
+      const update = () => {
+        const v = pwd.value || '';
+        items.forEach(({li, re}) => li.classList.toggle('ok', re.test(v)));
+      };
+      pwd.addEventListener('input', update);
+      update();
+    })();
+</script>
+

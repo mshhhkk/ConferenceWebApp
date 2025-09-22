@@ -12,7 +12,5 @@ namespace ConferenceWebApp.Application.DTOs.AuthDTOs
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
 
-        // Опционально: запомнить меня (для кук)
-        public bool RememberMe { get; set; } = false;
     }
 }

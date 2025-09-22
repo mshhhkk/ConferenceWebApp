@@ -12,11 +12,7 @@ public class UserProfileDTO
     public string Specialization { get; set; } = string.Empty;
     private string? _photoUrl;
 
-    public string PhotoUrl
-    {
-        get => string.IsNullOrEmpty(_photoUrl) ? "/images/defaultUserPhoto.png" : _photoUrl;
-        set => _photoUrl = value;
-    }
+    public string PhotoUrl { get; set; } = "/images/user.svg";
 
     public ParticipantType ParticipantType { get; set; }
     public ParticipantStatus Status { get; set; }
@@ -24,4 +20,15 @@ public class UserProfileDTO
     public bool IsApprovedAnyReports { get; set; }
     public bool IsExtendedThesisApproved { get; set; }
 
+    public void SetPhotoUrl(string? photoUrl)
+    {
+        if (string.IsNullOrEmpty(photoUrl))
+        {
+            PhotoUrl = "/images/user.svg";  // Если URL пустой, ставим дефолтный
+        }
+        else
+        {
+            PhotoUrl = photoUrl;
+        }
+    }
 }

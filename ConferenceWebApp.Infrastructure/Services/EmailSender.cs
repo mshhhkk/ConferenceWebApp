@@ -1,5 +1,7 @@
 ﻿using ConferenceWebApp.Application.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
+using System.Net;
+using System.Net.Mail;
 
 namespace ConferenceWebApp.Infrastructure.Services
 {
@@ -14,32 +16,32 @@ namespace ConferenceWebApp.Infrastructure.Services
 
         public async Task SendAsync(string email, string subject, string message)
         {
-            /* var smtpClient = new SmtpClient(_configuration["Smtp:Host"])
-             {
-                 Port = int.Parse(_configuration["Smtp:Port"]),
-                 Credentials = new NetworkCredential(
-                     _configuration["Smtp:Username"],
-                     _configuration["Smtp:Password"]),
-                 EnableSsl = true,
-             };
+            //var smtpClient = new SmtpClient(_configuration["Smtp:Host"])
+            //{
+            //    Port = int.Parse(_configuration["Smtp:Port"]),
+            //    Credentials = new NetworkCredential(
+            //        _configuration["Smtp:Username"],
+            //        _configuration["Smtp:Password"]),
+            //    EnableSsl = true,
+            //};
 
-             var fromAddress = _configuration["Smtp:From"];
-             if (string.IsNullOrEmpty(fromAddress))
-             {
-                 throw new ArgumentNullException(nameof(fromAddress), "Поле 'From' не может быть пустым.");
-             }
+            //var fromAddress = _configuration["Smtp:From"];
+            //if (string.IsNullOrEmpty(fromAddress))
+            //{
+            //    throw new ArgumentNullException(nameof(fromAddress), "Поле 'From' не может быть пустым.");
+            //}
 
-             var mailMessage = new MailMessage
-             {
-                 From = new MailAddress(fromAddress),
-                 Subject = subject,
-                 Body = message,
-                 IsBodyHtml = true,
-             };
+            //var mailMessage = new MailMessage
+            //{
+            //    From = new MailAddress(fromAddress),
+            //    Subject = subject,
+            //    Body = message,
+            //    IsBodyHtml = true,
+            //};
 
-             mailMessage.To.Add(email);
+            //mailMessage.To.Add(email);
 
-             await smtpClient.SendMailAsync(mailMessage);*/
+            //await smtpClient.SendMailAsync(mailMessage);
         }
     }
 

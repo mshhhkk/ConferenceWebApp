@@ -29,17 +29,13 @@ public class AuthController : BaseController
     }
 
 
-    [HttpPost]
     public async Task<IActionResult> Register(RegisterDTO dto)
     {
+        if (!ModelState.IsValid)
+            return View(dto);
 
+    
         var result = await _authService.RegisterAsync(dto);
-
-        if (!result.IsSuccess)
-        {
-            TempData["Error"] = result.ErrorMessage;
-            return View();
-        }
 
         return View("CheckYourEmail");
     }
@@ -76,12 +72,17 @@ public class AuthController : BaseController
     [HttpPost]
     public async Task<IActionResult> Login(LoginDTO dto)
     {
+        // 1) серверная валидация по DataAnnotations / FluentValidation
+        if (!ModelState.IsValid)
+            return View(dto);
 
+        // 2) логика входа
         var result = await _authService.SendTwoStepCodeAsync(dto);
         if (!result.IsSuccess)
         {
-            TempData["Error"] = result.ErrorMessage;
-            return View();
+            // показываем ошибку над формой (и сохраняем введённые значения)
+            ModelState.AddModelError(string.Empty, result.ErrorMessage);
+            return View(dto);
         }
 
         TempData["2fa_email"] = dto.Email;

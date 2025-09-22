@@ -31,6 +31,7 @@ public class PersonalAccountController : BaseController
     {
 
         var user = await _userManager.GetUserAsync(User);
+
         if (user == null)
         {
             return (null, RedirectToAction("Login", "Auth"));
@@ -76,7 +77,9 @@ public class PersonalAccountController : BaseController
             return View(dto);
         }
         var userprofile = await _userProfileService.GetByUserIdAsync(userId!.Value);
-     
+
+       
+
         _sessionService.UpdateSession("UserProfile", userprofile.Value);
 
         return RedirectToAction("Index", "Reports");

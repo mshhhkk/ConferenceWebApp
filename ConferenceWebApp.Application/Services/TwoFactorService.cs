@@ -49,7 +49,6 @@ namespace ConferenceWebApp.Infrastructure.Services.Realization
             if (twoFactorCode == null || twoFactorCode.ExpirationTime < DateTime.UtcNow || twoFactorCode.Code != inputCode)
                 return false;
 
-            // Удаляем код после успешной проверки
             await _twoFactorCodeRepository.RemoveAsync(twoFactorCode);
             return true;
         }
