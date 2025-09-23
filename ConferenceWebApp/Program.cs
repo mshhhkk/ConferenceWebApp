@@ -15,6 +15,10 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+        builder.Services.AddProblemDetails();
         var configBuild = new ConfigurationBuilder()
             .SetBasePath(builder.Environment.ContentRootPath)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -22,9 +26,12 @@ public class Program
 
         var configuration = configBuild.Build();
 
+
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddDistributedMemoryCache();
+
+     
 
         builder.Services.AddDatabase(builder.Configuration);
         builder.Services.AddApplicationServices();
@@ -78,17 +85,19 @@ public class Program
 
         var app = builder.Build();
 
-        app.UseMiddleware<SessionMiddleware>();
-
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
         }
         else
         {
-            app.UseExceptionHandler("/Error");
             app.UseHsts();
+            app.UseExceptionHandler("/error");
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
         }
+
+
+        app.UseMiddleware<SessionMiddleware>();
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
