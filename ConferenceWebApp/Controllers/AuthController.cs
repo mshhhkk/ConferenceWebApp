@@ -11,103 +11,65 @@ public class AuthController : BaseController
     private readonly ISessionService _sessionService;
     private readonly IUserProfileService _userProfileService;
     private readonly UserManager<User> _userManager;
+    private readonly ILogger<AuthController> _logger; 
 
-    public AuthController(IAuthService authService, IUserProfileService userProfileService, ISessionService sessionService, UserManager<User> userManager)
-         : base(userProfileService)
+    public AuthController(
+        IAuthService authService,
+        IUserProfileService userProfileService,
+        ISessionService sessionService,
+        UserManager<User> userManager,
+        ILogger<AuthController> logger)
+        : base(userProfileService)
     {
         _authService = authService;
         _sessionService = sessionService;
         _userProfileService = userProfileService;
         _userManager = userManager;
+        _logger = logger;
     }
 
-    [HttpGet]
-    public IActionResult Register()
-    {
-        ViewBag.Error = TempData["Error"];
-        return View();
-    }
-
-
-    public async Task<IActionResult> Register(RegisterDTO dto)
-    {
-        if (!ModelState.IsValid)
-            return View(dto);
-
-    
-        var result = await _authService.RegisterAsync(dto);
-
-        return View("CheckYourEmail");
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> ConfirmEmail(string userId, string token)
-    {
-        var result = await _authService.ConfirmEmailAsync(userId, token);
-        if (!result.IsSuccess)
-        {
-            TempData["Error"] = result.ErrorMessage;
-            return View();
-        }
-        var userProfileResult = await _userProfileService.GetByUserIdAsync(Guid.Parse(userId));
-        if (!userProfileResult.IsSuccess)
-        {
-            TempData["Error"] = userProfileResult.ErrorMessage;
-            return View();
-        }
-
-        _sessionService.SaveSession("UserProfile", userProfileResult.Value);
-
-        return RedirectToAction("Edit", "PersonalAccount");
-    }
-
-    [HttpGet]
-    public IActionResult Login()
-    {
-        ViewBag.Error = TempData["Error"];
-        return View();
-    }
-
-    [ValidateAntiForgeryToken]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginDTO dto)
     {
-        // 1) серверная валидация по DataAnnotations / FluentValidation
         if (!ModelState.IsValid)
+        {
+            _logger.LogWarning("Попытка логина с невалидной моделью. Email={Email}", dto.Email);
             return View(dto);
+        }
 
-        // 2) логика входа
         var result = await _authService.SendTwoStepCodeAsync(dto);
         if (!result.IsSuccess)
         {
-            // показываем ошибку над формой (и сохраняем введённые значения)
+            _logger.LogWarning("Ошибка логина для {Email}: {Error}", dto.Email, result.ErrorMessage);
             ModelState.AddModelError(string.Empty, result.ErrorMessage);
             return View(dto);
         }
 
+        _logger.LogInformation("Пользователь {Email} успешно прошёл первый этап логина", dto.Email);
         TempData["2fa_email"] = dto.Email;
         return RedirectToAction("Verify2SA", new { email = dto.Email });
     }
 
-    [HttpGet]
-    public IActionResult Verify2SA(string email) => View(new Verify2SADTO { Email = email });
-
-    [ValidateAntiForgeryToken]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Verify2SA(Verify2SADTO dto)
     {
-
         var result = await _authService.VerifyTwoStepsAuthAsync(dto);
         if (!result.IsSuccess)
         {
+            _logger.LogWarning("Ошибка 2FA для {Email}: {Error}", dto.Email, result.ErrorMessage);
             TempData["Error"] = result.ErrorMessage;
-            return RedirectToAction("Index"); ;
+            return RedirectToAction("Index");
         }
 
+        _logger.LogInformation("Пользователь {Email} успешно вошёл в систему", dto.Email);
         var user = await _userManager.GetUserAsync(User);
         var userProfileResult = await _userProfileService.GetByUserIdAsync(user.Id);
+
         if (!userProfileResult.IsSuccess)
         {
+            _logger.LogError("Не удалось загрузить профиль пользователя {Email}", dto.Email);
             TempData["Error"] = userProfileResult.ErrorMessage;
             return View();
         }
@@ -119,8 +81,11 @@ public class AuthController : BaseController
     [HttpPost]
     public async Task<IActionResult> Logout()
     {
+        var email = User.Identity?.Name ?? "Anonymous";
         await _authService.LogoutAsync();
         _sessionService.DeleteSession("UserProfile");
+
+        _logger.LogInformation("Пользователь {Email} вышел из системы", email);
         return RedirectToAction("Index", "Home");
     }
 }
