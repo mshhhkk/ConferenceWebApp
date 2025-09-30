@@ -12,6 +12,10 @@ obj/
 *.tmp
 *.bak
 
+ConferenceWebApp/Logs
+ConferenceWebApp/wwwroot/receipts/
+ConferenceWebApp/wwwroot/uploads/
+ConferenceWebApp/wwwroot/committee/
 # Конфигурационные файлы
 appsettings.json
 appsettings.Development.json
@@ -22,10 +26,7 @@ appsettings.Development.json
 *.userosscache
 *.sln.docstates
 
-# Папка с загруженными файлами
-wwwroot/receipts/
-wwwroot/uploads/
-wwwroot/committee/
+
 
 # NuGet
 *.nupkg

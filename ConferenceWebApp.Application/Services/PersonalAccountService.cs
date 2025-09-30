@@ -126,7 +126,7 @@ public class PersonalAccountService : IPersonalAccountService
                 userProfile.PhotoUrl = await _fileService.UpdateFileAsync(
                     dto.Photo,
                     null,
-                    "images",
+                    "uploads",
                     AllowedPhotoTypes,
                     MaxPhotoSize);
 
@@ -160,7 +160,7 @@ public class PersonalAccountService : IPersonalAccountService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Ошибка при удалении фото UserId={UserId}, Path={Path}", userProfile.UserId, userProfile.PhotoUrl);
-            throw; // пробрасываем дальше, чтобы верхний try/catch вернул Failure
+            throw; 
         }
     }
 
