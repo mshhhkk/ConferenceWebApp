@@ -19,6 +19,7 @@ public class UserProfileDTO
     public UserApprovalStatus ApprovalStatus { get; set; }
     public bool IsApprovedAnyReports { get; set; }
     public bool IsExtendedThesisApproved { get; set; }
+    
 
     public void SetPhotoUrl(string? photoUrl)
     {

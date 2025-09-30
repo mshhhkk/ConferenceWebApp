@@ -66,12 +66,20 @@
     <div class="settings-form-row">
         <div class="settings-form-group">
             <label asp-for="BirthDate" class="settings-form-label">Дата рождения</label>
-            <input asp-for="BirthDate" type="date" class="settings-form-input"
-                   min="1920-01-01" max="@DateTime.Now.ToString("yyyy-MM-dd")"
-                   value="@(Model.BirthDate.HasValue ? Model.BirthDate.Value.ToString("yyyy-MM-dd") : "2000-01-01")" />
-            <small class="form-text text-muted">Выберите дату в формате дд.мм.гггг</small>
+
+            <input asp-for="BirthDate"
+                   id="@Html.IdFor(m => m.BirthDate)"
+                   type="text"
+                   class="settings-form-input"
+                   placeholder="дд.мм.гггг"
+                   inputmode="numeric"
+                   pattern="^\d{2}\.\d{2}\.\d{4}$"
+                   value="@(Model.BirthDate.HasValue? Model.BirthDate.Value.ToString("dd.MM.yyyy") : "")" />
+
+            <small class="form-text text-muted">Формат: дд.мм.гггг</small>
             <span asp-validation-for="BirthDate" class="text-danger"></span>
         </div>
+
     </div>
 
     <div class="settings-form-row">
@@ -146,7 +154,64 @@
 
 @section Scripts {
     <script>
- 
+        (function () {
+          const view = document.getElementById('BirthDateView');
+          const hidden = document.getElementById('BirthDate');
+
+          if (!view || !hidden) return;
+
+          // авто-форматирование "дд.мм.гггг" по мере ввода
+          view.addEventListener('input', () => {
+            let v = view.value.replace(/\D/g, ''); // только цифры
+            if (v.length > 8) v = v.slice(0, 8);
+            // вставляем точки после 2 и 4 символов
+            if (v.length > 4) v = v.slice(0,2) + '.' + v.slice(2,4) + '.' + v.slice(4);
+            else if (v.length > 2) v = v.slice(0,2) + '.' + v.slice(2);
+            view.value = v;
+          });
+
+          function isValidDate(d, m, y) {
+            const dt = new Date(y, m - 1, d);
+            return dt.getFullYear() === y && (dt.getMonth() + 1) === m && dt.getDate() === d;
+          }
+
+          function toIso(d, m, y) {
+            // yyyy-MM-dd
+            const mm = m.toString().padStart(2, '0');
+            const dd = d.toString().padStart(2, '0');
+            return `${y}-${mm}-${dd}`;
+          }
+
+          view.addEventListener('blur', () => {
+            const m = view.value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+            const now = new Date();
+            const maxY = now.getFullYear();
+            const minY = 1920;
+
+            if (!m) {
+              hidden.value = ''; // пусть серверная валидация сработает
+              return;
+            }
+            const d = parseInt(m[1], 10);
+            const mo = parseInt(m[2], 10);
+            const y = parseInt(m[3], 10);
+
+            if (y < minY || y > maxY || !isValidDate(d, mo, y)) {
+              hidden.value = '';
+              return;
+            }
+            hidden.value = toIso(d, mo, y);
+          });
+
+
+          const form = view.closest('form');
+          if (form) {
+            form.addEventListener('submit', () => {
+              view.dispatchEvent(new Event('blur')); 
+            });
+          }
+        })();
+
         function openDeleteAccountModal() {
             document.getElementById("deleteAccountModal").style.display = "flex";
         }
@@ -157,7 +222,6 @@
             document.getElementById("deleteAccountForm").submit();
         }
 
-        // Закрытие модального окна при клике вне его
         window.addEventListener("click", function (e) {
             let modal = document.getElementById("deleteAccountModal");
             if (e.target === modal) closeDeleteAccountModal();

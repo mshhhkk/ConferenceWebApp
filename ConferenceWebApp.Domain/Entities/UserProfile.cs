@@ -10,21 +10,21 @@ public class UserProfile
     [ForeignKey(nameof(User))]
     public Guid UserId { get; set; }
 
-    public User User { get; set; } = null; 
+    public User User { get; set; } = null;
 
-    public string? FirstName { get; set; }
+    public string FirstName { get; set; } = "Имя";
 
-    public string? LastName { get; set; }
+    public string LastName { get; set; } = "Фамилия";
 
     public string? MiddleName { get; set; }
 
-    public DateOnly BirthDate { get; set; }
+    public DateOnly BirthDate { get; set; } 
 
-    public string? Organization { get; set; }
+    public string? Organization { get; set; } = string.Empty;
 
-    public string? Specialization { get; set; }
+    public string? Specialization { get; set; } = string.Empty;
 
-    public string? PhoneNumber { get; set; }
+    public string? PhoneNumber { get; set; } = string.Empty;
 
     public string? PhotoUrl { get; set; } = "/images/defaultUserPhoto.png";
 

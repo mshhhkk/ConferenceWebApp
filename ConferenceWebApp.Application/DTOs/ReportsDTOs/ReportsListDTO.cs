@@ -9,6 +9,11 @@ public class ReportDTO
     public DateTime UploadedAt { get; set; }
     public DateTime LastUpdatedAt { get; set; }
     public bool IsApproved { get; set; }
+
+    public string ExtThesis { get; set; }
+
+
+
 }
 
 public class ReportsListDTO
