@@ -43,9 +43,10 @@
     letter-spacing: 0;
     padding: 4px 16px;
     margin-top: 10px;
-    margin-bottom: 0px;
+    margin-bottom: 6px;
     white-space: nowrap;
-    width: 100px;
+    width: 130px;
+    text-align: center;
 }
 
 .thesis-card-ext {
@@ -60,8 +61,6 @@
     gap: 12px;
     margin-top: 8px;
 }
-
-
 
 .thesis-btn {
     display: inline-block;
@@ -82,11 +81,11 @@
     color: #fff;
     font-size: 18px;
     font-weight: 600;
-    width: 200px;
+    width: 400px;
     box-shadow: 0 2px 8px rgba(157,63,231,0.08);
     border: none;
     white-space: nowrap;
-    margin: 0; /* Важно! */
+    margin: 0; 
 }
 
 .thesis-btn-add:hover {

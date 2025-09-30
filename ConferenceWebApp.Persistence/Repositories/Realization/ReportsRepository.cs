@@ -39,7 +39,7 @@ public class ReportsRepository : IReportsRepository
     public async Task<List<Reports>> GetApprovedReportsByUserIdAsync(Guid userId)
     {
         return await _context.Reports
-            .Where(t => t.UserId == userId && t.Status == ReportStatus.ExtendedThesisApproved)
+            .Where(t => t.UserId == userId && t.Status == ReportStatus.ThesisApproved)
             .ToListAsync();
     }
 

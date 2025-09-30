@@ -36,7 +36,7 @@ public class ExtendedThesisService : IExtendedThesisService
         }
 
         var reports = await _reportsRepository.GetApprovedReportsByUserIdAsync(userId);
-        if (reports == null || reports.Count == 0)
+        if (reports == null)
         {
             _logger.LogWarning("У пользователя {UserId} нет одобренных докладов", userId);
             return Result<ExtendedThesisDTO>.Failure("У вас нет одобренных докладов.");
@@ -46,23 +46,23 @@ public class ExtendedThesisService : IExtendedThesisService
         {
             ReportsWithTheses = reports
                 .Where(r => r.ExtThesis != null && r.Status == ReportStatus.ThesisApproved)
-                .Select(r => new Reports
+                .Select(r => new ReportDTO
                 {
                     Id = r.Id,
                     ReportTheme = r.ReportTheme,
-                    Section = r.Section,
-                    WorkType = r.WorkType,
+                    Section = EnumDescriptionGetter.Handle(r.Section),
+                    WorkType = EnumDescriptionGetter.Handle(r.WorkType),
                     UploadedAt = r.UploadedAt,
                     LastUpdatedAt = r.LastUpdatedAt,
                 }).ToList(),
             ReportsWithoutTheses = reports
                 .Where(r => r.ExtThesis == null && r.Status == ReportStatus.ThesisApproved)
-                .Select(r => new Reports
+                .Select(r => new ReportDTO
                 {
                     Id = r.Id,
                     ReportTheme = r.ReportTheme,
-                    Section = r.Section,
-                    WorkType = r.WorkType,
+                    Section = EnumDescriptionGetter.Handle(r.Section),
+                    WorkType = EnumDescriptionGetter.Handle(r.WorkType),
                     UploadedAt = r.UploadedAt,
                     LastUpdatedAt = r.LastUpdatedAt,
                 }).ToList()

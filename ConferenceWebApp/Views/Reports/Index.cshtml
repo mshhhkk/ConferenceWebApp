@@ -1,4 +1,5 @@
-﻿@using ConferenceWebApp.ViewModels;
+﻿@using ConferenceWebApp
+@using ConferenceWebApp.ViewModels;
 @model UserReportsViewModel;
 
 @{
@@ -14,7 +15,11 @@
     {
         <div class="thesis-card" id="card-@talk.Id">
             <div class="thesis-card-title">@talk.ReportTheme</div>
-            <div class="thesis-card-org">@talk.Section</div>
+            <div class="thesis-card-org">
+                <div>
+                    @talk.Section
+                </div>
+               </div>
             <div class="thesis-card-type">@talk.WorkType</div>
             <div class="thesis-card-actions">
                 @if (!talk.IsApproved)
@@ -34,13 +39,13 @@
 
 <a asp-controller="Reports" asp-action="Add" class="thesis-btn thesis-btn-add">Добавить тезис</a>
 
-<!-- Скрытая форма для безопасного POST-удаления -->
+
 <form id="deleteForm" asp-controller="Reports" asp-action="Delete" method="post" style="display:none;">
     @Html.AntiForgeryToken()
     <input type="hidden" name="id" id="deleteId" />
 </form>
 
-<!-- Мини-модалка подтверждения -->
+
 <div id="deleteModal" class="modal" style="display:none;">
     <div class="modal-content">
         <div class="modal-header">

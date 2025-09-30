@@ -30,7 +30,6 @@ namespace ConferenceWebApp.Persistence
             var result = await base.CreateAsync(user, password);
             if (result.Succeeded)
             {
-                // Создаём профиль пользователя
                 var userProfile = new UserProfile
                 {
                     UserId = user.Id,

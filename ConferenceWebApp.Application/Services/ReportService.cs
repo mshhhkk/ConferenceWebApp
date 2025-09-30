@@ -282,8 +282,8 @@ public class ReportService : IReportService
     {
         Id = report.Id,
         ReportTheme = report.ReportTheme,
-        Section = report.Section.ToString(),
-        WorkType = report.WorkType.ToString(),
+        Section = EnumDescriptionGetter.Handle(report.Section),
+        WorkType = EnumDescriptionGetter.Handle(report.WorkType),
         UploadedAt = TimeZoneInfo.ConvertTimeFromUtc(report.UploadedAt, TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time")),
         LastUpdatedAt = TimeZoneInfo.ConvertTimeFromUtc(report.LastUpdatedAt, TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time")),
     };

@@ -134,6 +134,8 @@ public class ReportAdminService : IReportAdminService
 
         report.Status = ReportStatus.ThesisApproved;
         userProfile.ParticipantType = ParticipantType.Speaker;
+        userProfile.ApprovalStatus = UserApprovalStatus.ThesisApproved;
+        await _userProfileRepository.UpdateAsync(userProfile);
         await _reportsRepository.UpdateReportAsync(report);
 
         _logger.LogInformation("Тезис одобрен. ReportId={ReportId}", id);
@@ -194,10 +196,16 @@ public class ReportAdminService : IReportAdminService
             _logger.LogWarning("Нельзя одобрить расширенные тезисы — доклад не найден. ReportId={ReportId}", id);
             return false;
         }
-
+        var user = await _userProfileRepository.GetUserProfileByReportIdAsync(id);
+        if (user == null)
+        {
+            _logger.LogWarning("У доклада не найден владелец,ReportId={ReportId}", id);
+            return false;
+        }
         report.Status = ReportStatus.ExtendedThesisApproved;
+        user.ApprovalStatus = UserApprovalStatus.ThesisApproved;
         await _reportsRepository.UpdateReportAsync(report);
-
+        await _userProfileRepository.UpdateAsync(user);
         _logger.LogInformation("Расширенные тезисы одобрены. ReportId={ReportId}", id);
         return true;
     }
