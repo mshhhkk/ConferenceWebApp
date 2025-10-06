@@ -1,0 +1,60 @@
+services:
+  db:
+    image: postgres:16
+    container_name: postgres_conference
+    restart: always
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: conference_web
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ConnectionStrings__DefaultConnection: ${CONNECTION_STRING}
+    ports:
+      - "8080:8080"
+    restart: always
+    volumes:
+      - ./_data/logs:/app/Logs
+      - ./_data/wwwroot:/app/wwwroot
+
+  migrator:
+    image: mcr.microsoft.com/dotnet/sdk:9.0
+    container_name: conference_migrator
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    working_dir: /src
+    volumes:
+      - .:/src
+    entrypoint: ["bash", "-lc"]
+    command: >
+      dotnet restore &&
+      dotnet tool install -g dotnet-ef --version 9.* &&
+      /root/.dotnet/tools/dotnet-ef database update
+      --project ConferenceWebApp.Persistence/ConferenceWebApp.Persistence.csproj
+      --startup-project ConferenceWebApp/ConferenceWebApp.csproj
+      --connection "$CONNECTION_STRING"
+
+volumes:
+  postgres_data: {}
