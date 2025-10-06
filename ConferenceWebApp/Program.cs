@@ -1,11 +1,10 @@
 ﻿using ConferenceWebApp.Application.Extensions;
 using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.Infrastructure.Extensions;
+using ConferenceWebApp.Middleware;
 using ConferenceWebApp.Persistence;
 using ConferenceWebApp.Persistence.Extensions;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Session;
 using Serilog;
 
 namespace ConferenceWebApp;
@@ -14,49 +13,45 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
+
+        var builder = WebApplication.CreateBuilder(args);
+
+        builder.Configuration
+            .SetBasePath(builder.Environment.ContentRootPath)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables();
+
         Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables()
-                .Build())
+            .ReadFrom.Configuration(builder.Configuration)
             .Enrich.FromLogContext()
             .WriteTo.Console()
-            .WriteTo.File("Logs/log-.txt",
+            .WriteTo.File(
+                Path.Combine(builder.Environment.ContentRootPath, "Logs", "log-.txt"),
                 rollingInterval: RollingInterval.Day,
                 retainedFileCountLimit: 7,
-                shared: true)
+                shared: true
+            )
             .CreateLogger();
+
+        builder.Host.UseSerilog();
 
         try
         {
-            Log.Information(" Приложение запускается...");
-
-            var builder = WebApplication.CreateBuilder(args);
-
-            // Подключаем Serilog вместо стандартного логгера
-            builder.Host.UseSerilog();
+            Log.Information("Приложение запускается...");
 
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 
-            var configBuild = new ConfigurationBuilder()
-                .SetBasePath(builder.Environment.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables();
-
-            var configuration = configBuild.Build();
-
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddDistributedMemoryCache();
+
 
             builder.Services.AddDatabase(builder.Configuration);
             builder.Services.AddApplicationServices();
             builder.Services.AddPersistence();
 
-            builder.Services.AddFluentValidationAutoValidation(options =>
-            {
-                options.DisableDataAnnotationsValidation = false;
-            });
+
             builder.Services.AddValidators();
 
             var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
@@ -111,11 +106,11 @@ public class Program
                 app.UseStatusCodePagesWithReExecute("/error/{0}");
             }
 
-            app.UseMiddleware<SessionMiddleware>();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSession();
+            app.UseMiddleware<SessionMiddleware>();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

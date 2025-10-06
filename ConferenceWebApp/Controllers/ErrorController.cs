@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Diagnostics;
-using ConferenceWebApp.Models;
+﻿using ConferenceWebApp.Models;
+using Microsoft.AspNetCore.Mvc;
 
 [ApiExplorerSettings(IgnoreApi = true)]
 public sealed class ErrorController : Controller

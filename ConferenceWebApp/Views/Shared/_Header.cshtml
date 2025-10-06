@@ -1,6 +1,6 @@
 ﻿@using ConferenceWebApp.Application.DTOs.AuthDTOs
 @{
-    var authRoles = (AuthStatusDTO)ViewData["AuthStatus"];
+    var authRoles = ViewBag.AuthStatus as AuthStatusDTO;
 }
 <link rel="stylesheet" href="~/css/header.css" />
 <header class="header-bar mainpage-header">

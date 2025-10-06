@@ -4,7 +4,6 @@ using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ActionConstraints;
 
 public class AuthController : BaseController
 {
@@ -48,7 +47,7 @@ public class AuthController : BaseController
         if (!result.IsSuccess)
         {
             _logger.LogWarning("Ошибка логина для {Email}: {Error}", dto.Email, result.ErrorMessage);
-            ModelState.AddModelError(string.Empty, result.ErrorMessage);
+            ModelState.AddModelError(string.Empty, result.ErrorMessage!);
             return View(dto);
         }
 
@@ -76,7 +75,7 @@ public class AuthController : BaseController
             if (!result.IsSuccess)
             {
                 _logger.LogWarning("Ошибка регистрации для {Email}: {Error}", dto.Email, result.ErrorMessage);
-                ModelState.AddModelError(string.Empty, result.ErrorMessage);
+                ModelState.AddModelError(string.Empty, result.ErrorMessage!);
                 return View(dto);
             }
 
@@ -106,7 +105,7 @@ public class AuthController : BaseController
 
         _logger.LogInformation("Пользователь {Email} успешно вошёл в систему", dto.Email);
         var user = await _userManager.GetUserAsync(User);
-        var userProfileResult = await _userProfileService.GetByUserIdAsync(user.Id);
+        var userProfileResult = await _userProfileService.GetByUserIdAsync(user!.Id);
 
         if (!userProfileResult.IsSuccess)
         {

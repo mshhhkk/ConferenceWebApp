@@ -1,12 +1,5 @@
 ﻿using ConferenceWebApp.Application.DTOs.Admin;
-using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
-using ConferenceWebApp.Domain.Enums;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConferenceWebApp.Application.Validation;
 
@@ -45,7 +38,7 @@ public class AdminEditUserValidator : AbstractValidator<AdminEditUserDTO>
             .NotEmpty().WithMessage("Специализация обязательна для заполнения.")
             .MaximumLength(100).WithMessage("Специализация не может быть длиннее 100 символов.");
 
-      
+
         RuleFor(x => x.Position)
             .NotNull().WithMessage("Выберите должность.")
             .IsInEnum().WithMessage("Выбранная должность недопустима.");

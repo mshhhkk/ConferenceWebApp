@@ -1,5 +1,4 @@
-﻿using ConferenceWebApp.Application.DTOs.Admin;
-using ConferenceWebApp.Domain.Entities;
+﻿using ConferenceWebApp.Domain.Entities;
 
 namespace ConferenceWebApp.Application.Interfaces.Services.Admin;
 

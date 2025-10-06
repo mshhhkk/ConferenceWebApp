@@ -1,6 +1,5 @@
 ﻿using ConferenceWebApp.Application.Controllers;
 using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
-using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.ViewModels;
@@ -73,7 +72,7 @@ public class ExtendedThesisController : BaseController
                 UserProfile = userProfile,
                 ReportsWithoutTheses = resultExtThesis.Value.ReportsWithoutTheses
             });
-       }
+        }
 
         _logger.LogInformation("Пользователь {UserId} загрузил {Count} тезисов", userId, resultExtThesis.Value.ReportsWithTheses.Count);
 

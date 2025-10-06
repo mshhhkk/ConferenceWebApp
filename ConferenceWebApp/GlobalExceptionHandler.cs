@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Common;
-using System.Net;
+using Microsoft.Extensions.Primitives;
 using System.Text.Json;
 
 internal sealed class GlobalExceptionHandler : IExceptionHandler
@@ -35,7 +34,7 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
                 problem,
                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }), token);
 
-            return true; 
+            return true;
         }
 
         return false;
@@ -45,10 +44,29 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
     private static bool WantsJson(HttpRequest req)
     {
         if (req.Headers.TryGetValue("X-Requested-With", out var xrw) &&
-            string.Equals(xrw, "XMLHttpRequest", StringComparison.OrdinalIgnoreCase))
+            StringValues.Equals(xrw, "XMLHttpRequest"))
             return true;
 
-        var accepts = req.GetTypedHeaders().Accept;
-        return accepts != null && accepts.Any(a => a.MediaType.Value.Contains("json", StringComparison.OrdinalIgnoreCase));
+        var accept = req.GetTypedHeaders().Accept;
+        if (accept is null || accept.Count == 0) return false;
+
+        foreach (var a in accept)
+        {
+            if (a is null) continue;
+
+            if (a.MediaType.HasValue &&
+                a.MediaType.Value.Equals("application/json", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (a.Suffix.HasValue &&
+                a.Suffix.Value.Equals("json", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (a.MediaType.HasValue &&
+                a.MediaType.Value.IndexOf("json", StringComparison.OrdinalIgnoreCase) >= 0)
+                return true;
+        }
+
+        return false;
     }
 }

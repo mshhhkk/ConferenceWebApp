@@ -1,7 +1,6 @@
 ﻿using ConferenceWebApp.Application.DTOs.CommiteeDTOs;
 using ConferenceWebApp.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ConferenceWebApp.Application.Controllers;
 

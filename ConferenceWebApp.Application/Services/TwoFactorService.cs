@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using ConferenceWebApp.Application.Interfaces.Repositories;
+﻿using ConferenceWebApp.Application.Interfaces.Repositories;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
 using Microsoft.AspNetCore.Identity;

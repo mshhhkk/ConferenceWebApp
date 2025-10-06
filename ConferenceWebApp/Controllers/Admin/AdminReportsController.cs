@@ -75,7 +75,7 @@ public class AdminReportsController : BaseController
         var report = await _reportService.GetReportByIdAsync(id);
         if (report == null) return NotFound();
 
-      
+
         return View(id);
     }
 
@@ -113,6 +113,6 @@ public class AdminReportsController : BaseController
         await _reportService.RejectExtendedThesisAsync(id, comment);  // Отклоняем расширенный тезис с комментарием
 
         TempData["Message"] = "Расширенный тезис отклонен с комментариями.";
-        return RedirectToAction(nameof(Index));  
+        return RedirectToAction(nameof(Index));
     }
 }

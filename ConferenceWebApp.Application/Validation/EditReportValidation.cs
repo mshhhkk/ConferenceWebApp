@@ -22,12 +22,16 @@ public class EditReportValidator : AbstractValidator<EditReportDTO>
             .IsInEnum().WithMessage("Необходимо указать тип работы");
 
         RuleFor(x => x.File)
-            .Must(BeAValidFile).WithMessage("Допустимы только файлы форматов DOC и DOCX")
-            .Must(BeAValidFileSize).WithMessage("Размер файла не должен превышать 50 МБ");
+            .Cascade(CascadeMode.Stop)
+            .NotNull().WithMessage("Необходимо прикрепить файл")
+            .Must((_, file) => file is null || BeAValidFile(file))
+            .WithMessage("Допустимы только файлы форматов DOC и DOCX")
+            .Must((_, file) => file is null || BeAValidFileSize(file))
+            .WithMessage("Размер файла не должен превышать 50 МБ");
     }
     private bool BeAValidFile(IFormFile file)
     {
-        if (file == null) return true; 
+        if (file == null) return true;
 
         var allowedExtensions = new[] { ".doc", ".docx" };
         var extension = Path.GetExtension(file.FileName).ToLower();
@@ -35,8 +39,8 @@ public class EditReportValidator : AbstractValidator<EditReportDTO>
     }
     private bool BeAValidFileSize(IFormFile file)
     {
-        if (file == null) return true; 
+        if (file == null) return true;
 
-        return file.Length <= 50 * 1024 * 1024; 
+        return file.Length <= 50 * 1024 * 1024;
     }
 }

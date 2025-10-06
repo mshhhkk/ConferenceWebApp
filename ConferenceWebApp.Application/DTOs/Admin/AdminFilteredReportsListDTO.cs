@@ -9,6 +9,6 @@ public class AdminFilteredReportsListDTO
     public List<AdminReportDTO> ApprovedExtendedTheses { get; set; } = new();
     public List<AdminReportDTO> RejectedExtendedTheses { get; set; } = new();
     public string SearchQuery { get; set; } = string.Empty;
-    public string Organization { get; set; } = string.Empty;  
-    public string SortOrder { get; set; } = "Organization";  
+    public string Organization { get; set; } = string.Empty;
+    public string SortOrder { get; set; } = "Organization";
 }

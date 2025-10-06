@@ -4,7 +4,6 @@ using ConferenceWebApp.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ConferenceWebApp.Application.Controllers;
 

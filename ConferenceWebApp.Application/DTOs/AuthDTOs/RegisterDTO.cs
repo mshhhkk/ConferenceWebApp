@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using ConferenceWebApp.Domain.Entities;
 
 namespace ConferenceWebApp.Application.DTOs.AuthDTOs
 {
@@ -19,12 +18,5 @@ namespace ConferenceWebApp.Application.DTOs.AuthDTOs
         [DataType(DataType.Password)]
         public string PasswordRepeat { get; set; } = string.Empty;
 
-        public static RegisterDTO TransformService(User entity)
-        {
-            return new RegisterDTO
-            {
-                Email = entity.Email,
-            };
-        }
     }
 }

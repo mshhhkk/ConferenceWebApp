@@ -1,7 +1,6 @@
 ﻿using ConferenceWebApp.Application.Controllers;
 using ConferenceWebApp.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 public class ScheduleController : BaseController
 {

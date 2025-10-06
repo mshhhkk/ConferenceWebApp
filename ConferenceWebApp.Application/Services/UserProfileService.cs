@@ -38,7 +38,7 @@ public class UserProfileService : IUserProfileService
             BirthDate = userProfile.BirthDate,
             Organization = userProfile.Organization ?? string.Empty,
             Specialization = userProfile.Specialization ?? string.Empty,
-            PhotoUrl = userProfile.PhotoUrl,
+            PhotoUrl = userProfile.PhotoUrl!,
             ParticipantType = userProfile.ParticipantType,
             Status = userProfile.Status,
             IsApprovedAnyReports = (userProfile.ApprovalStatus > UserApprovalStatus.None),
@@ -88,8 +88,6 @@ public class UserProfileService : IUserProfileService
         if (user == null)
         {
             _logger.LogWarning("Профиль по Email не найден Email={Email}", email);
-            // Поведение исходного кода приводило бы к NRE.
-            // Явно логируем и кидаем исключение, чтобы не менять контракт скрытно.
             throw new Exception("Пользователь не найден");
         }
 
@@ -102,7 +100,7 @@ public class UserProfileService : IUserProfileService
     {
         _logger.LogInformation("Запрос списка всех пользовательских профилей (админ)");
 
-        var users = _userProfileRepository.GetAllList();
+        var users = await _userProfileRepository.GetAllAsync();
         if (users == null || !users.Any())
         {
             _logger.LogWarning("Список пользователей пуст");
@@ -114,9 +112,9 @@ public class UserProfileService : IUserProfileService
             UserId = user.UserId,
             FullName = $"{user.FirstName} {(string.IsNullOrWhiteSpace(user.LastName) ? "" : user.LastName)} {(string.IsNullOrWhiteSpace(user.MiddleName) ? "" : user.MiddleName)}",
             BirthDate = user.BirthDate.ToString(),
-            Organization = user.Organization,
-            Specialization = user.Specialization,
-            PhoneNumber = user.PhoneNumber,
+            Organization = user.Organization!,
+            Specialization = user.Specialization!,
+            PhoneNumber = user.PhoneNumber!,
             Status = user.Status,
             Position = user.Position,
             Degree = user.Degree,

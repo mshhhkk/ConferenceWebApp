@@ -51,13 +51,13 @@ public class UserProfileRepository : IUserProfileRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(up => up.UserId == userId);
 
-        return userProfile.Status;
+        return userProfile!.Status;
     }
 
     public async Task<List<UserProfile>> GetUsersWithReceiptsAsync()
     {
         return await _context.UserProfile
-            .Include(up => up.User) // Явная загрузка связанного User
+            .Include(up => up.User)
             .Where(up => !string.IsNullOrEmpty(up.ReceiptFilePath))
             .ToListAsync();
     }
@@ -108,8 +108,8 @@ public class UserProfileRepository : IUserProfileRepository
         return _context.UserProfile.AsQueryable();
     }
 
-    public List<UserProfile> GetAllList()
+    public async Task<List<UserProfile>> GetAllAsync()
     {
-        return _context.UserProfile.ToList();
+        return await _context.UserProfile.ToListAsync();
     }
 }

@@ -1,5 +1,5 @@
-﻿using ConferenceWebApp.Application.DTOs.ReportsDTOs;
-using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 
 namespace ConferenceWebApp.ViewModels;
 

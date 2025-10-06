@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions
     }
     public static IServiceCollection AddValidators(this IServiceCollection services)
     {
-        
+
         services.AddScoped<IValidator<EditUserDTO>, EditUserProfileValidator>();
         services.AddScoped<IValidator<AddReportDTO>, AddReportValidator>();
         services.AddScoped<IValidator<EditReportDTO>, EditReportValidator>();

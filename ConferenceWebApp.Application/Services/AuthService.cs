@@ -15,7 +15,7 @@ public class AuthService : IAuthService
     private readonly ITwoFactorService _twoFactorService;
     private readonly IUserProfileService _userProfileService;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ILogger<AuthService> _logger; 
+    private readonly ILogger<AuthService> _logger;
 
     public AuthService(
         UserManager<User> userManager,
@@ -24,7 +24,7 @@ public class AuthService : IAuthService
         IHttpContextAccessor httpContextAccessor,
         ITwoFactorService twoFactorService,
         IEmailSender emailSender,
-        ILogger<AuthService> logger) 
+        ILogger<AuthService> logger)
     {
         _twoFactorService = twoFactorService;
         _userManager = userManager;

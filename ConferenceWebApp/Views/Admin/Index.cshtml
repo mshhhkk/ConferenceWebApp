@@ -1,4 +1,4 @@
-﻿@using ConferenceWebApp
+﻿@using ConferenceWebApp.Application
 @model List<ConferenceWebApp.Application.DTOs.Admin.AdminUserProfileDTO>
 
 @{
@@ -40,13 +40,12 @@ else
                         <td class="d-none d-xl-table-cell">@user.BirthDate</td>
                         <td class="d-none d-lg-table-cell text-wrap" style="max-width:260px;">@user.Organization</td>
                         <td class="d-none d-xl-table-cell text-wrap" style="max-width:260px;">@user.Specialization</td>
-                        <td class="d-none d-xl-table-cell">@EnumHelper.GetEnumDescription(user.Status)</td>
-                        <td class="d-none d-xl-table-cell">@EnumHelper.GetEnumDescription(user.ParticipantType)</td>
-                        <td class="d-none d-xxl-table-cell">@EnumHelper.GetEnumDescription(user.ApprovalStatus)</td>
-                        <td class="d-none d-xxl-table-cell">@EnumHelper.GetEnumDescription(user.Degree)</td>
-                        <td class="d-none d-xxl-table-cell">@EnumHelper.GetEnumDescription(user.Position)</td>
+                        <td class="d-none d-xl-table-cell">@EnumDescriptionGetter.Handle(user.Status)</td>
+                        <td class="d-none d-xl-table-cell">@EnumDescriptionGetter.Handle(user.ParticipantType)</td>
+                        <td class="d-none d-xxl-table-cell">@EnumDescriptionGetter.Handle(user.ApprovalStatus)</td>
+                        <td class="d-none d-xxl-table-cell">@EnumDescriptionGetter.Handle(user.Degree)</td>
+                        <td class="d-none d-xxl-table-cell">@EnumDescriptionGetter.Handle(user.Position)</td>
                         <td class="text-end text-nowrap">
-                            <!-- nowrap только тут -->
                             <div class="btn-group btn-group-sm" role="group">
                                 <a href="@Url.Action("EditUser", "Admin", new { id = user.UserId })"
                                    class="btn btn-primary">Ред.</a>

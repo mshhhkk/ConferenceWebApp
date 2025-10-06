@@ -1,8 +1,5 @@
 ﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Text.RegularExpressions;
 
 public class EditUserProfileValidator : AbstractValidator<EditUserDTO>
 {
@@ -54,7 +51,7 @@ public class EditUserProfileValidator : AbstractValidator<EditUserDTO>
             .IsInEnum().WithMessage("Выбранная ученая степень недопустима.");
 
 
-  
+
 
     }
 

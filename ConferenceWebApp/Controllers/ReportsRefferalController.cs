@@ -6,7 +6,6 @@ using ConferenceWebApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 [Authorize]
 public class ReportsRefferalController : BaseController
@@ -80,8 +79,8 @@ public class ReportsRefferalController : BaseController
         var vm = new ApprovedReportsForReferralViewModel
         {
             UserProfile = resultUserProfile.Value,
-            IncomingTransfers = resultReports.Value.IncomingTransfers,
-            Reports = resultReports.Value.Reports
+            IncomingTransfers = resultReports.Value.IncomingTransfers!,
+            Reports = resultReports.Value.Reports!
         };
 
         return View(vm);
@@ -93,7 +92,8 @@ public class ReportsRefferalController : BaseController
         _logger.LogInformation("Поиск пользователей для передачи доклада. ReportId={ReportId}, Query={Query}",
             reportId, query);
 
-        var model = await _reportsReferralService.SearchUsersForReferral(reportId, query);
+        var q = query ?? string.Empty;
+        var model = await _reportsReferralService.SearchUsersForReferral(reportId, q);
         return Json(new { users = model.Users });
     }
 

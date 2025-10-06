@@ -35,7 +35,7 @@ public class AdminPaymentService : IAdminPaymentService
                 {
                     UserId = up.UserId,
                     FullName = $"{up.LastName} {up.FirstName} {up.MiddleName}",
-                    Email = up.User.Email,
+                    Email = up.User.Email!,
                     ReceiptFilePath = up.ReceiptFilePath!,
                     HasPaid = (up.Status == ParticipantStatus.CheckSubmitted)
                 })

@@ -2,7 +2,6 @@
 using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 using ConferenceWebApp.Application.Interfaces.Repositories;
 using ConferenceWebApp.Application.Interfaces.Services;
-using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.Domain.Enums;
 using Microsoft.Extensions.Logging;
 
@@ -17,7 +16,7 @@ public class ExtendedThesisService : IExtendedThesisService
     public ExtendedThesisService(
         IReportsRepository reportsRepository,
         IUserProfileRepository userProfileRepository,
-        ILogger<ExtendedThesisService> logger) 
+        ILogger<ExtendedThesisService> logger)
     {
         _reportsRepository = reportsRepository;
         _userProfileRepository = userProfileRepository;

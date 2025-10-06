@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ConferenceWebApp.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ConferenceWebApp.Domain.Enums;
 
 namespace ConferenceWebApp.Domain.Entities;
 
@@ -10,7 +10,7 @@ public class UserProfile
     [ForeignKey(nameof(User))]
     public Guid UserId { get; set; }
 
-    public User User { get; set; } = null;
+    public User User { get; set; } = default!; //means NOTNULL!
 
     public string FirstName { get; set; } = "Имя";
 
@@ -18,7 +18,7 @@ public class UserProfile
 
     public string? MiddleName { get; set; }
 
-    public DateOnly BirthDate { get; set; } 
+    public DateOnly BirthDate { get; set; }
 
     public string? Organization { get; set; } = string.Empty;
 

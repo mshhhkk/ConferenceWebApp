@@ -1,6 +1,4 @@
-﻿using ConferenceWebApp.Domain.Entities;
-
-namespace ConferenceWebApp.Application.DTOs.ReportsDTOs;
+﻿namespace ConferenceWebApp.Application.DTOs.ReportsDTOs;
 
 public class ExtendedThesisDTO
 {

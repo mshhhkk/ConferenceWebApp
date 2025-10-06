@@ -66,19 +66,26 @@ public class FileService : IFileService
         return await SaveFileAsync(newFile, destinationFolder, allowedContentTypes, maxFileSize);
     }
 
-    public async Task<(Stream FileStream, string ContentType, string FileName)> GetFileAsync(string filePath)
+    public (FileStream Stream, string ContentType, string FileName) GetFile(string filePath)
     {
-        if (string.IsNullOrEmpty(filePath))
+        if (string.IsNullOrWhiteSpace(filePath))
             throw new InvalidOperationException("Путь к файлу не указан.");
 
         var fullPath = Path.Combine(_rootPath, filePath.TrimStart('/'));
         if (!File.Exists(fullPath))
             throw new InvalidOperationException("Файл не найден.");
 
-        var fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
-        var fileName = Path.GetFileName(filePath);
-        var fileExtension = Path.GetExtension(filePath).ToLower();
-        var contentType = fileExtension switch
+        var stream = new FileStream(
+            fullPath,
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.Read,
+            bufferSize: 64 * 1024,
+            options: FileOptions.Asynchronous | FileOptions.SequentialScan);
+
+        var name = Path.GetFileName(filePath);
+        var ext = Path.GetExtension(filePath).ToLowerInvariant();
+        var contentType = ext switch
         {
             ".jpg" or ".jpeg" => "image/jpeg",
             ".png" => "image/png",
@@ -86,18 +93,21 @@ public class FileService : IFileService
             _ => "application/octet-stream"
         };
 
-        return (fileStream, contentType, fileName);
+        return (stream, contentType, name);
     }
 
-    public async Task<(bool Exists, string FileName, DateTime UploadDate)?> TryGetFileMetadataAsync(string filePath)
+    public (bool Exists, string FileName, DateTime UploadDate)? TryGetFileMetadata(string filePath)
     {
-        if (string.IsNullOrEmpty(filePath))
+        if (string.IsNullOrWhiteSpace(filePath))
             return null;
 
-        var fullPath = Path.Combine(_rootPath, filePath.TrimStart('/'));
+        var safePath = filePath.TrimStart('/', '\\');
+        var fullPath = Path.Combine(_rootPath, safePath);
+
         if (!File.Exists(fullPath))
             return null;
 
         return (true, Path.GetFileName(filePath), File.GetCreationTime(fullPath));
     }
+
 }

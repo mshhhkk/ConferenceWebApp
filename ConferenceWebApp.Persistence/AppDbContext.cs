@@ -63,7 +63,7 @@ namespace ConferenceWebApp.Persistence
                       .IsRequired();
 
                 entity.Property(e => e.IsHead)
-                .IsRequired(); // Указываем, что поле обязательно
+                .IsRequired();
 
                 entity.Property(e => e.PhotoUrl)
                       .HasMaxLength(500)
@@ -72,26 +72,26 @@ namespace ConferenceWebApp.Persistence
 
             builder.Entity<UserProfile>(entity =>
                 {
-                    entity.HasKey(up => up.UserId); // Указываем UserId как первичный ключ
+                    entity.HasKey(up => up.UserId);
                     entity.HasIndex(up => up.UserId)
-                          .IsUnique(); // Уникальный индекс на UserId
+                          .IsUnique();
                 });
 
             builder.Entity<TwoFactorCode>(entity =>
             {
-                entity.HasKey(e => e.Id); // Указываем первичный ключ
+                entity.HasKey(e => e.Id);
 
-                entity.HasOne(e => e.User) // Связь с User
-                      .WithMany() // Указываем, что User не содержит коллекции или навигационного свойства для TwoFactorCode
-                      .HasForeignKey(e => e.UserId) // Внешний ключ
-                      .IsRequired(); // Делаем связь обязательной
+                entity.HasOne(e => e.User)
+                      .WithMany()
+                      .HasForeignKey(e => e.UserId)
+                      .IsRequired();
 
                 entity.Property(e => e.Code)
                       .IsRequired()
-                      .HasMaxLength(6); // Пример ограничения длины кода
+                      .HasMaxLength(6);
 
                 entity.Property(e => e.ExpirationTime)
-                      .IsRequired(); // Указываем, что поле обязательно
+                      .IsRequired();
             });
 
             //TODO ПЕРЕМЕСТИТЬ РОЛИ В ОДЕЛЬНЫЙ КЛАСС
@@ -119,7 +119,6 @@ namespace ConferenceWebApp.Persistence
                 }
             };
 
-            // Добавляем роли в БД
             builder.Entity<IdentityRole<Guid>>().HasData(roles);
         }
 

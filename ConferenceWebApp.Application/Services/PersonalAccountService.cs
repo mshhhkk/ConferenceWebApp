@@ -95,11 +95,11 @@ public class PersonalAccountService : IPersonalAccountService
                 return Result<EditUserDTO>.Failure("Пользователь с одобренным докладом не может поменять профиль");
             }
 
-            userProfile.FirstName = dto.FirstName;
-            userProfile.LastName = dto.LastName;
+            userProfile.FirstName = dto.FirstName!;
+            userProfile.LastName = dto.LastName!;
             userProfile.MiddleName = dto.MiddleName;
             userProfile.PhoneNumber = dto.PhoneNumber;
-            userProfile.BirthDate = (DateOnly)dto.BirthDate;
+            userProfile.BirthDate = (DateOnly)dto.BirthDate!;
             userProfile.Organization = dto.Organization;
             userProfile.Specialization = dto.Specialization;
             userProfile.Degree = dto.Degree!.Value;
@@ -109,23 +109,17 @@ public class PersonalAccountService : IPersonalAccountService
             if (dto.RemovePhoto)
             {
                 _logger.LogInformation("Удаление пользовательского фото UserId={UserId}", userId);
-                await HandlePhotoRemoval(userProfile);
+                HandlePhotoRemoval(userProfile);
             }
             else if (dto.Photo != null)
             {
                 _logger.LogInformation("Обновление фото профиля UserId={UserId}, ContentType={ContentType}, Size={Size}",
                     userId, dto.Photo.ContentType, dto.Photo.Length);
 
-                if (!string.IsNullOrEmpty(userProfile.PhotoUrl) &&
-                    !userProfile.PhotoUrl.Equals(DefaultPhotoPath, StringComparison.OrdinalIgnoreCase))
-                {
-                    _fileService.DeleteFile(userProfile.PhotoUrl);
-                    _logger.LogInformation("Старое фото удалено UserId={UserId}", userId);
-                }
 
                 userProfile.PhotoUrl = await _fileService.UpdateFileAsync(
-                    dto.Photo,
-                    null,
+                    dto.Photo!,
+                    userProfile.PhotoUrl!,
                     "uploads",
                     AllowedPhotoTypes,
                     MaxPhotoSize);
@@ -145,24 +139,29 @@ public class PersonalAccountService : IPersonalAccountService
         }
     }
 
-    private async Task HandlePhotoRemoval(UserProfile userProfile)
+    private void HandlePhotoRemoval(UserProfile userProfile)
     {
         try
         {
-            if (!string.IsNullOrEmpty(userProfile.PhotoUrl) &&
-                !userProfile.PhotoUrl.Equals(DefaultPhotoPath, StringComparison.OrdinalIgnoreCase))
+            var path = userProfile.PhotoUrl;
+
+            if (!string.IsNullOrWhiteSpace(path) &&
+                !path.Equals(DefaultPhotoPath, StringComparison.OrdinalIgnoreCase))
             {
-                _fileService.DeleteFile(userProfile.PhotoUrl);
-                _logger.LogInformation("Удален файл фото {Path} для UserId={UserId}", userProfile.PhotoUrl, userProfile.UserId);
+                _fileService.DeleteFile(path);
+                _logger.LogInformation("Удален файл фото {Path} для UserId={UserId}", path, userProfile.UserId);
             }
+
             userProfile.PhotoUrl = DefaultPhotoPath;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Ошибка при удалении фото UserId={UserId}, Path={Path}", userProfile.UserId, userProfile.PhotoUrl);
-            throw; 
+            _logger.LogError(ex, "Ошибка при удалении фото UserId={UserId}, Path={Path}",
+                userProfile.UserId, userProfile.PhotoUrl);
+            throw;
         }
     }
+
 
     public async Task<Result<InvitationDTO>> GenerateInvitationAsync(Guid userId)
     {

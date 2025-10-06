@@ -1,19 +1,12 @@
 ﻿using ConferenceWebApp.Application.DTOs.Admin;
-using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Application.Validation;
 using ConferenceWebApp.Domain.Entities;
-using ConferenceWebApp.Infrastructure.Services.Realization;
 using ConferenceWebApp.ViewModels.Admin;
-using ConferenceWebApp.ViewModels.Admin;
-using FluentValidation;
-using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Composition;
 
 namespace ConferenceWebApp.Application.Controllers.Admin;
 
@@ -25,7 +18,7 @@ public class AdminController : BaseController
     private readonly IReportService _reportService;
     private readonly IPersonalAccountService _personalAccountService;
     public AdminController(IUserProfileService userProfileService, UserManager<User> userManager, IReportService reportService, IPersonalAccountService personalAccountService) : base(userProfileService)
-    { 
+    {
         _userProfileService = userProfileService;
         _userManager = userManager;
         _reportService = reportService;
@@ -84,7 +77,7 @@ public class AdminController : BaseController
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Email = vm.Email, 
+            Email = vm.Email,
             UserName = vm.Email,
             NormalizedEmail = vm.Email.ToUpper(),
             NormalizedUserName = vm.Email.ToUpper(),
@@ -97,13 +90,13 @@ public class AdminController : BaseController
             ModelState.AddModelError("", "Ошибка при создании пользователя.");
             return View(vm);
         }
-            
+
         var profileResult = await _personalAccountService.UpdateProfileAsync(user.Id, vm.UserProfile);
 
         var reportResult = await _reportService.AddReportAsync(vm.Report, user.Id);
 
         ModelState.AddModelError("", "Ошибка при добавлении профиля или доклада.");
-        
+
         return RedirectToAction("Index");
     }
 
@@ -121,13 +114,13 @@ public class AdminController : BaseController
 
         var vm = new AdminEditUserViewModel
         {
-            Email = user.Email,
-            UserProfile = userProfile.Value, 
-                   
+            Email = user!.Email!,
+            UserProfile = userProfile.Value,
+
         };
 
         return View(vm);
-   
+
     }
 
     [HttpPost]
@@ -159,11 +152,11 @@ public class AdminController : BaseController
         }
 
         return RedirectToAction("Index");
-        
+
     }
 
     [HttpGet]
-    public async Task<IActionResult> UserReports(Guid id) 
+    public async Task<IActionResult> UserReports(Guid id)
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
 
@@ -174,7 +167,7 @@ public class AdminController : BaseController
             return View(new AdminUserReportsViewModel
             {
                 UserId = id,
-                Email = user?.Email,
+                Email = user!.Email!,
                 Reports = new List<ReportDTO>()
             });
         }
@@ -182,7 +175,7 @@ public class AdminController : BaseController
         var vm = new AdminUserReportsViewModel
         {
             UserId = id,
-            Email = user?.Email,
+            Email = user!.Email!,
             Reports = reportsResult.Value ?? new List<ReportDTO>()
         };
 
@@ -198,7 +191,7 @@ public class AdminController : BaseController
     [HttpPost]
     public async Task<IActionResult> AddReport(Guid userId, AddReportDTO dto)
     {
-    
+
         var reportValidator = new AddReportValidator();
         var reportValidatorResult = reportValidator.Validate(dto);
         if (!reportValidatorResult.IsValid)

@@ -10,7 +10,7 @@ public class AddReportValidator : AbstractValidator<AddReportDTO>
 {
     public AddReportValidator()
     {
-  
+
         RuleFor(x => x.ReportTheme)
             .NotEmpty().WithMessage("Тема отчёта обязательна для заполнения")
             .Length(5, 200).WithMessage("Тема отчёта должна содержать от 5 до 200 символов");
@@ -27,18 +27,18 @@ public class AddReportValidator : AbstractValidator<AddReportDTO>
     }
     private bool BeAValidFile(IFormFile file)
     {
-        if (file == null) return true; 
+        if (file == null) return true;
 
         var allowedExtensions = new[] { ".doc", ".docx" };
         var extension = Path.GetExtension(file.FileName).ToLower();
         return allowedExtensions.Contains(extension);
     }
 
- 
+
     private bool BeAValidFileSize(IFormFile file)
     {
-        if (file == null) return true; 
+        if (file == null) return true;
 
-        return file.Length <= 50 * 1024 * 1024; 
+        return file.Length <= 50 * 1024 * 1024;
     }
 }

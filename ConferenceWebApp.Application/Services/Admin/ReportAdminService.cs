@@ -74,7 +74,7 @@ public class ReportAdminService : IReportAdminService
                     if (profile != null)
                     {
                         dto.AuthorFullName = $"{profile.LastName} {profile.FirstName} {profile.MiddleName}";
-                        dto.Organization = profile.Organization;
+                        dto.Organization = profile.Organization!;
                     }
                 }
 

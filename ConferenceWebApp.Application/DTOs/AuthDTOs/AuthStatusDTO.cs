@@ -2,6 +2,6 @@
 
 public class AuthStatusDTO
 {
-    public bool IsAuthenticated { get; set; }
-    public string? UserName { get; set; }
+    public required bool IsAuthenticated { get; set; }
+    public required string UserName { get; set; } = string.Empty;
 }

@@ -79,7 +79,7 @@ public class AdminCommitteeService : IAdminCommitteeService
             var newCommittee = new Committee
             {
                 Id = Guid.NewGuid(),
-                FullName = dto.FullName,
+                FullName = dto!.FullName,
                 Description = dto.Description,
                 IsHead = dto.IsHead,
                 PhotoUrl = photo != null ? await CommitteePhotoAsync(photo) : string.Empty

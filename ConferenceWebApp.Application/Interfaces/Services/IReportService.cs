@@ -1,5 +1,4 @@
 ﻿using ConferenceWebApp.Application;
-using ConferenceWebApp.Application.DTOs;
 using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 using Microsoft.AspNetCore.Mvc;
 

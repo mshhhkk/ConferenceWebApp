@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ConferenceWebApp.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ConferenceWebApp.Domain.Enums;
 
 namespace ConferenceWebApp.Domain.Entities;
 

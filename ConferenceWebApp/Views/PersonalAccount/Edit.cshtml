@@ -19,28 +19,24 @@
     <div class="settings-avatar-block">
         <img id="avatarPreview" src="@Model.PhotoUrl" alt="Фото" class="settings-avatar" />
         <div class="settings-photo-btns">
-            <!-- Кнопка загрузки нового фото -->
+        
             <input asp-for="Photo" type="file" id="Photo" style="display:none;" />
             <button type="button" id="addPhotoBtn" class="settings-save-btn" onclick="document.getElementById('Photo').click();">
                 Добавить фото
             </button>
 
-            <!-- Галочка для удаления фото -->
+           
             <div class="settings-photo-checkbox">
-                <input type="checkbox" id="removePhotoCheckbox" name="RemovePhoto" value="true"
-                @if (Model.PhotoUrl==null)
-                {
-                    <text>disabled</text>
-                }
-                />
-                <label for="removePhotoCheckbox"
                 @if (Model.PhotoUrl == null)
                 {
-                    <text>style="color: grey;"</text>
+                    <input type="checkbox" id="removePhotoCheckbox" name="RemovePhoto" value="true" disabled />
+                    <label for="removePhotoCheckbox" style="color: grey;">Удалить фото</label>
                 }
-                >
-                    Удалить фото
-                </label>
+                else
+                {
+                    <input type="checkbox" id="removePhotoCheckbox" name="RemovePhoto" value="true" />
+                    <label for="removePhotoCheckbox">Удалить фото</label>
+                }
             </div>
         </div>
     </div>
@@ -160,11 +156,11 @@
 
           if (!view || !hidden) return;
 
-          // авто-форматирование "дд.мм.гггг" по мере ввода
+      
           view.addEventListener('input', () => {
-            let v = view.value.replace(/\D/g, ''); // только цифры
+            let v = view.value.replace(/\D/g, ''); 
             if (v.length > 8) v = v.slice(0, 8);
-            // вставляем точки после 2 и 4 символов
+    
             if (v.length > 4) v = v.slice(0,2) + '.' + v.slice(2,4) + '.' + v.slice(4);
             else if (v.length > 2) v = v.slice(0,2) + '.' + v.slice(2);
             view.value = v;
@@ -176,7 +172,7 @@
           }
 
           function toIso(d, m, y) {
-            // yyyy-MM-dd
+
             const mm = m.toString().padStart(2, '0');
             const dd = d.toString().padStart(2, '0');
             return `${y}-${mm}-${dd}`;
@@ -189,7 +185,7 @@
             const minY = 1920;
 
             if (!m) {
-              hidden.value = ''; // пусть серверная валидация сработает
+              hidden.value = ''; 
               return;
             }
             const d = parseInt(m[1], 10);
@@ -234,11 +230,10 @@
                 reader.onload = function(e) {
                     document.getElementById('avatarPreview').src = e.target.result;
 
-                    // Сделать кнопку удаления фото доступной
                     document.getElementById('removePhotoBtn').disabled = false;
-                    document.getElementById('removePhotoBtn').style.border = ''; // Убираем серую границу
-                    document.getElementById('removePhotoBtn').style.backgroundColor = ''; // Убираем серый фон
-                    document.getElementById('removePhotoBtn').style.color = ''; // Убираем серый текст
+                    document.getElementById('removePhotoBtn').style.border = ''; 
+                    document.getElementById('removePhotoBtn').style.backgroundColor = ''; 
+                    document.getElementById('removePhotoBtn').style.color = ''; 
                 };
                 reader.readAsDataURL(file);
             }
@@ -247,25 +242,25 @@
          function removePhoto() {
             const preview = document.getElementById('avatarPreview');
 
-            // Если фото дефолтное
+        
             if (preview.src.includes('/images/user.svg')) {
                 alert('Фото не может быть удалено, так как оно дефолтное.');
-                return;  // Останавливаем выполнение, если фото дефолтное
+                return;  
             }
 
-            // Если фото не дефолтное, меняем его на дефолтное
-            preview.src = '/images/user.svg';  // Путь к дефолтному фото
+          
+            preview.src = '/images/user.svg';  
 
-            // Устанавливаем скрытое поле для удаления фото
+        
             const removePhotoInput = document.createElement('input');
             removePhotoInput.type = 'hidden';
             removePhotoInput.name = 'RemovePhoto';
-            removePhotoInput.value = 'true'; // Устанавливаем, что фото должно быть удалено
+            removePhotoInput.value = 'true'; 
 
-            // Добавляем скрытое поле в форму
+
             document.querySelector('form').appendChild(removePhotoInput);
 
-            // Сделаем кнопку неактивной, если фото снова дефолтное
+     
             document.getElementById('removePhotoBtn').disabled = true;
             document.getElementById('removePhotoBtn').style.border = '1px solid grey';
             document.getElementById('removePhotoBtn').style.backgroundColor = '#f0f0f0';

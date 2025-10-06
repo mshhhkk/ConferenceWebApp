@@ -10,8 +10,8 @@ namespace ConferenceWebApp.Application.Interfaces.Services
 
         Task<string> UpdateFileAsync(IFormFile newFile, string oldFilePath, string destinationPath, string[] allowedContentTypes, long maxFileSize);
 
-        Task<(Stream FileStream, string ContentType, string FileName)> GetFileAsync(string filePath);
+        (FileStream Stream, string ContentType, string FileName) GetFile(string filePath);
 
-        Task<(bool Exists, string FileName, DateTime UploadDate)?> TryGetFileMetadataAsync(string filePath);
+        (bool Exists, string FileName, DateTime UploadDate)? TryGetFileMetadata(string filePath);
     }
 }

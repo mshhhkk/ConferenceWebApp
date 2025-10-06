@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ConferenceWebApp.Application.Interfaces.Services;
+﻿using ConferenceWebApp.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ConferenceWebApp.Application.Controllers;
 

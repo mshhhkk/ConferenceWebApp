@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using ConferenceWebApp.Application.DTOs.AuthDTOs;
+﻿using ConferenceWebApp.Application.DTOs.AuthDTOs;
+using FluentValidation;
 
 public class RegisterValidator : AbstractValidator<RegisterDTO>
 {

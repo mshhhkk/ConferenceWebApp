@@ -1,5 +1,4 @@
 ﻿using ConferenceWebApp.Application;
-using ConferenceWebApp.Application.DTOs;
 using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 using ConferenceWebApp.Application.Interfaces.Repositories;
 using ConferenceWebApp.Application.Interfaces.Services;
@@ -116,7 +115,7 @@ public class ReportService : IReportService
         {
             _logger.LogInformation("Добавление доклада UserId={UserId}, Theme={Theme}", userId, dto?.ReportTheme);
 
-            var result = ValidateFile(dto.File);
+            var result = ValidateFile(dto!.File);
             if (!result.IsSuccess)
             {
                 _logger.LogWarning("Валидация файла не пройдена: {Reason}", result.ErrorMessage);
@@ -133,7 +132,7 @@ public class ReportService : IReportService
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,
-                ReportTheme = dto.ReportTheme,
+                ReportTheme = dto.ReportTheme!,
                 Section = dto.Section,
                 WorkType = dto.WorkType,
                 FilePath = filePath,
@@ -165,7 +164,7 @@ public class ReportService : IReportService
             _logger.LogInformation("Обновление доклада ReportId={ReportId}, UserId={UserId}", dto.Id, userId);
 
             var report = await _reportRepository.GetReportByIdAsync(dto.Id);
-            report.ReportTheme = dto.ReportTheme;
+            report!.ReportTheme = dto.ReportTheme;
             report.Section = dto.Section;
             report.WorkType = dto.WorkType;
             report.LastUpdatedAt = DateTime.UtcNow;
@@ -256,7 +255,7 @@ public class ReportService : IReportService
                 return Result<FileStreamResult>.Failure("Доступ к отчету запрещен");
             }
 
-            var (fileStream, contentType, fileName) = await _fileService.GetFileAsync(report.FilePath);
+            var (fileStream, contentType, fileName) = _fileService.GetFile(report.FilePath);
 
             _logger.LogInformation("Доклад отдан на скачивание ReportId={ReportId}, UserId={UserId}", reportId, userId);
             return Result<FileStreamResult>.Success(

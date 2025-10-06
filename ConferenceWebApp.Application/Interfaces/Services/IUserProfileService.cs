@@ -1,8 +1,6 @@
 ﻿using ConferenceWebApp.Application.DTOs.Admin;
 using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 
-using System.Threading.Tasks;
-
 namespace ConferenceWebApp.Application.Interfaces.Services;
 
 public interface IUserProfileService

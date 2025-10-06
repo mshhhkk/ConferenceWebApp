@@ -40,7 +40,7 @@ public class PaymentService : IPaymentService
             ReceiptFileDTO? receiptFileDto = null;
             if (!string.IsNullOrEmpty(profile.ReceiptFilePath))
             {
-                var fileMetadata = await _fileService.TryGetFileMetadataAsync(profile.ReceiptFilePath);
+                var fileMetadata = _fileService.TryGetFileMetadata(profile.ReceiptFilePath);
                 if (fileMetadata.HasValue)
                 {
                     receiptFileDto = new ReceiptFileDTO
@@ -52,7 +52,7 @@ public class PaymentService : IPaymentService
             }
 
             _logger.LogInformation("Чек пользователя {UserId} успешно получен", userId);
-            return Result<ReceiptFileDTO>.Success(receiptFileDto);
+            return Result<ReceiptFileDTO>.Success(receiptFileDto!);
         }
         catch (Exception ex)
         {
@@ -68,7 +68,7 @@ public class PaymentService : IPaymentService
             _logger.LogInformation("Загрузка чека для пользователя {UserId}", userId);
 
             var profile = await _userProfileRepository.GetByUserIdAsync(userId);
-            if (profile.Status == ParticipantStatus.ParticipationConfirmed)
+            if (profile == null || profile!.Status == ParticipantStatus.ParticipationConfirmed)
             {
                 _logger.LogWarning("Пользователь {UserId} пытается загрузить чек, но участие уже подтверждено", userId);
                 return Result.Failure("Оплата уже подтверждена. Загрузка нового чека невозможна.");
@@ -85,7 +85,7 @@ public class PaymentService : IPaymentService
 
             var filePath = await _fileService.UpdateFileAsync(
                 receipt,
-                profile.ReceiptFilePath,
+                profile.ReceiptFilePath!,
                 "receipts",
                 allowedContentTypes,
                 maxSize
@@ -118,7 +118,7 @@ public class PaymentService : IPaymentService
                 return Result<(Stream, string, string)>.Failure("Чек не найден.");
             }
 
-            var fileResult = await _fileService.GetFileAsync(profile.ReceiptFilePath);
+            var fileResult = _fileService.GetFile(profile.ReceiptFilePath);
 
             _logger.LogInformation("Файл чека успешно загружен для пользователя {UserId}", userId);
             return Result<(Stream, string, string)>.Success(fileResult);

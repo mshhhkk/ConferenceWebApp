@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 public class ArchiveModel : PageModel
 {
-    public List<ArchiveYear> ArchiveYears { get; set; }
+    public List<ArchiveYear> ArchiveYears { get; set; } = new List<ArchiveYear>();
 
     public void OnGet()
     {
@@ -23,8 +23,7 @@ public class ArchiveModel : PageModel
                 Volume1Url = "/files/2023_volume1.pdf",
                 Volume2Url = "/files/2023_volume2.pdf",
                 PhotosUrl = "/files/2023_photos.zip"
-            },
-            // Добавьте остальные года аналогично
+            }
         };
     }
 }
@@ -32,8 +31,8 @@ public class ArchiveModel : PageModel
 public class ArchiveYear
 {
     public int Year { get; set; }
-    public string ProgramUrl { get; set; }
-    public string Volume1Url { get; set; }
-    public string Volume2Url { get; set; }
-    public string PhotosUrl { get; set; }
+    public string ProgramUrl { get; set; } = string.Empty;
+    public string Volume1Url { get; set; } = string.Empty;
+    public string Volume2Url { get; set; } = string.Empty;
+    public string PhotosUrl { get; set; } = string.Empty;
 }

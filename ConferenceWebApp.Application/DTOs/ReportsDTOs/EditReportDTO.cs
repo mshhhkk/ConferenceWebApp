@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using ConferenceWebApp.Domain.Enums;
+﻿using ConferenceWebApp.Domain.Enums;
 using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace ConferenceWebApp.Application.DTOs.ReportsDTOs
 {

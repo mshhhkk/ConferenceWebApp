@@ -8,7 +8,6 @@ using ConferenceWebApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 [Authorize]
@@ -108,7 +107,7 @@ public class ReportsController : BaseController
         var userProfile = JsonConvert.DeserializeObject<UserProfileDTO>(userProfileJson);
         _logger.LogInformation("Открыта форма добавления доклада. UserId={UserId}", userId);
 
-        return View(new AddReportViewModel { UserProfile = userProfile, Report = new AddReportDTO() });
+        return View(new AddReportViewModel { UserProfile = userProfile!, Report = new AddReportDTO() });
     }
 
     [ValidateAntiForgeryToken]
@@ -131,22 +130,26 @@ public class ReportsController : BaseController
         var validationResult = validator.Validate(vm.Report);
         if (!validationResult.IsValid)
         {
+            foreach (var failure in validationResult.Errors)
+            {
+                ModelState.AddModelError($"Report.{failure.PropertyName}", failure.ErrorMessage);
+            }
             _logger.LogWarning("Валидация не пройдена при добавлении доклада. UserId={UserId}; Ошибки={Errors}",
                 userId, string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage)));
-            vm.UserProfile = userProfile;
+            vm.UserProfile = userProfile!;
             return View(vm);
         }
 
         _logger.LogInformation("Добавление доклада. UserId={UserId}, Theme={Theme}, Section={Section}, WorkType={WorkType}",
             userId, vm.Report?.ReportTheme, vm.Report?.Section, vm.Report?.WorkType);
 
-        var result = await _reportService.AddReportAsync(vm.Report, userId!.Value);
+        var result = await _reportService.AddReportAsync(vm.Report!, userId!.Value);
         if (!result.IsSuccess)
         {
             _logger.LogError("Ошибка при добавлении доклада. UserId={UserId}: {Error}",
                 userId, result.ErrorMessage);
             ViewBag.Message = result.ErrorMessage;
-            vm.UserProfile = userProfile;
+            vm.UserProfile = userProfile!;
             return View(vm);
         }
 
@@ -182,7 +185,7 @@ public class ReportsController : BaseController
 
         var vm = new EditReportViewModel
         {
-            UserProfile = userProfile,
+            UserProfile = userProfile!,
             Report = result.Value
         };
 
@@ -212,14 +215,14 @@ public class ReportsController : BaseController
                 userId, string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage)));
 
             var userProfile = JsonConvert.DeserializeObject<UserProfileDTO>(userProfileJson);
-            vm.UserProfile = userProfile;
+            vm.UserProfile = userProfile!;
             return View(vm);
         }
 
         _logger.LogInformation("Сохранение изменений доклада. UserId={UserId}, ReportId={ReportId}",
             userId, vm.Report?.Id);
 
-        var result = await _reportService.UpdateReportAsync(vm.Report, userId!.Value);
+        var result = await _reportService.UpdateReportAsync(vm.Report!, userId!.Value);
         if (!result.IsSuccess)
         {
             _logger.LogWarning("Не удалось обновить доклад. UserId={UserId}, ReportId={ReportId}: {Error}",
@@ -227,7 +230,7 @@ public class ReportsController : BaseController
             ViewBag.Message = result.ErrorMessage;
 
             var userProfile = JsonConvert.DeserializeObject<UserProfileDTO>(userProfileJson);
-            vm.UserProfile = userProfile;
+            vm.UserProfile = userProfile!;
             return View(vm);
         }
 
@@ -276,6 +279,6 @@ public class ReportsController : BaseController
         }
 
         _logger.LogInformation("Доклад отдан на скачивание. UserId={UserId}, ReportId={ReportId}", userId, id);
-        return result.Value; // FileResult
+        return result.Value;
     }
 }

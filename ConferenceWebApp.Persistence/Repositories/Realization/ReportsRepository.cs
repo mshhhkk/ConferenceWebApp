@@ -13,7 +13,7 @@ public class ReportsRepository : IReportsRepository
         _context = context;
     }
 
-   
+
     public async Task<List<Reports>> GetReportsByUserIdAsync(Guid userId)
     {
         return await _context.Reports
