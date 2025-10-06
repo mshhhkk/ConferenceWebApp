@@ -148,11 +148,11 @@ public class ReportsController : BaseController
         {
             _logger.LogError("Ошибка при добавлении доклада. UserId={UserId}: {Error}",
                 userId, result.ErrorMessage);
-            ViewBag.Message = result.ErrorMessage;
+            TempData["Error"] = result.ErrorMessage;
             vm.UserProfile = userProfile!;
             return View(vm);
         }
-
+        TempData["Success"] = "Доклад успешно добавлен!";
         _logger.LogInformation("Доклад успешно добавлен. UserId={UserId}", userId);
         return RedirectToAction("Index");
     }
@@ -227,13 +227,13 @@ public class ReportsController : BaseController
         {
             _logger.LogWarning("Не удалось обновить доклад. UserId={UserId}, ReportId={ReportId}: {Error}",
                 userId, vm.Report?.Id, result.ErrorMessage);
-            ViewBag.Message = result.ErrorMessage;
+            TempData["Error"] = result.ErrorMessage;
 
             var userProfile = JsonConvert.DeserializeObject<UserProfileDTO>(userProfileJson);
             vm.UserProfile = userProfile!;
             return View(vm);
         }
-
+        TempData["Success"] = "Доклад обновлён!";
         _logger.LogInformation("Доклад обновлён. UserId={UserId}, ReportId={ReportId}", userId, vm.Report?.Id);
         return RedirectToAction("Index");
     }

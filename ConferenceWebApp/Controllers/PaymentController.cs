@@ -50,7 +50,7 @@ public class PaymentController : BaseController
         {
             _logger.LogError("Не удалось получить профиль пользователя {UserId}: {Error}",
                 userId, resultUserProfile.ErrorMessage);
-            ViewBag.Message = resultUserProfile.ErrorMessage;
+           
             return View();
         }
 
@@ -59,7 +59,7 @@ public class PaymentController : BaseController
         {
             _logger.LogWarning("У пользователя {UserId} нет чека: {Error}",
                 userId, resultReceipt.ErrorMessage);
-
+            TempData["Error"] = resultReceipt.ErrorMessage;
             return View(new ReceiptFileViewModel
             {
                 UserProfile = resultUserProfile.Value,

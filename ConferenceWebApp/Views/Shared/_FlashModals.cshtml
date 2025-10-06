@@ -1,0 +1,41 @@
+﻿@{
+    var error = TempData["Error"] as string ?? ViewBag.Error as string;
+    var success = TempData["Success"] as string ?? ViewBag.Success as string;
+    var message = !string.IsNullOrWhiteSpace(error) ? error
+                : !string.IsNullOrWhiteSpace(success) ? success
+                : null;
+    var isError = !string.IsNullOrWhiteSpace(error);
+}
+
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    <div id="flash-overlay" class="flash-overlay" aria-hidden="false">
+        <div class="flash-modal @(isError ? "error" : "success")" role="status" aria-live="polite">
+            <div class="flash-header @(isError ? "error" : "success")">
+                <span id="flash-title">@((isError ? "Ошибка" : "Успех"))</span>
+                <button type="button" class="flash-close" aria-label="Закрыть" data-flash-close>&times;</button>
+            </div>
+            <div class="flash-body">
+                <p>@message</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const overlay = document.getElementById('flash-overlay');
+            if (!overlay) return;
+
+            function close() {
+                overlay.setAttribute('aria-hidden', 'true');
+                overlay.style.display = 'none';
+            }
+
+            overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+            document.querySelectorAll('[data-flash-close]').forEach(b => b.addEventListener('click', close));
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+            setTimeout(close, 5000);
+        })();
+    </script>
+}

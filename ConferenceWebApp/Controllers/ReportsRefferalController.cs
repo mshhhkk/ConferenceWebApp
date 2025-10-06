@@ -67,7 +67,7 @@ public class ReportsRefferalController : BaseController
                 IncomingTransfers = new List<ApprovedReportToRefferalDTO>(),
                 Reports = new List<ApprovedReportToRefferalDTO>(),
             };
-            ViewBag.Message = resultReports.ErrorMessage;
+            TempData["Error"] = resultReports.ErrorMessage;
             return View(emptyVm);
         }
 

@@ -77,7 +77,7 @@ public class UserSecurityController : BaseController
             return View(model);
         }
 
-        TempData["Message"] = "Пароль успешно изменён.";
+        TempData["Success"] = "Пароль успешно изменён.";
         _logger.LogInformation("Пользователь {UserId} успешно сменил пароль", userId);
         return RedirectToAction("Index");
     }

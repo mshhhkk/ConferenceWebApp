@@ -115,7 +115,7 @@ public class PersonalAccountController : BaseController
             TempData["Error"] = result.ErrorMessage;
             return RedirectToAction("Login", "Auth");
         }
-
+   
         _logger.LogInformation("Приглашение сгенерировано. UserId={UserId}", userId);
         return View(result.Value);
     }

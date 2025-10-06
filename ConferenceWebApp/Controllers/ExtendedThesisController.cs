@@ -14,13 +14,13 @@ public class ExtendedThesisController : BaseController
     private readonly UserManager<User> _userManager;
     private readonly IExtendedThesisService _thesisService;
     private readonly IUserProfileService _userProfileService;
-    private readonly ILogger<ExtendedThesisController> _logger; // 👈 добавляем логгер
+    private readonly ILogger<ExtendedThesisController> _logger; 
 
     public ExtendedThesisController(
         UserManager<User> userManager,
         IExtendedThesisService thesisService,
         IUserProfileService userProfileService,
-        ILogger<ExtendedThesisController> logger) // 👈 внедряем
+        ILogger<ExtendedThesisController> logger) 
         : base(userProfileService)
     {
         _userManager = userManager;
@@ -135,7 +135,7 @@ public class ExtendedThesisController : BaseController
         if (!resultEdit.IsSuccess)
         {
             _logger.LogError("Ошибка загрузки тезиса для редактирования ReportId={ReportId}: {Error}", vm.Thesis.ReportId, resultEdit.ErrorMessage);
-            ViewBag.ErrorMessage = resultEdit.ErrorMessage;
+            TempData["Error"] = resultEdit.ErrorMessage;
             return View(vm);
         }
 
@@ -143,10 +143,10 @@ public class ExtendedThesisController : BaseController
         if (!result.IsSuccess)
         {
             _logger.LogWarning("Не удалось обновить тезис ReportId={ReportId}, UserId={UserId}: {Error}", vm.Thesis.ReportId, userId, result.ErrorMessage);
-            ViewBag.ErrorMessage = result.ErrorMessage;
+            TempData["Error"] = result.ErrorMessage;
             return View(vm);
         }
-
+        TempData["Success"] = "Расширенный тезис успешно обновлен!";
         _logger.LogInformation("Пользователь {UserId} успешно обновил тезис ReportId={ReportId}", userId, vm.Thesis.ReportId);
         return RedirectToAction(nameof(Index));
     }

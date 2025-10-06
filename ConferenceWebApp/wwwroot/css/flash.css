@@ -1,0 +1,81 @@
+﻿
+.flash-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 100px;
+    background: transparent;
+    z-index: 2147483647;
+    pointer-events: none;
+}
+
+.flash-modal {
+    pointer-events: auto;
+    width: min(720px, calc(100% - 2rem));
+    border-radius: 12px;
+    overflow: hidden;
+    transform: translateY(-16px);
+    opacity: 0;
+    animation: flash-drop .18s ease-out forwards;
+    font-family: 'Montserrat', Arial, sans-serif;
+    box-shadow: 0 10px 30px rgba(0,0,0,.18);
+}
+
+  
+.flash-modal.error {
+    background: #FDECEC; 
+    border: 1px solid #F19999; 
+    color: #7F1D1D; 
+}
+
+
+.flash-modal.success{
+  background: #E9FBF2;
+  border: 1px solid #86E1B2;
+  color: #065F46;
+}
+
+
+.flash-header {
+    display: none;
+}
+
+.flash-body {
+    padding: 14px 16px 8px;
+    font-size: 18px;
+    line-height: 1.32;
+}
+
+.flash-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: .5rem;
+    padding: 0 16px 14px;
+    background: transparent;
+}
+
+.flash-btn {
+    border: 0;
+    border-radius: 8px;
+    padding: .5rem .9rem;
+    background: #111827;
+    color: #fff;
+    cursor: pointer;
+    transition: filter .15s;
+}
+
+    .flash-btn:hover {
+        filter: brightness(1.1);
+    }
+
+@keyframes flash-drop {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

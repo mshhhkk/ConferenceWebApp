@@ -19,9 +19,11 @@
     <link rel="stylesheet" href="~/css/personalaccount.css" />
     <link rel="stylesheet" href="~/css/reports.css" />
     <link rel="stylesheet" href="~/css/settings.css" />
+    <link rel="stylesheet" href="~/css/flash.css" />
 </head>
 <body>
         @await Html.PartialAsync("_HeaderPA")
+        <partial name="_FlashModals" />
         <div class="up-gradient-pa-bg"></div>
             <div class="personal-account-layout">
                 <div class="personal-account-main">
