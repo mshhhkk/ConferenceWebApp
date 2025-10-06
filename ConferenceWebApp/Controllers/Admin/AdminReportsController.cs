@@ -1,10 +1,11 @@
 ﻿using ConferenceWebApp.Application.Controllers;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Application.Interfaces.Services.Admin;
+using ConferenceWebApp.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = SystemRoles.Admin)]
 public class AdminReportsController : BaseController
 {
     private readonly IReportAdminService _reportService;

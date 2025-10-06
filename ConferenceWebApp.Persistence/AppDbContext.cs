@@ -97,29 +97,29 @@ namespace ConferenceWebApp.Persistence
             //TODO ПЕРЕМЕСТИТЬ РОЛИ В ОДЕЛЬНЫЙ КЛАСС
 
             // Заранее подготовленные Guid для ролей (можно вынести в константы)
-            var roles = new List<IdentityRole<Guid>>
-            {
-                new IdentityRole<Guid>
-                {
-                    Id = Guid.Parse("375FA642-7E6A-4333-B78F-270ED825997F"),
-                    Name = "Participant",
-                    NormalizedName = "PARTICIPANT"
-                },
-                new IdentityRole<Guid>
-                {
-                    Id = Guid.Parse("6282CBD6-908D-4E0E-A3EE-6F41CD54FB5F"),
-                    Name = "Admin",
-                    NormalizedName = "ADMIN"
-                },
-                new IdentityRole<Guid>
-                {
-                    Id = Guid.Parse("20AEDC71-9FC5-4272-B766-E6DC1AEB63AE"),
-                    Name = "SuperAdmin",
-                    NormalizedName = "SUPERADMIN"
-                }
-            };
+            builder.Entity<IdentityRole<Guid>>().HasData(
 
-            builder.Entity<IdentityRole<Guid>>().HasData(roles);
+                new IdentityRole<Guid>
+                {
+                    Id = SystemRoles.ParticipantId,
+                    Name = SystemRoles.Participant,
+                    NormalizedName = SystemRoles.Participant.ToUpperInvariant()
+                },
+                new IdentityRole<Guid>
+                {
+                    Id = SystemRoles.AdminId,
+                    Name = SystemRoles.Admin,
+                    NormalizedName = SystemRoles.Admin.ToUpperInvariant()
+                },
+                new IdentityRole<Guid>
+                {
+                    Id = SystemRoles.SuperAdminId,
+                    Name = SystemRoles.SuperAdmin,
+                    NormalizedName = SystemRoles.SuperAdmin.ToUpperInvariant()
+                });
+            
+
+           
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken ct = default)

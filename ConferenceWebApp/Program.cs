@@ -1,4 +1,5 @@
 ﻿using ConferenceWebApp.Application.Extensions;
+using ConferenceWebApp.Domain.Constants;
 using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.Infrastructure.Extensions;
 using ConferenceWebApp.Middleware;
@@ -123,19 +124,24 @@ public class Program
             using (var scope = app.Services.CreateScope())
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-                var roles = new[] { "Participant", "Admin", "SuperAdmin" };
 
-                foreach (var role in roles)
+                async Task EnsureRoleAsync(Guid id, string name)
                 {
-                    if (!await roleManager.RoleExistsAsync(role))
+                    if (!await roleManager.RoleExistsAsync(name))
                     {
-                        await roleManager.CreateAsync(new IdentityRole<Guid>
+                        var role = new IdentityRole<Guid>
                         {
-                            Name = role,
-                            NormalizedName = role.ToUpper()
-                        });
+                            Id = id,
+                            Name = name,
+                            NormalizedName = name.ToUpperInvariant()
+                        };
+                        await roleManager.CreateAsync(role);
                     }
                 }
+
+                await EnsureRoleAsync(SystemRoles.ParticipantId, SystemRoles.Participant);
+                await EnsureRoleAsync(SystemRoles.AdminId, SystemRoles.Admin);
+                await EnsureRoleAsync(SystemRoles.SuperAdminId, SystemRoles.SuperAdmin);
             }
 
             await app.RunAsync();

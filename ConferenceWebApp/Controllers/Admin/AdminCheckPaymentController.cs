@@ -2,10 +2,11 @@
 using ConferenceWebApp.Application.DTOs.Admin;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Application.Interfaces.Services.Admin;
+using ConferenceWebApp.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = SystemRoles.Admin)]
 public class AdminCheckPaymentController : BaseController
 {
     private readonly IAdminPaymentService _adminPaymentService;

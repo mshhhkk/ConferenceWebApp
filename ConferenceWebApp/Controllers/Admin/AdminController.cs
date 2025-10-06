@@ -2,6 +2,7 @@
 using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Application.Validation;
+using ConferenceWebApp.Domain.Constants;
 using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.ViewModels.Admin;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ConferenceWebApp.Application.Controllers.Admin;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = SystemRoles.Admin)]
 public class AdminController : BaseController
 {
     private readonly IUserProfileService _userProfileService;
