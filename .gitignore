@@ -8,6 +8,10 @@ obj/
 *.tmp
 *.bak
 
+docker-compose.yml
+Dockerfile
+_data
+secrets
 ConferenceWebApp/Logs
 ConferenceWebApp/wwwroot/receipts/
 ConferenceWebApp/wwwroot/uploads/
@@ -227,3 +231,5 @@ BonusEngine.Akka.Server/appsettings.json
 *.env
 **/.env
 !.env.example
+/docker-compose.yml
+/Dockerfile
