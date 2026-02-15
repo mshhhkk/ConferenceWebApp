@@ -1,10 +1,14 @@
 ﻿using ConferenceWebApp.Application.Extensions;
+using ConferenceWebApp.Application.Interfaces.Repositories;
+using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Constants;
 using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.Infrastructure.Extensions;
+using ConferenceWebApp.Infrastructure.Services;
 using ConferenceWebApp.Middleware;
 using ConferenceWebApp.Persistence;
 using ConferenceWebApp.Persistence.Extensions;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
 
@@ -17,10 +21,22 @@ public class Program
 
         var builder = WebApplication.CreateBuilder(args);
 
+        var webRoot = builder.Environment.WebRootPath
+              ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+        var uploadsSubfolder = builder.Configuration["Storage:UploadsSubfolder"];
+        if (string.IsNullOrWhiteSpace(uploadsSubfolder))
+            uploadsSubfolder = "uploads";
+        uploadsSubfolder = uploadsSubfolder.Trim().Trim('/', '\\');
+
+        var uploadsDir = Path.Combine(webRoot, uploadsSubfolder); // физический путь
+        var uploadsUrlPrefix = "/" + uploadsSubfolder;
+        Directory.CreateDirectory(uploadsDir);
+
         builder.Configuration
             .SetBasePath(builder.Environment.ContentRootPath)
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+             .AddKeyPerFile("/run/secrets", optional: true)
             .AddEnvironmentVariables();
 
         Log.Logger = new LoggerConfiguration()
@@ -51,7 +67,8 @@ public class Program
             builder.Services.AddDatabase(builder.Configuration);
             builder.Services.AddApplicationServices();
             builder.Services.AddPersistence();
-
+            builder.Services.Configure<ConferenceOptions>(
+            builder.Configuration.GetSection("Conference"));
 
             builder.Services.AddValidators();
 
@@ -59,6 +76,37 @@ public class Program
             builder.Services.AddInfrastructure(rootPath);
 
             builder.Services.AddScoped<UserManager<User>, CustomUserManager>();
+            builder.Services.AddSingleton<IReportCsvReader>(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<ReportCsvReader>>();
+                var content = builder.Environment.ContentRootPath;
+                var csvPath = Path.Combine(content, "imports", "reports-comma.csv");
+                return new ReportCsvReader(csvPath, ',', logger);
+            });
+            builder.Services.AddScoped<IReportLinkingService>(sp =>
+            {
+                var csv = sp.GetRequiredService<IReportCsvReader>();
+                var reports = sp.GetRequiredService<IReportsRepository>();
+                var profiles = sp.GetRequiredService<IUserProfileRepository>();
+                var processed = sp.GetRequiredService<IProcessedFilesRegistry>();
+                var logger = sp.GetRequiredService<ILogger<ReportLinkingService>>();
+
+                return new ReportLinkingService(
+                    csv,
+                    reports,
+                    profiles,
+                    processed,
+                    uploadsDir,        // <wwwroot>/<uploadsSubfolder>
+                    uploadsUrlPrefix,  // "/<uploadsSubfolder>"
+                    logger
+                );
+            });
+
+
+            builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(
+        Environment.GetEnvironmentVariable("DP_KEYS_PATH") ?? "/app/DataProtection-Keys"));
+
             builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -121,28 +169,7 @@ public class Program
                 pattern: "{controller=Home}/{action=Index}/{id?}"
             );
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-
-                async Task EnsureRoleAsync(Guid id, string name)
-                {
-                    if (!await roleManager.RoleExistsAsync(name))
-                    {
-                        var role = new IdentityRole<Guid>
-                        {
-                            Id = id,
-                            Name = name,
-                            NormalizedName = name.ToUpperInvariant()
-                        };
-                        await roleManager.CreateAsync(role);
-                    }
-                }
-
-                await EnsureRoleAsync(SystemRoles.ParticipantId, SystemRoles.Participant);
-                await EnsureRoleAsync(SystemRoles.AdminId, SystemRoles.Admin);
-                await EnsureRoleAsync(SystemRoles.SuperAdminId, SystemRoles.SuperAdmin);
-            }
+            await app.Services.SeedIdentityAsync(migrate: false);
 
             await app.RunAsync();
         }

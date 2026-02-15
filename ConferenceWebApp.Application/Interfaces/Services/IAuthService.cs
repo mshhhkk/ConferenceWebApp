@@ -12,5 +12,7 @@ public interface IAuthService
 
     Task<Result> VerifyTwoStepsAuthAsync(Verify2SADTO dto);
 
+    Task<Result> ResendConfirmationEmailAsync(string email);
+
     Task<Result> LogoutAsync();
 }

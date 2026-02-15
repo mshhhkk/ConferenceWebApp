@@ -14,13 +14,13 @@ public class Reports
 
     public string? ExtThesis { get; set; }
 
-    public string? ExtThesisFilePath { get; set; }
+    public string? ExtThesisFilePath { get; set; } 
 
     [Required]
-    public SectionTopic Section { get; set; }
+    public SectionTopic Section { get; set; } 
 
     [Required]
-    public WorkType WorkType { get; set; }
+    public WorkType WorkType { get; set; } = WorkType.Стендовый;
 
     [Required]
     public string FilePath { get; set; } = null!;
@@ -38,7 +38,7 @@ public class Reports
     public User User { get; set; } = null!;
 
     [Required]
-    public bool IsAuthor { get; set; }
+    public bool IsAuthor { get; set; } 
 
     [Required]
     public Guid AuthorId { get; set; } = Guid.Empty;
@@ -47,11 +47,11 @@ public class Reports
     public Guid TargetUserId { get; set; } = Guid.Empty;
 
     [Required]
-    public ReportStatus Status { get; set; }
+    public ReportStatus Status { get; set; } 
 
     [Required]
     public ReportTransferStatus TransferStatus { get; set; }
 
     [Required]
-    public string? RejectionComment { get; set; }
+    public string? RejectionComment { get; set; } = string.Empty;
 }

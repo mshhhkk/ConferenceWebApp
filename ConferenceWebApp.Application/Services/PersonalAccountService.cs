@@ -6,6 +6,7 @@ using ConferenceWebApp.Application.Interfaces.Repositories;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
 using ConferenceWebApp.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization;
@@ -52,7 +53,7 @@ public class PersonalAccountService : IPersonalAccountService
                 LastName = userProfile.LastName,
                 MiddleName = userProfile.MiddleName,
                 PhoneNumber = userProfile.PhoneNumber,
-                BirthDate = userProfile.BirthDate,
+                BirthDate = new DateOnly(1970, 1, 1),
                 Specialization = userProfile.Specialization,
                 Organization = userProfile.Organization,
                 PhotoUrl = userProfile.PhotoUrl,
@@ -89,23 +90,39 @@ public class PersonalAccountService : IPersonalAccountService
                 return Result.Failure("Невозможно удалить дефолтное фото.");
             }
 
-            if (userProfile.ParticipantType == ParticipantType.Speaker)
-            {
-                _logger.LogWarning("Попытка изменить профиль спикера с одобренным докладом UserId={UserId}", userId);
-                return Result<EditUserDTO>.Failure("Пользователь с одобренным докладом не может поменять профиль");
-            }
-
             userProfile.FirstName = dto.FirstName!;
             userProfile.LastName = dto.LastName!;
             userProfile.MiddleName = dto.MiddleName;
             userProfile.PhoneNumber = dto.PhoneNumber;
-            userProfile.BirthDate = (DateOnly)dto.BirthDate!;
+            userProfile.BirthDate = new DateOnly(1970, 1, 1);
             userProfile.Organization = dto.Organization;
             userProfile.Specialization = dto.Specialization;
             userProfile.Degree = dto.Degree!.Value;
-            userProfile.Position = dto.Position!.Value;
-            userProfile.Status = ParticipantStatus.ProfileCompleted;
 
+            var wasStudent = userProfile.Position == Position.Student;
+            var newPosition = dto.Position.HasValue ? dto.Position.Value : userProfile.Position;
+
+            // 2) Обновляем позицию
+            userProfile.Position = newPosition;
+
+            // 3) Правила статуса
+            if (newPosition == Position.Student)
+            {
+                // студентам сразу даём минимум ParticipationConfirmed
+                if (userProfile.Status < ParticipantStatus.ParticipationConfirmed)
+                    userProfile.Status = ParticipantStatus.ParticipationConfirmed;
+            }
+            else
+            {
+           
+                // ушли со студента → откат c ParticipationConfirmed к ProfileCompleted
+                if (wasStudent && userProfile.Status == ParticipantStatus.ParticipationConfirmed)
+                    userProfile.Status = ParticipantStatus.ProfileCompleted;
+
+                // и в любом случае минимум ProfileCompleted
+                if (userProfile.Status < ParticipantStatus.ProfileCompleted)
+                    userProfile.Status = ParticipantStatus.ProfileCompleted;
+            }
             if (dto.RemovePhoto)
             {
                 _logger.LogInformation("Удаление пользовательского фото UserId={UserId}", userId);
@@ -170,26 +187,56 @@ public class PersonalAccountService : IPersonalAccountService
             _logger.LogInformation("Генерация приглашения UserId={UserId}", userId);
 
             var profile = await _userProfileRepository.GetByUserIdAsync(userId);
-            if (profile == null)
-            {
-                _logger.LogWarning("Профиль не найден при генерации приглашения UserId={UserId}", userId);
+            if (profile is null)
                 return Result<InvitationDTO>.Failure("Профиль пользователя не найден");
+
+            var fio = string.Join(" ",
+                new[] { profile.LastName, profile.FirstName, profile.MiddleName }
+                .Where(s => !string.IsNullOrWhiteSpace(s)));
+
+            static string Initial(string? s) =>
+                string.IsNullOrWhiteSpace(s) ? "" : $"{char.ToUpper(s[0])}.";
+            var greeting = $"Уважаемый(ая) {Initial(profile.FirstName)} {Initial(profile.MiddleName)} {profile.LastName}!";
+
+
+            var reports = await _reportsRepository.GetApprovedReportsByUserIdAsync(userId);
+
+            var list = new List<InvitationReportDTO>();
+            foreach (var r in reports)
+            {
+
+                string workTypeText = r.WorkType switch
+                {
+                    WorkType.Стендовый => "стендового",
+                    WorkType.Доклад => "устного доклада",
+                    _ => "доклада"
+                };
+
+                var sectionText = EnumDescriptionGetter.Handle(r.Section);
+
+                list.Add(new InvitationReportDTO
+                {
+                    Title = r.ReportTheme ?? "(без названия)",
+                    WorkTypeText = workTypeText,
+                    SectionText = sectionText
+                });
             }
 
             var dto = new InvitationDTO
             {
-                FullName = $"{profile.FirstName} {profile.LastName}",
-                ConferenceName = "Международная конференция 2025",
-                Organizer = "Организационный комитет"
+                GreetingName = greeting,
+                FullName = fio,
+                Reports = list,
+                IsStudent = profile.Position == Position.Student
             };
 
-            _logger.LogInformation("Приглашение сформировано UserId={UserId}", userId);
+            _logger.LogInformation("Приглашение сформировано UserId={UserId}, Reports={Count}", userId, list.Count);
             return Result<InvitationDTO>.Success(dto);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Ошибка при генерации приглашения UserId={UserId}", userId);
-            return Result<InvitationDTO>.Failure($"Ошибка при генерации приглашения: {ex.Message}");
+            return Result<InvitationDTO>.Failure("Не удалось сформировать приглашение. Попробуйте позже.");
         }
     }
 
@@ -230,4 +277,39 @@ public class PersonalAccountService : IPersonalAccountService
             return Result.Failure($"Произошла ошибка при обновлении профиля: {ex.Message}");
         }
     }
+    public async Task<Result> DeleteAccountAsync(Guid userId)
+    {
+        try
+        {
+            _logger.LogInformation("Старт удаления аккаунта. UserId={UserId}", userId);
+
+  
+            var userReports = await _reportsRepository.GetReportsByUserIdAsync(userId);
+            int deletedReports = 0;
+            foreach (var r in userReports)
+            {
+                // при необходимости — удалить связанный файл доклада
+                if (!string.IsNullOrWhiteSpace(r.FilePath))
+                {
+                    try { _fileService.DeleteFile(r.FilePath); }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Не удалось удалить файл доклада {Path} для ReportId={ReportId}", r.FilePath, r.Id);
+                    }
+                }
+
+                await _reportsRepository.DeleteReportAsync(r.Id);
+                deletedReports++;
+            }
+            _logger.LogInformation("Удалено докладов: {Count} для UserId={UserId}", deletedReports, userId);
+
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка при удалении аккаунта. UserId={UserId}", userId);
+            return Result.Failure("Произошла ошибка при удалении аккаунта.");
+        }
+    }
 }
+

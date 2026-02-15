@@ -439,36 +439,60 @@
 
 /* было: top: 50%; transform: translateY(-50%); */
 /* контейнер и отступ под кнопку */
-.input-with-eye {
-    position: relative;
-}
+.input-with-eye { position: relative; }
+.input-with-eye .form-input { padding-right: 44px; }
 
-    .input-with-eye .form-input {
-        padding-right: 44px;
-        top: calc(50% - 20px);
-    }
-
-/* сама кнопка-иконка, позиционируем поверх поля справа */
 .eye-btn {
-    appearance: none;
-    margin-bottom:-20px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
     position: absolute;
-    right: 10px;
-    top: calc(50% - 4px); /* ↑ можно подстроить */
+    right: 12px;
+    top: 20px; 
     transform: translateY(-50%);
-    width: 32px;
-    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
     border: 0;
     background: transparent;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    z-index: 2;
+    opacity: .8;
+}}
+.eye-btn:hover {
+    opacity: 1;
 }
+
+.eye-btn:hover{ opacity: 1; }
+
+.eye-btn .icon-eye,
+.eye-btn .icon-eye-off{
+  width: 22px; height: 22px; display: block;
+  fill: currentColor;
+}
+.eye-btn .icon-eye-off{ display: none; }
+.eye-btn[aria-pressed="true"] .icon-eye{ display: none; }
+.eye-btn[aria-pressed="true"] .icon-eye-off{ display: block; }
+
+/* чек-лист скрыт по умолчанию */
+.pwd-checklist { margin: 8px 0 0; padding: 0; list-style: none; display:none; }
+.pwd-checklist li {
+  position: relative;
+  padding-left: 0;           /* без отступа под кружок */
+  color: #6b7280;            /* серый */
+  line-height: 1.4;
+}
+pwd-checklist li::before { display: none !important; }
+
+/* когда правило выполнено — зелёная галочка и зелёный текст */
+.pwd-checklist li.ok {
+  color: #16a34a;
+}
+.pwd-checklist li.ok::before {
+  display: inline-block !important;
+  content: "✓";
+  margin-right: 8px;
+  font-weight: 700;
+}
+
 
     .eye-btn:focus-visible {
         outline: 2px solid rgba(16,84,229,.35);

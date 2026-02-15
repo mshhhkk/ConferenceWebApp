@@ -13,4 +13,6 @@ public interface IPersonalAccountService
     Task<Result<InvitationDTO>> GenerateInvitationAsync(Guid userId);
 
     Task<Result> AdminUpdateProfileAsync(Guid userId, AdminEditUserDTO dto);
+
+    Task<Result> DeleteAccountAsync(Guid userId);
 }

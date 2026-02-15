@@ -37,7 +37,8 @@ public class AdminPaymentService : IAdminPaymentService
                     FullName = $"{up.LastName} {up.FirstName} {up.MiddleName}",
                     Email = up.User.Email!,
                     ReceiptFilePath = up.ReceiptFilePath!,
-                    HasPaid = (up.Status == ParticipantStatus.CheckSubmitted)
+                    CheckSubbmited = (up.Status == ParticipantStatus.CheckSubmitted),
+                    CheckAccepted = (up.Status == ParticipantStatus.ParticipationConfirmed)
                 })
                 .ToListAsync();
 

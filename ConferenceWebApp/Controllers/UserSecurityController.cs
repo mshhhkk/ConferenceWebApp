@@ -1,4 +1,5 @@
-﻿using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
+﻿using ConferenceWebApp.Application.DTOs;
+using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
 using Microsoft.AspNetCore.Authentication;
@@ -10,104 +11,126 @@ namespace ConferenceWebApp.Application.Controllers;
 public class UserSecurityController : BaseController
 {
     private readonly IUserSecurityService _userSecurityService;
-    private readonly UserManager<User> _userManager;
+    private readonly IUserProfileService _userProfileService;
+    private readonly UserManager<User> _userManager;          
+    private readonly IConfiguration _cfg;
     private readonly ILogger<UserSecurityController> _logger;
 
     public UserSecurityController(
         IUserProfileService userProfileService,
         IUserSecurityService userSecurityService,
-        UserManager<User> userManager,
+        UserManager<User> userManager,                     
+        IConfiguration cfg,
         ILogger<UserSecurityController> logger)
         : base(userProfileService)
     {
         _userSecurityService = userSecurityService;
-        _userManager = userManager;
+        _userProfileService = userProfileService;
+        _userManager = userManager;                         
+        _cfg = cfg;
         _logger = logger;
     }
 
-    private async Task<(Guid? userId, IActionResult? redirect)> GetCurrentUserIdAsync()
-    {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            _logger.LogWarning("Попытка доступа без авторизации в {Controller}", nameof(UserSecurityController));
-            return (null, RedirectToAction("Login", "Auth"));
-        }
-        return (user.Id, null);
-    }
-
     [HttpGet]
-    public IActionResult ChangePassword()
-    {
-        _logger.LogInformation("Открыта страница смены пароля пользователем {User}", User.Identity?.Name);
-        return View();
-    }
+    public IActionResult ChangePassword() => View();
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> ChangePassword(ChangePasswordDTO model)
     {
-        if (!ModelState.IsValid)
+        if (!ModelState.IsValid) return View(model);
+
+        var user = await _userManager.GetUserAsync(User);       // ← используем UserManager
+        if (user is null)
         {
-            _logger.LogWarning("Модель смены пароля некорректна");
-            return View(model);
+            _logger.LogWarning("ChangePassword: user is null (not authenticated)");
+            return RedirectToAction("Login", "Auth");
         }
 
-        var (userId, redirect) = await GetCurrentUserIdAsync();
-        if (redirect != null) return redirect;
-
-        _logger.LogInformation("Пользователь {UserId} инициировал смену пароля", userId);
-
-        var result = await _userSecurityService.ChangePasswordAsync(
-            userId!.Value,
-            model.CurrentPassword,
-            model.NewPassword);
-
-        if (!result.IsSuccess)
+        var res = await _userSecurityService.ChangePasswordAsync(user.Id, model.CurrentPassword, model.NewPassword);
+        if (!res.IsSuccess)
         {
-            _logger.LogWarning("Ошибка смены пароля для {UserId}: {Error}", userId, result.ErrorMessage);
-
-            if (result.ErrorMessage?.Contains("Incorrect password") == true)
-            {
+            if ((res.ErrorMessage ?? "").Contains("Incorrect password", StringComparison.OrdinalIgnoreCase))
                 ModelState.AddModelError(nameof(model.CurrentPassword), "Текущий пароль введён неверно.");
-            }
             else
-            {
-                ModelState.AddModelError("", result.ErrorMessage ?? "Неизвестная ошибка");
-            }
+                ModelState.AddModelError(string.Empty, res.ErrorMessage ?? "Не удалось сменить пароль.");
+
             return View(model);
         }
 
         TempData["Success"] = "Пароль успешно изменён.";
-        _logger.LogInformation("Пользователь {UserId} успешно сменил пароль", userId);
-        return RedirectToAction("Index");
+        return RedirectToAction("Index", "Home");
+    }
+
+    [HttpGet]
+    public IActionResult PasswordRecovery() => View(new PasswordRecoveryDTO());
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PasswordRecovery(PasswordRecoveryDTO dto)
+    {
+        if (!ModelState.IsValid) return View(dto);
+
+        var baseUrl = _cfg["Urls:PublicBaseUrl"];
+        if (string.IsNullOrWhiteSpace(baseUrl))
+            baseUrl = $"{Request.Scheme}://{Request.Host}";
+
+        var res = await _userSecurityService.SendPasswordRecoveryAsync(dto.Email, baseUrl);
+        if (!res.IsSuccess)
+        {
+            _logger.LogWarning("PasswordRecovery fail for {Email}: {Err}", dto.Email, res.ErrorMessage);
+        }
+
+        TempData["Success"] = "Если такой email существует и подтверждён, мы отправили ссылку для сброса пароля.";
+        return RedirectToAction("Login", "Auth");
+    }
+
+    [HttpGet]
+    public IActionResult ResetPassword(string userId, string token)
+    {
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(token))
+            return BadRequest("Некорректная ссылка для сброса пароля.");
+
+        return View(new ResetPasswordDTO { UserId = userId, Token = token });
     }
 
     [HttpPost]
-    public async Task<IActionResult> DeleteAccount()
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetPassword(ResetPasswordDTO dto)
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
+        if (!ModelState.IsValid) return View(dto);
+
+        var res = await _userSecurityService.ResetPasswordAsync(dto.UserId, dto.Token, dto.NewPassword);
+        if (!res.IsSuccess)
         {
-            _logger.LogError("Не удалось найти пользователя при удалении аккаунта");
-            return NotFound("Пользователь не найден.");
+            ModelState.AddModelError(string.Empty, res.ErrorMessage ?? "Не удалось обновить пароль.");
+            return View(dto);
         }
 
-        _logger.LogInformation("Пользователь {UserId} инициировал удаление аккаунта", user.Id);
+        TempData["Success"] = "Пароль успешно обновлён. Войдите с новым паролем.";
+        return RedirectToAction("Login", "Auth");
+    }
 
-        var result = await _userSecurityService.DeleteAccountAsync(user.Id);
-
-        if (!result.IsSuccess)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteAccount()
+    {
+        var user = await _userManager.GetUserAsync(User); 
+        if (user is null)
         {
-            _logger.LogWarning("Ошибка удаления аккаунта {UserId}: {Error}", user.Id, result.ErrorMessage);
-            TempData["Error"] = result.ErrorMessage ?? "Не удалось удалить аккаунт";
-            return RedirectToAction("Index");
+            _logger.LogWarning("DeleteAccount: user is null (not authenticated)");
+            return RedirectToAction("Login", "Auth");
+        }
+
+        var res = await _userSecurityService.DeleteAccountAsync(user.Id);
+        if (!res.IsSuccess)
+        {
+            TempData["Error"] = res.ErrorMessage ?? "Не удалось удалить аккаунт.";
+            return RedirectToAction("Index", "Home");
         }
 
         await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-
-        TempData["Message"] = "Ваш аккаунт был успешно удален.";
-        _logger.LogInformation("Пользователь {UserId} удалил аккаунт", user.Id);
-
+        TempData["Success"] = "Аккаунт удалён.";
         return RedirectToAction("Index", "Home");
     }
 }

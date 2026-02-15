@@ -240,7 +240,7 @@ namespace ConferenceWebApp.Persistence.Migrations
                     b.Property<int>("ApprovalStatus")
                         .HasColumnType("integer");
 
-                    b.Property<DateOnly>("BirthDate")
+                    b.Property<DateOnly?>("BirthDate")
                         .HasColumnType("date");
 
                     b.Property<int>("Degree")

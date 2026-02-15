@@ -40,13 +40,22 @@
                 <span class="sidebar-text">Статистика</span>
             </a>
         </li> *@
-        <li>
+        @* <li>
             <a href="/Archive/Index">
                 <span class="sidebar-icon-wrap">
                     <img src="~/images/Archive.svg" alt="Архив" class="sidebar-icon" />
                 </span>
                 <span class="sidebar-text">Архив</span>
             </a>
-        </li>
+        </li> *@
     </ul>
 </div>
+<script>
+    // Разрешаем ISO (yyyy-MM-dd) и русский dd.MM.yyyy
+    if (window.$ && $.validator && $.validator.methods) {
+      $.validator.methods.date = function (value, element) {
+        if (!value) return true;
+        return /^\d{4}-\d{2}-\d{2}$/.test(value) || /^\d{2}\.\d{2}\.\d{4}$/.test(value);
+      };
+    }
+</script>

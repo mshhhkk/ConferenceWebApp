@@ -2,10 +2,12 @@
 using ConferenceWebApp.Application.DTOs.PersonalAccountDTOs;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Domain.Enums;
 using ConferenceWebApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 [Authorize]
 public class PaymentController : BaseController
@@ -43,16 +45,23 @@ public class PaymentController : BaseController
         var (userId, redirect) = await GetCurrentUserIdAsync();
         if (redirect != null) return redirect;
 
-        _logger.LogInformation("Загрузка страницы оплаты для UserId={UserId}", userId);
+        _logger.LogInformation("Открыт список докладов. UserId={UserId}", userId);
 
-        var resultUserProfile = await _userProfileService.GetByUserIdAsync(userId!.Value);
-        if (!resultUserProfile.IsSuccess)
+        var userProfileJson = HttpContext.Session.GetString("UserProfile");
+        if (string.IsNullOrEmpty(userProfileJson))
         {
-            _logger.LogError("Не удалось получить профиль пользователя {UserId}: {Error}",
-                userId, resultUserProfile.ErrorMessage);
-           
-            return View();
+            _logger.LogWarning("Сессия без UserProfile. Redirect -> Login. UserId={UserId}", userId);
+            return RedirectToAction("Login", "Auth");
         }
+
+        var userProfile = JsonConvert.DeserializeObject<UserProfileDTO>(userProfileJson);
+        if (userProfile == null)
+        {
+            _logger.LogError("Не удалось десериализовать UserProfile из сессии. UserId={UserId}", userId);
+            TempData["Error"] = "Не удалось загрузить профиль пользователя.";
+            return RedirectToAction("Login", "Auth");
+        }
+
 
         var resultReceipt = await _paymentService.GetReceiptByUserIdAsync(userId!.Value);
         if (!resultReceipt.IsSuccess)
@@ -62,7 +71,7 @@ public class PaymentController : BaseController
             TempData["Error"] = resultReceipt.ErrorMessage;
             return View(new ReceiptFileViewModel
             {
-                UserProfile = resultUserProfile.Value,
+                UserProfile = userProfile,
                 ReceiptFile = new ReceiptFileDTO()
             });
         }
@@ -71,7 +80,7 @@ public class PaymentController : BaseController
 
         var vm = new ReceiptFileViewModel
         {
-            UserProfile = resultUserProfile.Value,
+            UserProfile = userProfile,
             ReceiptFile = resultReceipt.Value
         };
         return View(vm);

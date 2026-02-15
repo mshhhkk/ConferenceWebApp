@@ -26,16 +26,15 @@ namespace ConferenceWebApp.Infrastructure.Services
 
              if (!int.TryParse(portStr, out var port)) port = 587;
 
-             var secure = ParseSecureSocket(_configuration["Smtp:SecureSocket"]); // default: StartTls
+             var secure = ParseSecureSocket(_configuration["Smtp:SecureSocket"]); 
              var allowInvalid = bool.TryParse(_configuration["Smtp:AllowInvalidCerts"], out var a) && a;
 
-             // Собираем письмо
              var mimeMessage = new MimeMessage();
              mimeMessage.From.Add(MailboxAddress.Parse(from));
              mimeMessage.To.Add(MailboxAddress.Parse(email));
              mimeMessage.Subject = subject;
 
-             // Тело (HTML + текст на всякий)
+
              var bodyBuilder = new BodyBuilder
              {
                  HtmlBody = message,

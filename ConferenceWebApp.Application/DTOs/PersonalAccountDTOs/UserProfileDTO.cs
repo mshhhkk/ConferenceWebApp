@@ -7,7 +7,7 @@ public class UserProfileDTO
     public string FullName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
-    public DateOnly BirthDate { get; set; }
+    public string BirthDate { get; set; }
     public string Organization { get; set; } = string.Empty;
     public string Specialization { get; set; } = string.Empty;
     public string PhotoUrl { get; set; } = "/images/user.svg";

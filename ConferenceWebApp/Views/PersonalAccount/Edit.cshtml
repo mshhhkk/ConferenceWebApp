@@ -3,6 +3,9 @@
 
 @{
     Layout = "_SettingsLayout";
+    var photoUrl = string.IsNullOrWhiteSpace(Model.PhotoUrl)
+        ? Url.Content("~/images/user.svg")
+        : Model.PhotoUrl;
 }
 
 <link rel="stylesheet" href="~/css/modal.css" />
@@ -59,7 +62,7 @@
         </div>
     </div>
 
-    <div class="settings-form-row">
+    @* <div class="settings-form-row">
         <div class="settings-form-group">
             <label asp-for="BirthDate" class="settings-form-label">Дата рождения</label>
 
@@ -67,16 +70,16 @@
                    id="@Html.IdFor(m => m.BirthDate)"
                    type="text"
                    class="settings-form-input"
-                   placeholder="дд.мм.гггг"
+                   placeholder="мм.дд.гггг"
                    inputmode="numeric"
                    pattern="^\d{2}\.\d{2}\.\d{4}$"
-                   value="@(Model.BirthDate.HasValue? Model.BirthDate.Value.ToString("dd.MM.yyyy") : "")" />
+                   value="@(Model.BirthDate.HasValue? Model.BirthDate.Value.ToString("MM.dd.yyyy") : "")" />
 
-            <small class="form-text text-muted">Формат: дд.мм.гггг</small>
+            <small class="form-text text-muted">Формат: мм.дд.гггг</small>
             <span asp-validation-for="BirthDate" class="text-danger"></span>
         </div>
 
-    </div>
+    </div> *@
 
     <div class="settings-form-row">
         <div class="settings-form-group">
@@ -148,123 +151,123 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        (function () {
-          const view = document.getElementById('BirthDateView');
-          const hidden = document.getElementById('BirthDate');
 
-          if (!view || !hidden) return;
+<script>
+    (function () {
+        const view = document.getElementById('BirthDateView');
+        const hidden = document.getElementById('BirthDate');
+
+        if (!view || !hidden) return;
 
       
-          view.addEventListener('input', () => {
-            let v = view.value.replace(/\D/g, ''); 
-            if (v.length > 8) v = v.slice(0, 8);
+        view.addEventListener('input', () => {
+        let v = view.value.replace(/\D/g, ''); 
+        if (v.length > 8) v = v.slice(0, 8);
     
-            if (v.length > 4) v = v.slice(0,2) + '.' + v.slice(2,4) + '.' + v.slice(4);
-            else if (v.length > 2) v = v.slice(0,2) + '.' + v.slice(2);
-            view.value = v;
-          });
-
-          function isValidDate(d, m, y) {
-            const dt = new Date(y, m - 1, d);
-            return dt.getFullYear() === y && (dt.getMonth() + 1) === m && dt.getDate() === d;
-          }
-
-          function toIso(d, m, y) {
-
-            const mm = m.toString().padStart(2, '0');
-            const dd = d.toString().padStart(2, '0');
-            return `${y}-${mm}-${dd}`;
-          }
-
-          view.addEventListener('blur', () => {
-            const m = view.value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-            const now = new Date();
-            const maxY = now.getFullYear();
-            const minY = 1920;
-
-            if (!m) {
-              hidden.value = ''; 
-              return;
-            }
-            const d = parseInt(m[1], 10);
-            const mo = parseInt(m[2], 10);
-            const y = parseInt(m[3], 10);
-
-            if (y < minY || y > maxY || !isValidDate(d, mo, y)) {
-              hidden.value = '';
-              return;
-            }
-            hidden.value = toIso(d, mo, y);
-          });
-
-
-          const form = view.closest('form');
-          if (form) {
-            form.addEventListener('submit', () => {
-              view.dispatchEvent(new Event('blur')); 
-            });
-          }
-        })();
-
-        function openDeleteAccountModal() {
-            document.getElementById("deleteAccountModal").style.display = "flex";
-        }
-        function closeDeleteAccountModal() {
-            document.getElementById("deleteAccountModal").style.display = "none";
-        }
-        function confirmDeleteAccount() {
-            document.getElementById("deleteAccountForm").submit();
-        }
-
-        window.addEventListener("click", function (e) {
-            let modal = document.getElementById("deleteAccountModal");
-            if (e.target === modal) closeDeleteAccountModal();
+        if (v.length > 4) v = v.slice(0,2) + '.' + v.slice(2,4) + '.' + v.slice(4);
+        else if (v.length > 2) v = v.slice(0,2) + '.' + v.slice(2);
+        view.value = v;
         });
 
-        document.getElementById('Photo').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('avatarPreview').src = e.target.result;
+        function isValidDate(d, m, y) {
+        const dt = new Date(y, m - 1, d);
+        return dt.getFullYear() === y && (dt.getMonth() + 1) === m && dt.getDate() === d;
+        }
 
-                    document.getElementById('removePhotoBtn').disabled = false;
-                    document.getElementById('removePhotoBtn').style.border = ''; 
-                    document.getElementById('removePhotoBtn').style.backgroundColor = ''; 
-                    document.getElementById('removePhotoBtn').style.color = ''; 
-                };
-                reader.readAsDataURL(file);
-            }
+        function toIso(d, m, y) {
+
+        const mm = m.toString().padStart(2, '0');
+        const dd = d.toString().padStart(2, '0');
+        return `${y}-${mm}-${dd}`;
+        }
+
+        view.addEventListener('blur', () => {
+        const m = view.value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+        const now = new Date();
+        const maxY = now.getFullYear();
+        const minY = 1920;
+
+        if (!m) {
+            hidden.value = ''; 
+            return;
+        }
+        const d = parseInt(m[1], 10);
+        const mo = parseInt(m[2], 10);
+        const y = parseInt(m[3], 10);
+
+        if (y < minY || y > maxY || !isValidDate(d, mo, y)) {
+            hidden.value = '';
+            return;
+        }
+        hidden.value = toIso(d, mo, y);
         });
 
-         function removePhoto() {
-            const preview = document.getElementById('avatarPreview');
+
+        const form = view.closest('form');
+        if (form) {
+        form.addEventListener('submit', () => {
+            view.dispatchEvent(new Event('blur')); 
+        });
+        }
+    })();
+
+    function openDeleteAccountModal() {
+        document.getElementById("deleteAccountModal").style.display = "flex";
+    }
+    function closeDeleteAccountModal() {
+        document.getElementById("deleteAccountModal").style.display = "none";
+    }
+    function confirmDeleteAccount() {
+        document.getElementById("deleteAccountForm").submit();
+    }
+
+    window.addEventListener("click", function (e) {
+        let modal = document.getElementById("deleteAccountModal");
+        if (e.target === modal) closeDeleteAccountModal();
+    });
+
+    document.getElementById('Photo').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('avatarPreview').src = e.target.result;
+
+                document.getElementById('removePhotoBtn').disabled = false;
+                document.getElementById('removePhotoBtn').style.border = ''; 
+                document.getElementById('removePhotoBtn').style.backgroundColor = ''; 
+                document.getElementById('removePhotoBtn').style.color = ''; 
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+        function removePhoto() {
+        const preview = document.getElementById('avatarPreview');
 
         
-            if (preview.src.includes('/images/user.svg')) {
-                alert('Фото не может быть удалено, так как оно дефолтное.');
-                return;  
-            }
+        if (preview.src.includes('/images/user.svg')) {
+            alert('Фото не может быть удалено, так как оно дефолтное.');
+            return;  
+        }
 
           
-            preview.src = '/images/user.svg';  
+        preview.src = '/images/user.svg';  
 
         
-            const removePhotoInput = document.createElement('input');
-            removePhotoInput.type = 'hidden';
-            removePhotoInput.name = 'RemovePhoto';
-            removePhotoInput.value = 'true'; 
+        const removePhotoInput = document.createElement('input');
+        removePhotoInput.type = 'hidden';
+        removePhotoInput.name = 'RemovePhoto';
+        removePhotoInput.value = 'true'; 
 
 
-            document.querySelector('form').appendChild(removePhotoInput);
+        document.querySelector('form').appendChild(removePhotoInput);
 
      
-            document.getElementById('removePhotoBtn').disabled = true;
-            document.getElementById('removePhotoBtn').style.border = '1px solid grey';
-            document.getElementById('removePhotoBtn').style.backgroundColor = '#f0f0f0';
-            document.getElementById('removePhotoBtn').style.color = 'grey';
-        }
-    </script>
-}
+        document.getElementById('removePhotoBtn').disabled = true;
+        document.getElementById('removePhotoBtn').style.border = '1px solid grey';
+        document.getElementById('removePhotoBtn').style.backgroundColor = '#f0f0f0';
+        document.getElementById('removePhotoBtn').style.color = 'grey';
+    }
+</script>
+

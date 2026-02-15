@@ -4,9 +4,9 @@
     string selected = "";
 
     if (controller == "Reports" && action == "Index") selected = "Thesis";
-    else if (controller == "ExtendedThesis") selected = "ExtendedThesis";
+    // else if (controller == "ExtendedThesis") selected = "ExtendedThesis";
     else if (controller == "Payment") selected = "Payment";
-    else if (controller == "ReportsTransfer" || controller == "ReportsRefferal") selected = "ReportsTransfer";
+    // else if (controller == "ReportsTransfer" || controller == "ReportsRefferal") selected = "ReportsTransfer";
 }
 
 <div class="section-tabs">
@@ -20,15 +20,14 @@
     </a>
     @if (Model.UserProfile.IsApprovedAnyReports)
     {
-        <a href="/ExtendedThesis/Index"
-           class="section-tab-btn @(selected == "ExtendedThesis" ? "selected" : "")">
-            Расширенные тезисы
-        </a>
-        <a href="/ReportsRefferal/Index"
-           class="section-tab-btn @(selected == "ReportsTransfer" ? "selected" : "")">
-            Передача докладов
-        </a>
+        // <a href="/ExtendedThesis/Index"
+        //    class="section-tab-btn @(selected == "ExtendedThesis" ? "selected" : "")">
+        //     Расширенные тезисы
+        // </a>
+        // <a href="/ReportsRefferal/Index"
+        //    class="section-tab-btn @(selected == "ReportsTransfer" ? "selected" : "")">
+        //     Передача докладов
+        // </a>
     }
- 
 </div>
 

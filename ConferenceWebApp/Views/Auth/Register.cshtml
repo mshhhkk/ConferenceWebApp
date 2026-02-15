@@ -1,7 +1,7 @@
 ﻿@using ConferenceWebApp.Application.DTOs.AuthDTOs
 @model RegisterDTO
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Регистрация";
     Layout = "_AuthLayout";
 }
 
@@ -69,10 +69,10 @@
                         <!-- чек-лист требований ОСТАВЛЯЕМ -->
                         <ul class="pwd-checklist" id="pwdChecklist">
                             <li data-re=".{8,}">Минимум 8 символов</li>
-                            <li data-re="[A-Z]">Заглавная буква</li>
-                            <li data-re="[a-z]">Строчная буква</li>
-                            <li data-re="\d">Цифра</li>
-                            <li data-re="[^A-Za-z0-9]">Спец-символ</li>
+                            <li data-re="\p{Lu}">Заглавная буква</li>
+                            <li data-re="\p{Ll}">Строчная буква</li>
+                            <li data-re="\p{Nd}">Цифра</li>
+                            <li data-re="[^\p{L}\p{Nd}]">Спец-символ</li>
                         </ul>
                     </div>
 
@@ -107,19 +107,21 @@
                         <span asp-validation-for="PasswordRepeat" class="form-error"></span>
                     </div>
 
-
-                    <div class="form-check">
+@* 
+                    div class="form-check">
                         <input type="checkbox" id="agreement" class="form-check-input" />
                         <label for="agreement" class="form-check-label">
                             Я принимаю условия <a href="#">пользовательского соглашения</a>
                         </label>
+                    </div> *@
+
+                    <button type="submit" class="btn-primary">Продолжить</button> 
+                    <div class="form-link">
+                        Уже есть учетная запись? <a href="/Auth/Login">Войти</a>
                     </div>
-
-                    <button type="submit" class="btn-primary">Продолжить</button>
-
                 </form>
 
-               
+                <partial name="_FlashModals" />
 
             </div>
         </div>
@@ -129,7 +131,7 @@
 
 
 <script>
-    // глазик
+    // глазик — оставить как было
     (function(){
       document.querySelectorAll('.eye-btn').forEach(btn => {
         const id = btn.dataset.target;
@@ -143,18 +145,32 @@
       });
     })();
 
-    // чек-лист требований к паролю (оставляем)
-    (function(){
-      const pwd = document.getElementById('@Html.IdFor(m => m.Password)');
+
+        (function () {
+      const pwd  = document.getElementById('@Html.IdFor(m => m.Password)');
       const list = document.getElementById('pwdChecklist');
       if (!pwd || !list) return;
-      const items = [...list.querySelectorAll('li')].map(li => ({li, re: new RegExp(li.dataset.re)}));
+
+      const items = [...list.querySelectorAll('li')].map(li => {
+        // ВАЖНО: флаг 'u' включает Unicode-классы \p{..}
+        return { li, re: new RegExp(li.dataset.re, 'u') };
+      });
+
       const update = () => {
-        const v = pwd.value || '';
-        items.forEach(({li, re}) => li.classList.toggle('ok', re.test(v)));
+        const v = pwd.value ?? '';
+        let allOk = true;
+        items.forEach(({ li, re }) => {
+          const ok = re.test(v);
+          li.classList.toggle('ok', ok);
+          if (!ok) allOk = false;
+        });
+        // показывать чек-лист ТОЛЬКО если пароль не удовлетворяет всем правилам
+        list.style.display = allOk || v.length === 0 ? 'none' : 'block';
       };
+
       pwd.addEventListener('input', update);
       update();
     })();
 </script>
+
 

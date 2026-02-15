@@ -128,6 +128,12 @@ public class ExtendedThesisService : IExtendedThesisService
             return Result.Failure("У вас нет доступных одобренных тезисов");
         }
 
+        if (report.Status == ReportStatus.ExtendedThesisApproved)
+        {
+            _logger.LogWarning("Расширенный тезис доклада ReportId={ReportId} одобрен, обновление невозможно", dto.ReportId);
+            return Result.Failure("Невозможно изменить одобренный доклад");
+        }
+
         report.ExtThesis = dto.ExtThesis;
         report.Status = ReportStatus.SubmittedExtendedThesis;
         await _reportsRepository.UpdateReportAsync(report);

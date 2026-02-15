@@ -31,7 +31,7 @@ public class PaymentService : IPaymentService
             _logger.LogInformation("Получение чека пользователя {UserId}", userId);
 
             var profile = await _userProfileRepository.GetByUserIdAsync(userId);
-            if (profile == null || profile.Status == ParticipantStatus.ProfileCompleted)
+            if (profile == null || profile.Status < ParticipantStatus.ProfileCompleted)
             {
                 _logger.LogWarning("Профиль пользователя {UserId} не найден или статус ProfileCompleted", userId);
                 return Result<ReceiptFileDTO>.Failure("Вы не зарегистрированы на конференцию.");

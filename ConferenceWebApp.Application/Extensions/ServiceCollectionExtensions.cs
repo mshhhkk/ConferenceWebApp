@@ -5,6 +5,7 @@ using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Application.Interfaces.Services.Admin;
 using ConferenceWebApp.Application.Validation;
+using ConferenceWebApp.Infrastructure.Services;
 using ConferenceWebApp.Infrastructure.Services.Realization;
 using ConferenceWebApp.Infrastructure.Services.Realization.Admin;
 using FluentValidation;
@@ -30,6 +31,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IReportAdminService, ReportAdminService>();
         services.AddScoped<IScheduleAdminService, ScheduleAdminService>();
         services.AddScoped<IUserProfileService, UserProfileService>();
+       
+        
+
+
         return services;
     }
     public static IServiceCollection AddValidators(this IServiceCollection services)
@@ -40,6 +45,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IValidator<EditReportDTO>, EditReportValidator>();
         services.AddScoped<IValidator<AdminEditUserDTO>, AdminEditUserValidator>();
         services.AddScoped<IValidator<RegisterDTO>, RegisterValidator>();
+        services.AddScoped<IValidator<LoginDTO>, LoginValidator>();
+
         return services;
     }
 }

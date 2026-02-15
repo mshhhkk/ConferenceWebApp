@@ -8,10 +8,9 @@
 <div class="payment-card">
     <div class="payment-info" style="margin-bottom:18px;">
         <p>Для участия в симпозиуме необходимо оплатить оргвзнос и загрузить чек об оплате.</p>
-        <p>Величина оргвзноса: 140 BYN. Для аспирантов, студентов и участников без докладов предусмотрена скидка 50%.</p>
-        <strong>Крайний срок оплаты:</strong> 24 ноября 2024 г.
+        <p>Величина оргвзноса: 90 BYN. Студенты и магистранты освобождены от уплаты оргвзноса.</p>
+       @*  <strong>Крайний срок оплаты:</strong> 24 ноября 2024 г. *@
     </div>
-
     <div class="payment-title">Оплата участия в конференции</div>
     @if (Model.UserProfile.Status == ParticipantStatus.ParticipationConfirmed)
     {
@@ -19,18 +18,47 @@
             <span style="font-size:18px;"> Оплата подтверждена. Спасибо!</span>
         </div>
     }
-    <div class="payment-details" style="border:1px solid #e0e0e0; border-radius:8px; padding:18px; margin-bottom:24px;">
-        <div style="font-size:18px; font-weight:600; color:#8e24aa; margin-bottom:8px;">Сумма к оплате</div>
-        <div style="font-size:32px; font-weight:700; color:#6c2eb7; margin-bottom:16px;">140 BYN</div>
-        <div style="margin-bottom:12px;">Реквизиты для оплаты:</div>
-        <div style="font-size:15px; color:#444;">
-            <div>Получатель: ООО "Симпозиум"</div>
-            <div>УНП: 123456789</div>
-            <div>Банк: ОАО "Банк"</div>
-            <div>IBAN: BY00UNBS00000000000000000000</div>
-            <div>Назначение платежа: Оргвзнос за участие в конференции</div>
+    else
+    {
+        <div class="payment-details" style="border:1px solid #e0e0e0; border-radius:8px; padding:18px; margin-bottom:24px;">
+            <div style="font-size:18px; font-weight:600; color:#8e24aa; margin-bottom:8px;">Сумма к оплате</div>
+            <div style="font-size:32px; font-weight:700; color:#6c2eb7; margin-bottom:16px;">90 BYN</div>
+            <div style="margin-bottom:12px;">Реквизиты для оплаты:</div>
+            <div style="font-size:15px; color:#444;">
+                <div>
+                    Белорусский государственный университет
+                </div>
+                    <div>
+                    220030, г. Минск, пр. Независимости, 4
+                </div>
+                        <div>
+                    р/с BY88BLBB36320100235722001001
+                </div>
+                            <div>
+                    Дирекция ОАО «Белинвестбанк» по городу Минску и Минской области
+                </div>
+                                <div>
+                    БИК BLBBBY2X г. Минск, ул. Коллекторная, 11
+                </div>
+                                    <div>
+                    УНП 100235722
+                </div>
+                                        <div>
+                    ОКПО 02071814
+                </div>
+                                            <div>
+                    Назначение платежа: “Квантовая электроника”
+                </div>
+            </div>
         </div>
-    </div>
+        <form asp-action="UploadReceipt" method="post" enctype="multipart/form-data">
+            <label class="payment-label" for="Receipt">Загрузить новый чек</label>
+            <input type="file" name="Receipt" id="Receipt" class="payment-file" accept=".jpg,.jpeg,.png,.pdf" required style="display:none;" />
+            <button type="button" class="payment-btn" onclick="document.getElementById('Receipt').click();">Загрузить чек</button>
+            <span id="file-name" style="display:block;margin-top:10px;color:#6c2eb7;"></span>
+            <button type="submit" class="payment-btn" style="margin-top:12px;">Отправить чек</button>
+        </form>
+    }
 
     @if (Model?.ReceiptFile != null)
     {
@@ -49,15 +77,6 @@
             <button type="submit" class="payment-btn" style="width:220px;">Скачать чек</button>
         </form>
     }
-
-    <form asp-action="UploadReceipt" method="post" enctype="multipart/form-data">
-        <label class="payment-label" for="Receipt">Загрузить новый чек</label>
-        <input type="file" name="Receipt" id="Receipt" class="payment-file" accept=".jpg,.jpeg,.png,.pdf" required style="display:none;" />
-        <button type="button" class="payment-btn" onclick="document.getElementById('Receipt').click();">Загрузить чек</button>
-        <span id="file-name" style="display:block;margin-top:10px;color:#6c2eb7;"></span>
-        <button type="submit" class="payment-btn" style="margin-top:12px;">Отправить чек</button>
-    </form>
-
 </div>
 
 <script>

@@ -4,6 +4,7 @@ using ConferenceWebApp.Application.DTOs.ReportsDTOs;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Application.Validation;
 using ConferenceWebApp.Domain.Entities;
+using ConferenceWebApp.Domain.Enums;
 using ConferenceWebApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -103,8 +104,9 @@ public class ReportsController : BaseController
             _logger.LogWarning("Add(): нет UserProfile в сессии. Redirect -> Login. UserId={UserId}", userId);
             return RedirectToAction("Login", "Auth");
         }
-
+    
         var userProfile = JsonConvert.DeserializeObject<UserProfileDTO>(userProfileJson);
+      
         _logger.LogInformation("Открыта форма добавления доклада. UserId={UserId}", userId);
 
         return View(new AddReportViewModel { UserProfile = userProfile!, Report = new AddReportDTO() });

@@ -4,8 +4,8 @@ namespace ConferenceWebApp.Domain.Enums;
 
 public enum Position
 {
-    [Display(Name = "Студент")]
-    Student = 0,
+    [Display(Name = "Без должности")]
+    WithoutFeatures = 0,
 
     [Display(Name = "Аспирант")]
     GradStudent = 1,
@@ -13,6 +13,6 @@ public enum Position
     [Display(Name = "Профессор")]
     Professor = 2,
 
-    [Display(Name = "Без должности")]
-    WithoutFeatures = 3
+    [Display(Name = "Студент")]
+    Student = 4
 }

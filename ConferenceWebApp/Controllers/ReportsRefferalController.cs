@@ -1,4 +1,4 @@
-﻿using ConferenceWebApp.Application.Controllers;
+﻿/*using ConferenceWebApp.Application.Controllers;
 using ConferenceWebApp.Application.DTOs.ReportsRefferDTOs;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
@@ -161,3 +161,4 @@ public class ReportsRefferalController : BaseController
         return RedirectToAction("Index");
     }
 }
+*/

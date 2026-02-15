@@ -23,10 +23,10 @@ public class EditUserProfileValidator : AbstractValidator<EditUserDTO>
             .Matches(@"^\+375\d{9}$").WithMessage("Номер телефона должен быть в формате +375xxxxxxxxx.")
             .When(x => !string.IsNullOrEmpty(x.PhoneNumber));
 
-        RuleFor(x => x.BirthDate)
+       /* RuleFor(x => x.BirthDate)
             .NotNull().WithMessage("Дата рождения обязательна для заполнения.")
             .LessThan(DateOnly.FromDateTime(DateTime.Now.AddYears(-15))).WithMessage("Возраст должен быть не менее 15 лет.")
-            .GreaterThan(DateOnly.FromDateTime(DateTime.Now.AddYears(-100))).WithMessage("Возраст не может быть старше 100 лет.");
+            .GreaterThan(DateOnly.FromDateTime(DateTime.Now.AddYears(-100))).WithMessage("Возраст не может быть старше 100 лет.");*/
 
         RuleFor(x => x.Organization)
             .NotEmpty().WithMessage("Организация обязательна для заполнения.")

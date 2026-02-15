@@ -75,7 +75,7 @@ public class ReportService : IReportService
                 return Result<EditReportDTO>.Failure("Доступ к отчету запрещен");
             }
 
-            if (report.Status == ReportStatus.ThesisApproved)
+            if (report.Status >= ReportStatus.ThesisApproved)
             {
                 _logger.LogWarning("Попытка изменить утвержденный доклад ReportId={ReportId}", reportId);
                 return Result<EditReportDTO>.Failure("Невозможно изменить утвержденный отчет");
@@ -113,8 +113,14 @@ public class ReportService : IReportService
     {
         try
         {
-            _logger.LogInformation("Добавление доклада UserId={UserId}, Theme={Theme}", userId, dto?.ReportTheme);
 
+            _logger.LogInformation("Добавление доклада UserId={UserId}, Theme={Theme}", userId, dto?.ReportTheme);
+            var userProfile = await _userProfileRepository.GetByUserIdAsync(userId);
+            if (userProfile.Status < ParticipantStatus.ProfileCompleted)
+            {
+                _logger.LogWarning("Попытка добавления дкоалад без заполненного профиля") ;
+                return Result<EditReportDTO>.Failure("Невозможно добавить доклад без заполненной личной информации. Ппожалуйста, перейдите в настройки личного аккаунта для заполнения.");
+            }
             var result = ValidateFile(dto!.File);
             if (!result.IsSuccess)
             {
@@ -164,6 +170,16 @@ public class ReportService : IReportService
             _logger.LogInformation("Обновление доклада ReportId={ReportId}, UserId={UserId}", dto.Id, userId);
 
             var report = await _reportRepository.GetReportByIdAsync(dto.Id);
+            if (report == null)
+            {
+                _logger.LogWarning("Доклад для редактирования не найден ReportId={ReportId}", report!.Id);
+                return Result<EditReportDTO>.Failure("Доклад не найден");
+            }
+            if (report.UserId != userId || report.AuthorId != userId)
+            {
+                _logger.LogWarning("Попытка удалить чужой доклад ReportId={ReportId}, UserId={UserId}", report.Id, userId);
+                return Result<EditReportDTO>.Failure("Доступ к отчету запрещен");
+            }
             report!.ReportTheme = dto.ReportTheme;
             report.Section = dto.Section;
             report.WorkType = dto.WorkType;
@@ -177,7 +193,11 @@ public class ReportService : IReportService
                     _logger.LogWarning("Валидация файла при обновлении не пройдена: {Reason}", resultFile.ErrorMessage);
                     return resultFile;
                 }
-
+                 if (report.UserId != userId || report.AuthorId != userId)
+                {
+                    _logger.LogWarning("Попытка удалить чужой доклад ReportId={ReportId}, UserId={UserId}", report.Id, userId);
+                    return Result<EditReportDTO>.Failure("Доступ к отчету запрещен");
+                }
                 report.FilePath = await _fileService.UpdateFileAsync(
                     dto.File,
                     report.FilePath,
@@ -217,7 +237,7 @@ public class ReportService : IReportService
                 return Result<EditReportDTO>.Failure("Доступ к отчету запрещен");
             }
 
-            if (report.Status == ReportStatus.ThesisApproved)
+            if (report.Status >= ReportStatus.ThesisApproved)
             {
                 _logger.LogWarning("Попытка удалить утвержденный доклад ReportId={ReportId}", reportId);
                 return Result<EditReportDTO>.Failure("Невозможно изменить утвержденный отчет");
@@ -256,7 +276,7 @@ public class ReportService : IReportService
             }
 
             var (fileStream, contentType, fileName) = _fileService.GetFile(report.FilePath);
-
+            Console.WriteLine($"ПУТЬ ДО ФАЙЛА: {report.FilePath}");
             _logger.LogInformation("Доклад отдан на скачивание ReportId={ReportId}, UserId={UserId}", reportId, userId);
             return Result<FileStreamResult>.Success(
                 new FileStreamResult(fileStream, contentType) { FileDownloadName = fileName });

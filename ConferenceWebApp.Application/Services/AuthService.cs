@@ -4,8 +4,10 @@ using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
 
 public class AuthService : IAuthService
 {
@@ -16,6 +18,7 @@ public class AuthService : IAuthService
     private readonly IUserProfileService _userProfileService;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<AuthService> _logger;
+    private readonly IConfiguration _cfg;
 
     public AuthService(
         UserManager<User> userManager,
@@ -24,7 +27,8 @@ public class AuthService : IAuthService
         IHttpContextAccessor httpContextAccessor,
         ITwoFactorService twoFactorService,
         IEmailSender emailSender,
-        ILogger<AuthService> logger)
+        ILogger<AuthService> logger,
+        IConfiguration cfg)
     {
         _twoFactorService = twoFactorService;
         _userManager = userManager;
@@ -33,6 +37,7 @@ public class AuthService : IAuthService
         _httpContextAccessor = httpContextAccessor;
         _emailSender = emailSender;
         _logger = logger;
+        _cfg = cfg;
     }
 
     public async Task<Result> RegisterAsync(RegisterDTO dto)
@@ -59,10 +64,19 @@ public class AuthService : IAuthService
         await _userManager.AddToRoleAsync(user, "Participant");
 
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var confirmationLink = $"https://yourdomain.com/Auth/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+        var baseUrl = Environment.GetEnvironmentVariable("APP_BASE_URL")
+              ?? _cfg["App:BaseUrl"]
+              ?? throw new InvalidOperationException("APP_BASE_URL не настроен");
 
-        await _emailSender.SendAsync(dto.Email, "Подтвердите ваш email",
-            $"Для подтверждения перейдите по ссылке: {confirmationLink}");
+        var url = $"{baseUrl}/Auth/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+        var subject = "Подтверждение e-mail";
+        var body = $@"
+            <p>Здравствуйте!</p>
+            <p>Подтвердите адрес электронной почты, перейдя по ссылке:</p>
+            <p><a href=""{url}"">Подтвердить e-mail</a></p>
+            <p>Если вы не регистрировались, просто игнорируйте это письмо.</p>";
+
+        await _emailSender.SendAsync(user.Email!, subject, body);
 
         _logger.LogInformation("Пользователь {Email} успешно зарегистрирован. Отправлено письмо с подтверждением", dto.Email);
 
@@ -100,6 +114,11 @@ public class AuthService : IAuthService
             return Result.Failure("Неверный логин или пароль");
         }
 
+        if (await _userManager.IsInRoleAsync(user, "Admin") || await _userManager.IsInRoleAsync(user, "SuperAdmin"))
+        {
+            await _signInManager.SignInAsync(user, isPersistent: false);
+            return Result.Success();
+        }
         var code = _twoFactorService.GenerateCode();
         await _twoFactorService.StoreCodeAsync(dto.Email, code);
         await _emailSender.SendAsync(dto.Email, "Ваш код подтверждения", $"Код: {code}");
@@ -138,7 +157,39 @@ public class AuthService : IAuthService
 
         return Result.Success();
     }
+    public async Task<Result> ResendConfirmationEmailAsync(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return Result.Failure("E-mail не задан");
 
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null)
+            return Result.Failure("Пользователь не найден");
+
+        if (user.EmailConfirmed)
+            return Result.Success(); 
+
+        // генерим новый токен
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+        var baseUrl = Environment.GetEnvironmentVariable("APP_BASE_URL")
+              ?? _cfg["App:BaseUrl"]
+              ?? throw new InvalidOperationException("APP_BASE_URL не настроен");
+
+        var url = $"{baseUrl}/Auth/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+
+        var subject = "Подтверждение e-mail";
+        var body = $@"
+            <p>Здравствуйте!</p>
+            <p>Подтвердите адрес электронной почты, перейдя по ссылке:</p>
+            <p><a href=""{url}"">Подтвердить e-mail</a></p>
+            <p>Если вы не регистрировались, просто игнорируйте это письмо.</p>";
+
+        await _emailSender.SendAsync(user.Email!, subject, body);
+
+        _logger.LogInformation("Повторная отправка письма подтверждения для {Email}", email);
+        return Result.Success();
+    }
     public async Task<Result> LogoutAsync()
     {
         var email = _httpContextAccessor.HttpContext?.User.Identity?.Name ?? "Anonymous";

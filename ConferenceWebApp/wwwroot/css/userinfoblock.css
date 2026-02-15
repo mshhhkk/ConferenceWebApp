@@ -103,9 +103,62 @@
 }
 
 .participant-status--inactive {
+    position: relative;
     background: #D9D1E0;
     color: #222;
+    cursor: help;
 }
+
+/* пузырёк */
+.participant-status--inactive::after{
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 0;                   /* прижать к началу текста */
+  bottom: 100%;              /* над элементом */
+  transform: translateY(-8px);
+  max-width: 320px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(17,24,39,.95); /* тёмный */
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.3;
+  white-space: normal;
+  box-shadow: 0 6px 18px rgba(0,0,0,.18);
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease, transform .15s ease;
+  z-index: 10;
+}
+
+/* маленькая стрелка */
+.participant-status--inactive::before{
+  content: "";
+  position: absolute;
+  left: 10px;
+  bottom: 100%;
+  transform: translateY(2px);
+  border: 6px solid transparent;
+  border-top-color: rgba(17,24,39,.95);
+
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+
+/* показать по ховеру/фокусу */
+.participant-status--inactive:hover::after,
+.participant-status--inactive:focus::after,
+.participant-status--inactive:hover::before,
+.participant-status--inactive:focus::before{
+  opacity: 1;
+  transform: translateY(-12px);
+}
+
+/* для доступности с клавиатуры */
+.participant-status--inactive{ outline: none; }
+.participant-status--inactive:focus{ box-shadow: 0 0 0 2px #9D3FE7; }
+
 .user-info-invite {
     margin-top: 12px;
     text-align: center;

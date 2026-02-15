@@ -1,4 +1,5 @@
-﻿using ConferenceWebApp.Domain.Entities;
+﻿using ConferenceWebApp.Domain.Constants;
+using ConferenceWebApp.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -94,9 +95,6 @@ namespace ConferenceWebApp.Persistence
                       .IsRequired();
             });
 
-            //TODO ПЕРЕМЕСТИТЬ РОЛИ В ОДЕЛЬНЫЙ КЛАСС
-
-            // Заранее подготовленные Guid для ролей (можно вынести в константы)
             builder.Entity<IdentityRole<Guid>>().HasData(
 
                 new IdentityRole<Guid>
@@ -117,9 +115,6 @@ namespace ConferenceWebApp.Persistence
                     Name = SystemRoles.SuperAdmin,
                     NormalizedName = SystemRoles.SuperAdmin.ToUpperInvariant()
                 });
-            
-
-           
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken ct = default)

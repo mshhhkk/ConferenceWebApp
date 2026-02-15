@@ -12,21 +12,44 @@ public class UserProfile
 
     public User User { get; set; } = default!; //means NOTNULL!
 
-    public string FirstName { get; set; } = "Имя";
+    private string _firstname = "Имя";
 
-    public string LastName { get; set; } = "Фамилия";
+    public string FirstName {
+        get => _firstname;
+        set => _firstname = string.IsNullOrWhiteSpace(value) ? "Имя" : value;
+        }
+
+
+    private string _lastname = "Фамилия";
+
+    public string LastName
+    {
+        get => _lastname;
+        set => _lastname = string.IsNullOrWhiteSpace(value) ? "Фамилия" : value;
+    }
+
 
     public string? MiddleName { get; set; }
 
-    public DateOnly BirthDate { get; set; }
+    public DateOnly? BirthDate { get; set; }
 
-    public string? Organization { get; set; } = string.Empty;
-
-    public string? Specialization { get; set; } = string.Empty;
+    private string _organization = string.Empty;
+    public string? Organization
+    {
+        get => _organization;
+        set => _organization = value ?? string.Empty;
+    }
+        
+    private string _specialization = string.Empty;
+    public string? Specialization
+    {
+        get => _specialization;
+        set =>  _specialization = value ?? string.Empty;
+    }
 
     public string? PhoneNumber { get; set; } = string.Empty;
 
-    public string? PhotoUrl { get; set; } = "/images/defaultUserPhoto.png";
+    public string? PhotoUrl { get; set; } = "/images/user.svg";
 
     [Required]
     public ParticipantType ParticipantType { get; set; } = ParticipantType.Spectator;

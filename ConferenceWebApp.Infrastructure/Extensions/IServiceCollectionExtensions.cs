@@ -37,7 +37,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEmailSender, EmailSender>();
         services.AddSingleton<IFileService>(provider => new FileService(rootPath));
         services.AddScoped<ISessionService, SessionService>();
+        services.AddSingleton<IProcessedFilesRegistry>(
+    _ => new FileBasedProcessedFilesRegistry(Path.Combine(Directory.GetCurrentDirectory(), "imports", "processed.json")));
+     
+        services.AddScoped<IInvitationImageService, InvitationImageService>();
+
         return services;
     }
+
 }
 

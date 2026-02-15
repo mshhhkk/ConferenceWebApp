@@ -1,4 +1,5 @@
-﻿@model ConferenceWebApp.Application.DTOs.PersonalAccountDTOs.UserProfileDTO
+﻿@using ConferenceWebApp.Application;
+@model ConferenceWebApp.Application.DTOs.PersonalAccountDTOs.UserProfileDTO
 <link rel="stylesheet" href="~/css/userinfoblock.css" />
 @{
     var photoUrl = string.IsNullOrWhiteSpace(Model.PhotoUrl)
@@ -6,7 +7,6 @@
         : Model.PhotoUrl;
     bool isParticipant = Model.ParticipantType == ParticipantType.Speaker;
 }
-
 
 <div class="user-info-block">
     <div class="user-info-photo">
@@ -24,10 +24,10 @@
             <span class="user-info-key">Специальность:</span>
             <span class="user-info-value">@Model.Specialization</span>
         </div>
-        <div class="user-info-row">
+        @* <div class="user-info-row">
             <span class="user-info-key">Дата рождения:</span>
-            <span class="user-info-value">@Model.BirthDate.ToString("dd.MM.yyyy")</span>
-        </div>
+            <span class="user-info-value">@Model.BirthDate</span>
+        </div> *@
     </div>
 
     <div class="user-info-section-title">КОНТАКТЫ</div>
@@ -45,36 +45,35 @@
     <div class="user-info-section-title">УЧАСТИЕ</div>
     <div class="user-info-section">
         <div class="user-info-row">
-            @if (isParticipant)
+            @if (Model.Status == ParticipantStatus.ParticipationConfirmed)
             {
                 <span class="participant-status participant-status--active">
                     ВЫ ЯВЛЯЕТЕСЬ УЧАСТНИКОМ
                 </span>
+                <div class="user-info-row">
+                    <span class="user-info-key">Форма участия:</span>
+                    <span class="user-info-value">@EnumDescriptionGetter.Handle(Model.ParticipantType)</span>
+                </div>
+                <div class="user-info-invite">
+                    <div class="user-info-invite-label">
+                        Если необходимо, вы можете сгенерировать персональное официальное приглашение
+                    </div>
+                    <form method="get" action="/PersonalAccount/DownloadInvitationPng">
+                        <button type="submit" class="user-info-invite-btn">
+                            Создать приглашение
+                        </button>
+                    </form>
+                </div>
             }
             else
             {
-                <span class="participant-status participant-status--inactive">
+                <span class="participant-status participant-status--inactive"
+                      data-tooltip="Чтобы стать участником, необходимо оплатить взнос">
                     ВЫ НЕ ЯВЛЯЕТЕСЬ УЧАСТНИКОМ
                 </span>
             }
         </div>
-        @if (isParticipant)
-        {
-            <div class="user-info-row">
-                <span class="user-info-key">Форма участия:</span>
-                <span class="user-info-value">@Model.ParticipantType</span>
-            </div>
-            <div class="user-info-invite">
-                <div class="user-info-invite-label">
-                    Если необходимо, вы можете сгенерировать персональное официальное приглашение
-                </div>
-                <form method="get" action="/PersonalAccount/GenerateInvitation">
-                    <button type="submit" class="user-info-invite-btn">
-                        Создать приглашение
-                    </button>
-                </form>
-            </div>
-        }
+      
 
         <div class="user-info-row">
             <span class="user-info-key">Статус оплаты:</span>
@@ -82,11 +81,11 @@
         </div>
         <div class="user-info-row">
             <span class="user-info-key">Регистрация:</span>
-            <span class="user-info-value">@(Model.Status == ParticipantStatus.ProfileCompleted ? "Зарегистрирован" : "Не зарегистрирован")</span>
+            <span class="user-info-value">@(Model.Status >= ParticipantStatus.ProfileCompleted ? "Зарегистрирован" : "Не зарегистрирован")</span>
         </div>
-        <div class="user-info-row">
+        @* <div class="user-info-row">
             <span class="user-info-key">Доклады:</span>
-            <span class="user-info-value">@(Model.ApprovalStatus == UserApprovalStatus.ThesisApproved ? "Есть одобренные" : "Нет одобренных")</span>
-        </div>
+            <span class="user-info-value">@(Model.ApprovalStatus >= UserApprovalStatus.ThesisApproved ? "Есть одобренные" : "Нет одобренных")</span>
+        </div> *@
     </div>
 </div>

@@ -6,5 +6,6 @@ public class UserWithReceiptDTO
     public string FullName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string ReceiptFilePath { get; set; } = string.Empty;
-    public bool HasPaid { get; set; }
+    public bool CheckSubbmited { get; set; }
+    public bool CheckAccepted { get; set; }
 }

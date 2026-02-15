@@ -2,14 +2,17 @@
 using ConferenceWebApp.Application.DTOs.AuthDTOs;
 using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
+using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 public class AuthController : BaseController
 {
     private readonly IAuthService _authService;
     private readonly ISessionService _sessionService;
     private readonly IUserProfileService _userProfileService;
+    private readonly IReportLinkingService _linkingService;
     private readonly UserManager<User> _userManager;
     private readonly ILogger<AuthController> _logger;
 
@@ -18,12 +21,14 @@ public class AuthController : BaseController
         IUserProfileService userProfileService,
         ISessionService sessionService,
         UserManager<User> userManager,
+        IReportLinkingService linkingService,
         ILogger<AuthController> logger)
         : base(userProfileService)
     {
         _authService = authService;
         _sessionService = sessionService;
         _userProfileService = userProfileService;
+        _linkingService = linkingService;
         _userManager = userManager;
         _logger = logger;
     }
@@ -35,11 +40,18 @@ public class AuthController : BaseController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Login(LoginDTO dto)
+    public async Task<IActionResult> Login(
+    LoginDTO dto,
+    [FromServices] FluentValidation.IValidator<LoginDTO> validator)
     {
-        if (!ModelState.IsValid)
+        var vr = await validator.ValidateAsync(dto);
+        if (!vr.IsValid)
         {
+            foreach (var e in vr.Errors)
+                ModelState.AddModelError(e.PropertyName, e.ErrorMessage);
+
             _logger.LogWarning("Попытка логина с невалидной моделью. Email={Email}", dto.Email);
+            
             return View(dto);
         }
 
@@ -47,7 +59,7 @@ public class AuthController : BaseController
         if (!result.IsSuccess)
         {
             _logger.LogWarning("Ошибка логина для {Email}: {Error}", dto.Email, result.ErrorMessage);
-            ModelState.AddModelError(string.Empty, result.ErrorMessage!);
+            TempData["Error"] = result.ErrorMessage;
             return View(dto);
         }
 
@@ -56,13 +68,20 @@ public class AuthController : BaseController
         return RedirectToAction("Verify2SA", new { email = dto.Email });
     }
 
+
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Register(RegisterDTO dto)
+    public async Task<IActionResult> Register(
+    RegisterDTO dto,
+    [FromServices] FluentValidation.IValidator<RegisterDTO> validator)
     {
-        if (!ModelState.IsValid)
+        var vr = await validator.ValidateAsync(dto);
+        if (!vr.IsValid)
         {
-            _logger.LogWarning("Попытка регистрации с невалидной моделью. Email={Email}", dto.Email);
+            foreach (var e in vr.Errors)
+                ModelState.AddModelError(e.PropertyName, e.ErrorMessage);
+
+            _logger.LogWarning("Попытка регистрации с невалидной моделью (FluentValidation). Email={Email}", dto.Email);
             return View(dto);
         }
 
@@ -91,6 +110,7 @@ public class AuthController : BaseController
     }
 
 
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Verify2SA(Verify2SADTO dto)
@@ -115,6 +135,7 @@ public class AuthController : BaseController
         }
 
         _sessionService.SaveSession("UserProfile", userProfileResult.Value);
+
         return RedirectToAction("Index", "Home");
     }
 
@@ -128,4 +149,53 @@ public class AuthController : BaseController
         _logger.LogInformation("Пользователь {Email} вышел из системы", email);
         return RedirectToAction("Index", "Home");
     }
+
+    [HttpGet]
+    public async Task<IActionResult> ConfirmEmail(string userId, string token)
+    {
+        var result = await _authService.ConfirmEmailAsync(userId, token);
+        if (!result.IsSuccess)
+            return BadRequest(result.ErrorMessage);
+        var user = await _userManager.GetUserAsync(User);
+        try
+        {
+            var bind = await _linkingService.BindByEmailAsync(user.Id, user.Email);
+            _logger.LogInformation("Связывание докладов (email={Email}): добавлено={Added}, дублей={Dup}, брак={Bad}",
+                user.Email, bind.Added, bind.SkippedAlreadyExists, bind.SkippedInvalid);
+
+            if (bind.Added > 0)
+                TempData["Success"] = $"Подтянули доклады: {bind.Added}. Пожалуйста, заполните личный профиль. ";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Ошибка авто-связывания докладов по email={Email}", user.Email);
+            TempData["Error"] = "Доклады не найдены, пожалуйста, заполните личную информацию";
+        }
+        var userProfileResult = await _userProfileService.GetByUserIdAsync(user!.Id);
+        _sessionService.SaveSession("UserProfile", userProfileResult.Value);
+        return RedirectToAction("Edit", "PersonalAccount");
+    }
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResendConfirmation([FromForm] string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            TempData["Error"] = "Укажите e-mail.";
+            return RedirectToAction("Register");
+        }
+
+        var res = await _authService.ResendConfirmationEmailAsync(email);
+        if (!res.IsSuccess)
+        {
+            TempData["Error"] = res.ErrorMessage ?? "Не удалось отправить письмо.";
+            return RedirectToAction("Register");
+        }
+
+        TempData["Success"] = "Письмо с подтверждением отправлено.";
+        return RedirectToAction("CheckYourEmail");
+    }
 }
+

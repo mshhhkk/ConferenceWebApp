@@ -3,6 +3,7 @@ using ConferenceWebApp.Application.Interfaces.Services;
 using ConferenceWebApp.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using System.Security.Cryptography;
 
 namespace ConferenceWebApp.Infrastructure.Services.Realization
 {
@@ -24,13 +25,11 @@ namespace ConferenceWebApp.Infrastructure.Services.Realization
 
         public string GenerateCode()
         {
-            var number = 111111;
 
-            // Если нужно включить реальную генерацию:
-            // using var rng = RandomNumberGenerator.Create();
-            // var bytes = new byte[4];
-            // rng.GetBytes(bytes);
-            // var number = BitConverter.ToUInt32(bytes, 0) % 1_000_000;
+             using var rng = RandomNumberGenerator.Create();
+             var bytes = new byte[4];
+             rng.GetBytes(bytes);
+            var number = BitConverter.ToUInt32(bytes, 0) % 1_000_000;
 
             var code = number.ToString("D6");
             _logger.LogInformation("Сгенерирован код двухфакторной аутентификации: {Code}", code);
